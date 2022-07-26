@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 public class CouponService {
 
     public CouponRetrieveResult retrieve(String id) {
-        return new CouponRetrieveResult(id,"coupon",null,System.currentTimeMillis(),"usd",
+        return new CouponRetrieveResult(id,"coupon",null,System.currentTimeMillis()/1000,"usd",
                 "repeating",3, false,
                 null,"25.5% off",25.5F,true);
     }
