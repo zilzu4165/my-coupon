@@ -1,4 +1,4 @@
-package me.zilzu.mycoupon.api.controller;
+package me.zilzu.mycoupon.application.service;
 
 public class Coupon {
     public String id;

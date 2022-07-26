@@ -1,6 +1,6 @@
 package me.zilzu.mycoupon.api.controller;
 
-import me.zilzu.mycoupon.application.service.CouponRetrieveResult;
+import me.zilzu.mycoupon.application.service.Coupon;
 import me.zilzu.mycoupon.application.service.CouponService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,14 +33,9 @@ public class CouponController {
     @GetMapping("api/v1/coupons/{id}")
     public CouponRetrieveResultResponse retrieveCoupon(@PathVariable String id) {
 
-        CouponRetrieveResult couponRetrieveResult = couponService.retrieve(id);
+        Coupon retrieveCoupon = couponService.retrieve(id);
 
-        CouponRetrieveResultResponse couponRetrieveResultResponse = new CouponRetrieveResultResponse(
-                couponRetrieveResult.id, couponRetrieveResult.object, couponRetrieveResult.amountOff, couponRetrieveResult.created, couponRetrieveResult.currency, couponRetrieveResult.duration, couponRetrieveResult.durationInMonths, couponRetrieveResult.livemode, couponRetrieveResult.maxRedemptions, couponRetrieveResult.name, couponRetrieveResult.percentOff, couponRetrieveResult.valid);
-
-        return couponRetrieveResultResponse;
+        return new CouponRetrieveResultResponse(retrieveCoupon);
     }
-
-
 
 }
