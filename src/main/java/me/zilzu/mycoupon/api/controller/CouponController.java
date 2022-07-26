@@ -33,9 +33,9 @@ public class CouponController {
     @GetMapping("api/v1/coupons/{id}")
     public CouponRetrieveResultResponse retrieveCoupon(@PathVariable String id) {
 
-        Coupon retrieveCoupon = couponService.retrieve(id);
+        Coupon coupon = couponService.retrieve(id);
 
-        return new CouponRetrieveResultResponse(retrieveCoupon);
+        return new CouponRetrieveResultResponse(coupon);
     }
 
 }
