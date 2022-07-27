@@ -23,7 +23,7 @@ public class CouponController {
         this.couponService = couponService;
     }
 
-    @GetMapping("api/v1/coupons/{id}")
+    @GetMapping("/api/v1/coupons/{id}")
     public CouponRetrieveResultResponse retrieveCoupon(@PathVariable String id) {
 
         Coupon coupon = couponService.retrieve(id);
@@ -31,7 +31,7 @@ public class CouponController {
         return new CouponRetrieveResultResponse(coupon);
     }
 
-    @GetMapping("api/v1/coupons")
+    @GetMapping("/api/v1/coupons")
     public CouponRetrieveListResponse retrieveListCoupons(HttpServletRequest request, @RequestBody Integer limit) {
 
         String requestURI = request.getRequestURI();
