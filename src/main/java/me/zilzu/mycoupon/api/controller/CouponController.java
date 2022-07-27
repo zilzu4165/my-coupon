@@ -15,21 +15,6 @@ public class CouponController {
         this.couponService = couponService;
     }
 
-
-    //    {
-//        "id": "Z4OV52SU",
-//            "object": "coupon",
-//            "amount_off": null,
-//            "created": 1658661549,
-//            "currency": "usd",
-//            "duration": "repeating",
-//            "duration_in_months": 3,
-//            "livemode": false,
-//            "max_redemptions": null,
-    //        "name": "25.5% off",
-//            "percent_off": 25.5,
-//            "valid": true
-//    }
     @GetMapping("api/v1/coupons/{id}")
     public CouponRetrieveResultResponse retrieveCoupon(@PathVariable String id) {
 
