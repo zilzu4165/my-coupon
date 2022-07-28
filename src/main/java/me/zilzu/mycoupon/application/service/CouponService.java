@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.api.controller.CouponRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,5 +26,12 @@ public class CouponService {
         }
 
         return coupons;
+    }
+
+    public Coupon create(CouponRequest couponRequest) {
+
+        return new Coupon("Z4OV52SU", "coupon", null, System.currentTimeMillis() / 1000, "usd",
+                couponRequest.getDuration(), couponRequest.getDurationInMonths(), false,
+                null, "25.5% off", 25.5F, true);
     }
 }
