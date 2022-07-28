@@ -3,10 +3,7 @@ package me.zilzu.mycoupon.api.controller;
 import me.zilzu.mycoupon.application.service.Coupon;
 import me.zilzu.mycoupon.application.service.CouponService;
 import org.springframework.http.HttpRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
@@ -32,22 +29,18 @@ public class CouponController {
     }
 
     @GetMapping("/api/v1/coupons")
-    public CouponRetrieveListResponse retrieveListCoupons(HttpServletRequest request, @RequestBody Integer limit) {
+    public CouponRetrieveListResponse retrieveListCoupons(HttpServletRequest request,
+                                                          @RequestParam Integer limit) {
 
         String requestURI = request.getRequestURI();
 
         List<Coupon> coupons = couponService.retrieveList(limit);
 
-        String objectType = "";
-        if (coupons.getClass().getName().equals("java.util.ArrayList")) {
-            objectType = "list";
-        }
-
         List<CouponRetrieveResultResponse> couponListResults = coupons
                 .stream()
                 .map(CouponRetrieveResultResponse::new)
                 .collect(Collectors.toList());
-        return new CouponRetrieveListResponse(objectType, requestURI, false, couponListResults);
+        return new CouponRetrieveListResponse("list", requestURI, false, couponListResults);
     }
 
 }
