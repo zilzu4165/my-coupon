@@ -2,12 +2,9 @@ package me.zilzu.mycoupon.api.controller;
 
 import me.zilzu.mycoupon.application.service.Coupon;
 import me.zilzu.mycoupon.application.service.CouponService;
-import org.springframework.http.HttpRequest;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +38,14 @@ public class CouponController {
                 .map(CouponRetrieveResultResponse::new)
                 .collect(Collectors.toList());
         return new CouponRetrieveListResponse("list", requestURI, false, couponListResults);
+    }
+
+    @PostMapping("/api/v1/coupons")
+    public CouponCreatedResponse createCoupons(@RequestBody CouponRequest couponRequest) {
+
+        Coupon coupon = couponService.create(couponRequest);
+
+        return new CouponCreatedResponse(coupon);
     }
 
 }
