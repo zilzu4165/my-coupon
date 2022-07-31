@@ -1,8 +1,11 @@
 package me.zilzu.mycoupon.api.controller;
 
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import me.zilzu.mycoupon.application.service.Coupon;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CouponRetrieveResultResponse {
 
     public String id;
