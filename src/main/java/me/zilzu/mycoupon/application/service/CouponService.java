@@ -34,4 +34,8 @@ public class CouponService {
                 couponRequest.getDuration(), couponRequest.getDurationInMonths(), false,
                 null, "25.5% off", 25.5F, true);
     }
+
+    public CouponDeleteResult delete(String id) {
+        return new CouponDeleteResult(id,"coupon",true);
+    }
 }

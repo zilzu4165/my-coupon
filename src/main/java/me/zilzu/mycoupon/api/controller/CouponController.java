@@ -1,6 +1,7 @@
 package me.zilzu.mycoupon.api.controller;
 
 import me.zilzu.mycoupon.application.service.Coupon;
+import me.zilzu.mycoupon.application.service.CouponDeleteResult;
 import me.zilzu.mycoupon.application.service.CouponService;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,5 +48,14 @@ public class CouponController {
 
         return new CouponCreatedResponse(coupon);
     }
+
+    @DeleteMapping("/api/v1/coupons/{id}")
+    public CouponDeletedResponse deleteCoupons(@PathVariable String id) {
+
+        CouponDeleteResult deleteResult = couponService.delete(id);
+
+        return new CouponDeletedResponse(deleteResult.id, deleteResult.object, deleteResult.deleted);
+    }
+
 
 }
