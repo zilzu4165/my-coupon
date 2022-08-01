@@ -1,22 +1,24 @@
 package me.zilzu.mycoupon.api.controller;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import me.zilzu.mycoupon.application.service.Coupon;
 
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CouponCreatedResponse {
 
     public String id;
     public String object;
+    @JsonProperty("amount_off")
     public Integer amountOff;
     public long created;
     public String currency;
     public String duration;
+    @JsonProperty("duration_in_months")
     public Integer durationInMonths;
     public Boolean livemode;
+    @JsonProperty("max_redemptions")
     public Integer maxRedemptions;
     public String name;
+    @JsonProperty("percent_off")
     public Float percentOff;
     public Boolean valid;
 
