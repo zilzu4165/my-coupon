@@ -38,4 +38,5 @@ public class CouponService {
     public CouponDeleteResult delete(String id) {
         return new CouponDeleteResult(id,"coupon",true);
     }
+
 }

@@ -1,20 +1,26 @@
 package me.zilzu.mycoupon.api.controller;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import me.zilzu.mycoupon.application.service.Coupon;
+
 
 public class CouponRetrieveResultResponse {
 
     public String id;
     public String object;
+    @JsonProperty("amount_off")
     public Integer amountOff;
     public long created;
     public String currency;
     public String duration;
+    @JsonProperty("duration_in_months")
     public Integer durationInMonths;
     public Boolean livemode;
+    @JsonProperty("max_redemptions")
     public Integer maxRedemptions;
     public String name;
+    @JsonProperty("percent_off")
     public Float percentOff;
     public Boolean valid;
 
