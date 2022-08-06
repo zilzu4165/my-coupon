@@ -15,7 +15,7 @@ public class CouponIdGenerateTest {
     public void isCapitalAlphabet() {
 //        String generatedId = new CouponIdGenerate().generate();
         String prefix = generatedId.substring(0, 1);
-        assertThat(prefix).isUpperCase();
+        assertThat(prefix).isLowerCase();
     }
 
     @Test
