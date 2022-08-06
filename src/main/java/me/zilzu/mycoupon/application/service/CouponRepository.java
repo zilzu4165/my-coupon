@@ -19,6 +19,12 @@ public class CouponRepository {
 
 
     public Coupon retrieve(String id) {
-        return database.get(id);
+        Coupon coupon = database.get(id);
+
+        if (coupon == null) {
+            throw new IllegalArgumentException("해당하는 coupon id가 없습니다.");
+        }
+        
+        return coupon;
     }
 }
