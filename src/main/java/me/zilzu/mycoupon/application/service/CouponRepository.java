@@ -16,4 +16,9 @@ public class CouponRepository {
 
         database.put(coupon.id, coupon);
     }
+
+
+    public Coupon retrieve(String id) {
+        return database.get(id);
+    }
 }

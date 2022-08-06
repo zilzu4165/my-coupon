@@ -20,13 +20,10 @@ public class CouponService {
     }
 
     public Coupon retrieve(String id) {
-        return new Coupon(id, "coupon", null, System.currentTimeMillis() / 1000, "usd",
-                "repeating", 3, false,
-                null, "25.5% off", 25.5F, true);
+        return couponRepository.retrieve(id);
     }
 
     public List<Coupon> retrieveList(Integer limit) {
-
         List<Coupon> coupons = new ArrayList<>();
 
         for (int i = 0; i < limit; i++) {
