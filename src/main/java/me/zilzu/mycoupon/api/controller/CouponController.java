@@ -43,14 +43,13 @@ public class CouponController {
 
     @PostMapping("/api/v1/coupons")
     public CouponCreatedResponse createCoupons(@RequestBody CouponRequest couponRequest) {
-
         Coupon coupon = couponService.create(couponRequest);
 
         return new CouponCreatedResponse(coupon);
     }
 
     @DeleteMapping("/api/v1/coupons/{id}")
-    public CouponDeletedResponse deleteCoupons(@PathVariable String id) {
+    public CouponDeletedResponse deleteCoupon(@PathVariable String id) {
 
         CouponDeleteResult deleteResult = couponService.delete(id);
 
