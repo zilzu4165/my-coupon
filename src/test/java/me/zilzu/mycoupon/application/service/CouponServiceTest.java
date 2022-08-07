@@ -1,14 +1,10 @@
 package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.api.controller.CouponRequest;
-import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.concurrent.Callable;
-import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -18,6 +14,7 @@ class CouponServiceTest {
 
     @Autowired
     CouponService couponService;
+
     @Test
     void coupon_create_and_retrieve_test() {
         CouponRequest request = new CouponRequest("3", 3);
@@ -36,5 +33,6 @@ class CouponServiceTest {
             System.out.println("coupon = " + coupon);
         }).isInstanceOf(IllegalArgumentException.class);
     }
+
 
 }
