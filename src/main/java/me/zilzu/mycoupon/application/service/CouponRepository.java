@@ -27,4 +27,12 @@ public class CouponRepository {
         
         return coupon;
     }
+
+    public Long getAllCoupon() {
+        return (long) database.size();
+    }
+
+    public void emptyCoupon() {
+        database.clear();
+    }
 }
