@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +24,7 @@ public class CouponCreateTest {
     }
 
     @Test
-    @DisplayName("쿠폰 100개가 동시에 생성됐을 때, 100개가 정상적으로 생성된다.")
+    @DisplayName("쿠폰 100개가 동시에 생성됐을 때, 100개가 정상적으로 생성된다. ")
     @RepeatedTest(100)
     void test() {
         CouponRequest couponRequest = new CouponRequest("3", 3);
@@ -38,48 +37,48 @@ public class CouponCreateTest {
         }
         executorService.shutdown();
 
-        assertThat(couponService.getAllCoupon()).isEqualTo(100);
+        assertThat(couponService.getAllCouponSize()).isEqualTo(100);
         // 실패시 밑에있는 로직 건너뜀
     }
 
     @Test
-    @DisplayName("쿠폰 100개가 동시에 생성됐을 때, 100개가 정상적으로 생성된다.")
+    @DisplayName("100명의 유저가 동시에 총 10000개의 쿠폰을 생성한다. -1")
     @RepeatedTest(100)
-    void test1() throws InterruptedException {
-        for (int i = 0; i < 100; i++) {
-            Thread th = new CreateCouponThread();
-            th.start();  // 해당 thread 시작
-            th.join();   // thread 가 종료될 때 까지 기다린 후에 실행
-        }
-
-        assertThat(couponService.getAllCoupon()).isEqualTo(100);
-
-    }
-
-    @Test
-    @DisplayName("쿠폰 100개가 동시에 생성됐을 때, 100개가 정상적으로 생성된다.")
-    @RepeatedTest(100)
-    void test2() throws InterruptedException {
-        for (int i = 0; i < 100; i++) {
-            Thread th = new Thread(() -> {
-                CouponRequest couponRequest = new CouponRequest("3", 3);
-                couponService.create(couponRequest);
-            });
-            th.start();
-            th.join();
-        }
-
-        assertThat(couponService.getAllCoupon()).isEqualTo(100);
-
-    }
-
-    @Test
-    @DisplayName("100명의 유저가 동시에 총 10000개의 쿠폰을 생성한다.")
-    void test4() {
+    void testCallable() throws ExecutionException, InterruptedException {
         CouponRequest couponRequest = new CouponRequest("3", 3);
 
         ExecutorService executorService = Executors.newFixedThreadPool(100); // threadPoolSize 100
 
+        Callable<Boolean> callable = () -> {
+            Boolean isFinish = true;
+            for (int i = 0; i < 100; i++) {
+                couponService.create(couponRequest);
+            }
+            return isFinish;
+        };
+
+        for (int i = 0; i < 100; i++) {
+            Future<Boolean> isWorkFinish = executorService.submit(callable);
+
+            try {
+                Boolean aBoolean = isWorkFinish.get();
+                System.out.println(aBoolean);
+            } catch (Exception e) {
+                System.out.println("실행 예외 발생" + e.getMessage());
+            }
+        }
+        executorService.shutdown();
+
+        assertThat(couponService.getAllCouponSize()).isEqualTo(10000);
+    }
+
+    @Test
+    @DisplayName("100명의 유저가 동시에 총 10000개의 쿠폰을 생성한다. -2")
+    @RepeatedTest(100)
+    void testRunnable() throws ExecutionException, InterruptedException {
+        CouponRequest couponRequest = new CouponRequest("3", 3);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(100); // threadPoolSize 100
 
         Runnable runnable = () -> {
             for (int i = 0; i < 100; i++) {
@@ -88,35 +87,18 @@ public class CouponCreateTest {
         };
 
         for (int i = 0; i < 100; i++) {
-            executorService.submit(runnable);
+            Future<?> submit = executorService.submit(runnable);
+
+            try {
+                submit.get();
+                System.out.println("작업완료");
+            } catch (Exception e) {
+                System.out.println("실행 예외 발생" + e.getMessage());
+            }
         }
         executorService.shutdown();
 
-        assertThat(couponService.getAllCoupon()).isEqualTo(10000);
-    }
-
-    @Test
-    @DisplayName("100명의 유저가 동시에 총 10000개의 쿠폰을 생성한다.")
-    void test5() throws InterruptedException {
-        for (int i = 0; i < 100; i++) {
-            Thread th = new Thread(() -> {
-                for (int j = 0; j < 100; j++) {
-                    CouponRequest couponRequest = new CouponRequest("3", 3);
-                    couponService.create(couponRequest);
-                }
-            });
-            th.start();
-            th.join();
-        }
-        assertThat(couponService.getAllCoupon()).isEqualTo(10000);
-    }
-
-    private class CreateCouponThread extends Thread {
-        @Override
-        public void run() {
-            CouponRequest couponRequest = new CouponRequest("3", 3);
-            couponService.create(couponRequest);
-        }
+        assertThat(couponService.getAllCouponSize()).isEqualTo(10000);
     }
 
 

@@ -49,8 +49,8 @@ public class CouponService {
         return new CouponDeleteResult(id, "coupon", true);
     }
 
-    public Long getAllCoupon() {
-        return couponRepository.getAllCoupon();
+    public Long getAllCouponSize() {
+        return couponRepository.getAllCouponSize();
     }
 
     public void emptyCoupon() {
