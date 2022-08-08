@@ -33,7 +33,14 @@ public class CouponCreateTest {
 
         Runnable runnable = () -> couponService.create(couponRequest);
         for (int i = 0; i < 100; i++) {
-            executorService.submit(runnable);
+            Future<?> future = executorService.submit(runnable);
+
+            try {
+                future.get();
+                System.out.println("작업완료");
+            } catch (Exception e) {
+                System.out.println("예외 발생" + e.getMessage());
+            }
         }
         executorService.shutdown();
 
