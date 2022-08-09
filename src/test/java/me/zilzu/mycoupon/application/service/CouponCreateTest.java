@@ -7,10 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.concurrent.ExecutionException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
+import static java.util.Comparator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -26,7 +30,7 @@ public class CouponCreateTest {
 
     @Test
     @DisplayName("쿠폰 100개가 동시에 생성됐을 때, 100개가 정상적으로 생성된다. ")
-    void test() throws InterruptedException {
+    void test1() throws InterruptedException {
         CouponRequest couponRequest = new CouponRequest("3", 3);
         // Test Worker
         System.out.println("Thread.currentThread().getName() = " + Thread.currentThread().getName());
@@ -50,7 +54,7 @@ public class CouponCreateTest {
 
     @Test
     @DisplayName("100명의 유저가 동시에 총 10000개의 쿠폰을 생성한다. -1")
-    void testRunnable() throws ExecutionException, InterruptedException {
+    void testRunnable() throws InterruptedException {
         CouponRequest couponRequest = new CouponRequest("3", 3);
 
         // Test Worker thread
@@ -72,5 +76,38 @@ public class CouponCreateTest {
         // Test Worker Thread
         System.out.println("Thread.currentThread().getName() = " + Thread.currentThread().getName());
         assertThat(couponService.getAllCouponSize()).isEqualTo(10000);
+    }
+
+
+    @Test
+    @DisplayName("쿠폰을 100개 생성 후, 가장 최근 생성된 10개의 쿠폰 리스트를 내림차순으로 반환한다")
+    void test3() throws InterruptedException {
+
+        CouponRequest couponRequest = new CouponRequest("3", 3);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(100); // threadPoolSize 100
+
+        List<Coupon> createdCouponList = new ArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+            executorService.submit(() -> {
+                Coupon coupon = couponService.create(couponRequest);
+                createdCouponList.add(coupon);
+            });
+        }
+        executorService.shutdown();
+        Thread.sleep(1000);
+
+        // createdCouponReverseOrder
+        List<Coupon> reverseOrderCreatedCoupon = createdCouponList.stream()
+                .sorted(comparing(Coupon::getDate).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
+
+        // 최근 생성된 10개 쿠폰 리스트 내림차순 반환
+        List<Coupon> selectRecentlyCreatedCoupon = couponService.selectRecentlyCreatedCoupon(createdCouponList, 10);
+
+        assertThat(reverseOrderCreatedCoupon).isEqualTo(selectRecentlyCreatedCoupon);
+
     }
 }

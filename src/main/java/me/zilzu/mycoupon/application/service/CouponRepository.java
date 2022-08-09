@@ -2,13 +2,12 @@ package me.zilzu.mycoupon.application.service;
 
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class CouponRepository {
-    Map<String, Coupon> database = new ConcurrentHashMap<>();  // db를 대체할 Map
+    Map<String, Coupon> database = new ConcurrentHashMap<>();  // db를 대체할 Map, 멀티쓰레드환경에서는 ConcurrentHashMap
 
     public void save(Coupon coupon) {
         if (database.containsKey(coupon.id)) {
@@ -25,7 +24,7 @@ public class CouponRepository {
         if (coupon == null) {
             throw new IllegalArgumentException("해당하는 coupon id가 없습니다.");
         }
-        
+
         return coupon;
     }
 
@@ -35,5 +34,16 @@ public class CouponRepository {
 
     public void emptyCoupon() {
         database.clear();
+    }
+
+    public List<Coupon> selectRecently(List<Coupon> createdCouponList, Integer limit) {
+
+        List<Coupon> coupons = new ArrayList<>();
+
+        for (int i = 0; i < limit; i++) {
+            Coupon coupon = database.get(createdCouponList.get(i).id);
+            coupons.add(coupon);
+        }
+        return coupons;
     }
 }
