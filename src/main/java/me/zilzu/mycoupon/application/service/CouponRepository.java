@@ -4,10 +4,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class CouponRepository {
-    Map<String, Coupon> database = new HashMap<>();  // db를 대체할 Map
+    Map<String, Coupon> database = new ConcurrentHashMap<>();  // db를 대체할 Map
 
     public void save(Coupon coupon) {
         if (database.containsKey(coupon.id)) {
@@ -26,5 +27,13 @@ public class CouponRepository {
         }
         
         return coupon;
+    }
+
+    public Long getAllCouponSize() {
+        return (long) database.size();
+    }
+
+    public void emptyCoupon() {
+        database.clear();
     }
 }

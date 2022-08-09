@@ -31,7 +31,6 @@ public class CouponService {
                     "repeating", 3, false,
                     null, "25.5% off", 25.5F, true));
         }
-
         return coupons;
     }
 
@@ -43,12 +42,18 @@ public class CouponService {
                 null, "25.5% off", 25.5F, true);
 
         couponRepository.save(coupon);
-
         return coupon;
     }
 
     public CouponDeleteResult delete(String id) {
-        return new CouponDeleteResult(id,"coupon",true);
+        return new CouponDeleteResult(id, "coupon", true);
     }
 
+    public Long getAllCouponSize() {
+        return couponRepository.getAllCouponSize();
+    }
+
+    public void emptyCoupon() {
+        couponRepository.emptyCoupon();
+    }
 }

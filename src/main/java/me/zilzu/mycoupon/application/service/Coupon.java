@@ -29,5 +29,10 @@ public class Coupon {
         this.valid = valid;
     }
 
-
+    @Override
+    public String toString() {
+        return "Coupon{" +
+                "id= " + id +
+                "}";
+    }
 }
