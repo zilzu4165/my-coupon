@@ -1,13 +1,14 @@
 package me.zilzu.mycoupon.application.service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public class Coupon {
     public String id;
     public String object;
     public Integer amountOff;
+
     public long created;
+
     public String currency;
     public String duration;
     public Integer durationInMonths;
@@ -17,9 +18,12 @@ public class Coupon {
     public Float percentOff;
     public Boolean valid;
     public LocalDateTime date;
-
     public LocalDateTime getDate() {
         return date;
+    }
+
+    public long getCreated() {
+        return created;
     }
 
     public Coupon(String id, String object, Integer amountOff, long created, String currency, String duration, Integer durationInMonths, Boolean livemode, Integer maxRedemptions, String name, Float percentOff, Boolean valid, LocalDateTime date) {

@@ -34,5 +34,4 @@ class CouponServiceTest {
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
-
 }

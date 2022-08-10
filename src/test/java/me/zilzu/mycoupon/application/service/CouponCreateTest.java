@@ -7,9 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -62,13 +60,15 @@ public class CouponCreateTest {
 
         ExecutorService executorService = Executors.newFixedThreadPool(100); // threadPoolSize 100
 
+        Runnable runnable = () -> {
+            // pool-1-thread-1~100
+            System.out.println("Thread.currentThread().getName() = " + Thread.currentThread().getName());
+            couponService.create(couponRequest);
+        };
+
         for (int i = 0; i < 10000; i++) {
             // Test Worker 쓰레드가 pool-1-thread-1~100 쓰레드에게 작업을 시킨다.
-            executorService.submit(() -> {
-                // pool-1-thread-1~100
-                System.out.println("Thread.currentThread().getName() = " + Thread.currentThread().getName());
-                couponService.create(couponRequest);
-            });
+            executorService.submit(runnable);
         }
 
         executorService.shutdown();
@@ -98,16 +98,21 @@ public class CouponCreateTest {
         executorService.shutdown();
         Thread.sleep(1000);
 
-        // createdCouponReverseOrder
-        List<Coupon> reverseOrderCreatedCoupon = createdCouponList.stream()
-                .sorted(comparing(Coupon::getDate).reversed())
-                .limit(10)
-                .collect(Collectors.toList());
 
         // 최근 생성된 10개 쿠폰 리스트 내림차순 반환
-        List<Coupon> selectRecentlyCreatedCoupon = couponService.selectRecentlyCreatedCoupon(createdCouponList, 10);
+        List<Coupon> selectRecentlyDescendingCreatedCoupon = couponService.selectRecentlyCreatedCoupon(createdCouponList, 10);
 
-        assertThat(reverseOrderCreatedCoupon).isEqualTo(selectRecentlyCreatedCoupon);
+        assertThat(selectRecentlyDescendingCreatedCoupon.size()).isEqualTo(10);
+
+        List<Coupon> sortedCoupon = selectRecentlyDescendingCreatedCoupon.stream()
+                .sorted(comparing(Coupon::getDate)          // 오름차순
+                        .reversed()                         // 내림차순
+                        .thenComparing(Coupon::getCreated)) // 만약에 같으면 이걸로 비교
+                .collect(Collectors.toList());
+
+        assertThat(selectRecentlyDescendingCreatedCoupon).isEqualTo(sortedCoupon);
+
 
     }
+
 }
