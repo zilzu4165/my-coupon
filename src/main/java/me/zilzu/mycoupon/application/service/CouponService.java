@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
 
@@ -60,14 +59,7 @@ public class CouponService {
         couponRepository.emptyCoupon();
     }
 
-    public List<Coupon> selectRecentlyCreatedCoupon(List<Coupon> createdCouponList, Integer limit) {
-
-        List<Coupon> latestCoupons = createdCouponList
-                .stream()
-                .sorted(comparing(Coupon::getDate).reversed())
-                .limit(limit)
-                .collect(Collectors.toList());
-
-        return couponRepository.selectRecently(latestCoupons, limit);
+    public List<Coupon> findRecentlyCreatedCoupon(Integer limit) {
+        return couponRepository.selectRecently(limit);
     }
 }

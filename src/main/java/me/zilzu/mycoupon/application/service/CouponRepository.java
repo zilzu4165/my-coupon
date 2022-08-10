@@ -4,10 +4,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+
+import static java.util.Comparator.*;
 
 @Component
 public class CouponRepository {
-    Map<String, Coupon> database = new ConcurrentHashMap<>();  // db를 대체할 Map, 멀티쓰레드환경에서는 ConcurrentHashMap
+    private Map<String, Coupon> database = new ConcurrentHashMap<>();  // db를 대체할 Map, 멀티쓰레드환경에서는 ConcurrentHashMap
 
     public void save(Coupon coupon) {
         if (database.containsKey(coupon.id)) {
@@ -36,14 +39,14 @@ public class CouponRepository {
         database.clear();
     }
 
-    public List<Coupon> selectRecently(List<Coupon> createdCouponList, Integer limit) {
+    public List<Coupon> selectRecently(Integer limit) {
 
-        List<Coupon> coupons = new ArrayList<>();
+        return database.values()
+                .stream()
+                .sorted(comparing(Coupon::getDate)
+                        .reversed())
+                .limit(limit)
+                .collect(Collectors.toList());
 
-        for (int i = 0; i < limit; i++) {
-            Coupon coupon = database.get(createdCouponList.get(i).id);
-            coupons.add(coupon);
-        }
-        return coupons;
     }
 }

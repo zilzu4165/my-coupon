@@ -10,9 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
-import static java.util.Comparator.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -82,37 +80,22 @@ public class CouponCreateTest {
     @Test
     @DisplayName("쿠폰을 100개 생성 후, 가장 최근 생성된 10개의 쿠폰 리스트를 내림차순으로 반환한다")
     void test3() throws InterruptedException {
-
         CouponRequest couponRequest = new CouponRequest("3", 3);
 
         ExecutorService executorService = Executors.newFixedThreadPool(100); // threadPoolSize 100
 
-        List<Coupon> createdCouponList = new ArrayList<>();
-
         for (int i = 0; i < 100; i++) {
             executorService.submit(() -> {
-                Coupon coupon = couponService.create(couponRequest);
-                createdCouponList.add(coupon);
+                couponService.create(couponRequest);
             });
         }
         executorService.shutdown();
         Thread.sleep(1000);
 
-
         // 최근 생성된 10개 쿠폰 리스트 내림차순 반환
-        List<Coupon> selectRecentlyDescendingCreatedCoupon = couponService.selectRecentlyCreatedCoupon(createdCouponList, 10);
+        List<Coupon> coupons = couponService.findRecentlyCreatedCoupon(10);
 
-        assertThat(selectRecentlyDescendingCreatedCoupon.size()).isEqualTo(10);
-
-        List<Coupon> sortedCoupon = selectRecentlyDescendingCreatedCoupon.stream()
-                .sorted(comparing(Coupon::getDate)          // 오름차순
-                        .reversed()                         // 내림차순
-                        .thenComparing(Coupon::getCreated)) // 만약에 같으면 이걸로 비교
-                .collect(Collectors.toList());
-
-        assertThat(selectRecentlyDescendingCreatedCoupon).isEqualTo(sortedCoupon);
-
-
+        assertThat(coupons.size()).isEqualTo(10);
+        assertThat(coupons).isSortedAccordingTo(Comparator.comparing(Coupon::getDate).reversed()); // 내림차순 정렬인지 확인
     }
-
 }
