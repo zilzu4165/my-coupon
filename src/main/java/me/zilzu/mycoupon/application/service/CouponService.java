@@ -62,4 +62,9 @@ public class CouponService {
     public List<Coupon> findRecentlyCreatedCoupon(Integer limit) {
         return couponRepository.selectRecently(limit);
     }
+
+
+    public List<Coupon> findRecentlyCreatedCoupon(Integer limit, SortingOrder sortedBy) {
+        return couponRepository.selectRecently(limit, sortedBy);
+    }
 }
