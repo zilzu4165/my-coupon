@@ -60,9 +60,16 @@ public class CouponService {
     }
 
     public List<Coupon> findRecentlyCreatedCoupon(Integer limit) {
-        return couponRepository.selectRecently(limit);
+        return findRecentlyCreatedCoupon(limit, SortingOrder.DESC);
     }
 
+    public List<Coupon> findRecentlyCreatedCoupon() {
+        return findRecentlyCreatedCoupon(10, SortingOrder.DESC);
+    }
+
+    public List<Coupon> findRecentlyCreatedCoupon(SortingOrder sortedBy) {
+        return findRecentlyCreatedCoupon(10, sortedBy);
+    }
 
     public List<Coupon> findRecentlyCreatedCoupon(Integer limit, SortingOrder sortedBy) {
         return couponRepository.selectRecently(limit, sortedBy);

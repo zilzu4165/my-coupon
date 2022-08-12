@@ -40,15 +40,6 @@ public class CouponRepository {
         database.clear();
     }
 
-    public List<Coupon> selectRecently(Integer limit) {
-        return database.values()
-                .stream()
-                .sorted(comparing(Coupon::getDate)
-                        .reversed())  // 내림차순
-                .limit(limit)
-                .collect(Collectors.toList());
-    }
-
     public List<Coupon> selectRecently(Integer limit, SortingOrder sortedBy) {
         List<Coupon> sortedCoupons = null;
 
