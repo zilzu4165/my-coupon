@@ -1,16 +1,18 @@
 package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.api.controller.CouponRequest;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -84,25 +86,25 @@ public class CouponCreateTest {
     void test6(CouponCurrency couponCurrency) {
         CouponRequest couponRequest = new CouponRequest("3", 3);
 
-        String couponId = couponService.createWithCurrency(couponRequest, couponCurrency);
+        Coupon coupon = couponService.createWithCurrency(couponRequest, couponCurrency);
+        String couponId = coupon.id;
 
-        Coupon coupon = couponService.retrieve(couponId);
+        Coupon foundCoupon = couponService.retrieve(couponId);
 
-        assertThat(couponId).isEqualTo(coupon.id);
-        assertThat(couponCurrency).isEqualTo(coupon.couponCurrency);
+        assertThat(foundCoupon.id).isEqualTo(couponId);
+        assertThat(foundCoupon.couponCurrency).isEqualTo(couponCurrency);
     }
 
     @DisplayName("생성한 coupon을 조회했을 때, 유저가 정한 통화로 조회가 된다. 기본 통화는 USD이다.")
-    @ParameterizedTest
-    @EnumSource(value = CouponCurrency.class, names = "USD")
-    void test7(CouponCurrency couponCurrency) {
+    @Test
+    void test7() {
         CouponRequest couponRequest = new CouponRequest("3", 3);
 
-        String couponId = couponService.createWithCurrency(couponRequest);
-        Coupon coupon = couponService.retrieve(couponId);
+        Coupon coupon = couponService.createWithCurrency(couponRequest, CouponCurrency.USD);
+        Coupon foundCoupon = couponService.retrieve(coupon.id);
 
-        assertThat(couponId).isEqualTo(coupon.id);
-        assertThat(couponCurrency).isEqualTo(CouponCurrency.USD);
+        assertThat(foundCoupon.id).isEqualTo(coupon.id);
+        assertThat(foundCoupon.couponCurrency).isEqualTo(CouponCurrency.USD);
     }
 
 
