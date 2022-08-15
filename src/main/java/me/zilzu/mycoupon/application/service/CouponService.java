@@ -36,27 +36,17 @@ public class CouponService {
     }
 
     public Coupon create(CouponRequest couponRequest) {
+        return createWithCurrency(couponRequest, CouponCurrency.USD);
+    }
 
+    public Coupon createWithCurrency(CouponRequest couponRequest, CouponCurrency couponCurrency) {
         String couponId = couponIdGenerate.generate();
-        Coupon coupon = new Coupon(couponId, "coupon", null, CouponCurrency.USD,
+
+        Coupon coupon = new Coupon(couponId, "coupon", null, couponCurrency,
                 couponRequest.getDuration(), couponRequest.getDurationInMonths(), false,
                 null, "25.5% off", 25.5F, true, LocalDateTime.now());
-
         couponRepository.save(coupon);
         return coupon;
-    }
-
-    public String createWithCurrency(CouponRequest couponRequest, CouponCurrency couponCurrency) {
-        String couponId = couponIdGenerate.generate();
-
-        couponRepository.save(new Coupon(couponId, "coupon", null, couponCurrency,
-                couponRequest.getDuration(), couponRequest.getDurationInMonths(), false,
-                null, "25.5% off", 25.5F, true, LocalDateTime.now()));
-        return couponId;
-    }
-
-    public String createWithCurrency(CouponRequest couponRequest) {
-        return createWithCurrency(couponRequest, CouponCurrency.USD);
     }
 
     public CouponDeleteResult delete(String id) {
