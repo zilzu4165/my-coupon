@@ -87,11 +87,9 @@ public class CouponCreateTest {
         CouponRequest couponRequest = new CouponRequest("3", 3);
 
         Coupon coupon = couponService.createWithCurrency(couponRequest, couponCurrency);
-        String couponId = coupon.id;
+        Coupon foundCoupon = couponService.retrieve(coupon.id);
 
-        Coupon foundCoupon = couponService.retrieve(couponId);
-
-        assertThat(foundCoupon.id).isEqualTo(couponId);
+        assertThat(foundCoupon.id).isEqualTo(coupon.id);
         assertThat(foundCoupon.couponCurrency).isEqualTo(couponCurrency);
     }
 
