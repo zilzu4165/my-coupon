@@ -2,8 +2,13 @@ package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.api.controller.CouponRequest;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -12,6 +17,8 @@ import java.util.concurrent.Executors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@WebAppConfiguration
+@ComponentScan(basePackages = {"me.zilzu.mycoupon.application.service"})
 public class CouponCreateTest {
 
     @Autowired
@@ -47,7 +54,7 @@ public class CouponCreateTest {
         List<Coupon> coupons = couponService.findRecentlyCreatedCoupon(10);
 
         assertThat(coupons.size()).isEqualTo(10);
-        assertThat(coupons).isSortedAccordingTo(Comparator.comparing(Coupon::getDate).reversed()); // 내림차순 정렬인지 확인
+        assertThat(coupons).isSortedAccordingTo(Comparator.comparing(Coupon::getCreatedTime).reversed()); // 내림차순 정렬인지 확인
     }
 
     @Test
@@ -57,7 +64,7 @@ public class CouponCreateTest {
         List<Coupon> coupons = couponService.findRecentlyCreatedCoupon(10, SortingOrder.ASC);
 
         assertThat(coupons.size()).isEqualTo(10);
-        assertThat(coupons).isSortedAccordingTo(Comparator.comparing(Coupon::getDate));  // 내림차순 정렬인지 확인
+        assertThat(coupons).isSortedAccordingTo(Comparator.comparing(Coupon::getCreatedTime));  // 내림차순 정렬인지 확인
     }
 
     @Test
@@ -68,8 +75,36 @@ public class CouponCreateTest {
         List<Coupon> coupons = couponService.findRecentlyCreatedCoupon(10, SortingOrder.DESC);
 
         assertThat(coupons.size()).isEqualTo(10);
-        assertThat(coupons).isSortedAccordingTo(Comparator.comparing(Coupon::getDate).reversed());  // 내림차순 정렬인지 확인
+        assertThat(coupons).isSortedAccordingTo(Comparator.comparing(Coupon::getCreatedTime).reversed());  // 내림차순 정렬인지 확인
     }
+
+    @DisplayName("생성한 coupon을 조회했을 때, 유저가 정한 통화로 조회가 된다.")
+    @ParameterizedTest
+    @EnumSource(value = CouponCurrency.class)
+    void test6(CouponCurrency couponCurrency) {
+        CouponRequest couponRequest = new CouponRequest("3", 3);
+
+        String couponId = couponService.createWithCurrency(couponRequest, couponCurrency);
+
+        Coupon coupon = couponService.retrieve(couponId);
+
+        assertThat(couponId).isEqualTo(coupon.id);
+        assertThat(couponCurrency).isEqualTo(coupon.couponCurrency);
+    }
+
+    @DisplayName("생성한 coupon을 조회했을 때, 유저가 정한 통화로 조회가 된다. 기본 통화는 USD이다.")
+    @ParameterizedTest
+    @EnumSource(value = CouponCurrency.class, names = "USD")
+    void test7(CouponCurrency couponCurrency) {
+        CouponRequest couponRequest = new CouponRequest("3", 3);
+
+        String couponId = couponService.createWithCurrency(couponRequest);
+        Coupon coupon = couponService.retrieve(couponId);
+
+        assertThat(couponId).isEqualTo(coupon.id);
+        assertThat(couponCurrency).isEqualTo(CouponCurrency.USD);
+    }
+
 
     private void createCoupons(int count, int nThreads) throws InterruptedException {
         CouponRequest couponRequest = new CouponRequest("3", 3);

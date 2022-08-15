@@ -6,8 +6,7 @@ public class Coupon {
     public String id;
     public String object;
     public Integer amountOff;
-    public long created;
-    public String currency;
+    public CouponCurrency couponCurrency;
     public String duration;
     public Integer durationInMonths;
     public Boolean livemode;
@@ -15,17 +14,16 @@ public class Coupon {
     public String name;
     public Float percentOff;
     public Boolean valid;
-    public LocalDateTime date;
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime createdTime;
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
     }
 
-    public Coupon(String id, String object, Integer amountOff, long created, String currency, String duration, Integer durationInMonths, Boolean livemode, Integer maxRedemptions, String name, Float percentOff, Boolean valid, LocalDateTime date) {
+    public Coupon(String id, String object, Integer amountOff, CouponCurrency couponCurrency, String duration, Integer durationInMonths, Boolean livemode, Integer maxRedemptions, String name, Float percentOff, Boolean valid, LocalDateTime createdTime) {
         this.id = id;
         this.object = object;
         this.amountOff = amountOff;
-        this.created = created;
-        this.currency = currency;
+        this.couponCurrency = couponCurrency;
         this.duration = duration;
         this.durationInMonths = durationInMonths;
         this.livemode = livemode;
@@ -33,14 +31,14 @@ public class Coupon {
         this.name = name;
         this.percentOff = percentOff;
         this.valid = valid;
-        this.date = date;
+        this.createdTime = createdTime;
     }
 
     @Override
     public String toString() {
         return "Coupon{" +
                 "id='" + id + '\'' +
-                ", date=" + date +
+                ", date=" + createdTime +
                 '}';
     }
 }

@@ -16,6 +16,8 @@ public class CouponRepository {
     public void save(Coupon coupon) {
         if (database.containsKey(coupon.id)) {
             throw new RuntimeException("Duplicate key");
+        }else if (!coupon.couponCurrency.getDeclaringClass().isEnum()) {
+            throw new RuntimeException("not ISO 4217 Currency");
         }
 
         database.put(coupon.id, coupon);
@@ -46,17 +48,21 @@ public class CouponRepository {
         if (sortedBy == SortingOrder.ASC) {
             sortedCoupons = database.values()
                     .stream()
-                    .sorted(comparing(Coupon::getDate))
+                    .sorted(comparing(Coupon::getCreatedTime))
                     .limit(limit)
                     .collect(Collectors.toList());
         } else if (sortedBy == SortingOrder.DESC) {
             sortedCoupons = database.values()
                     .stream()
-                    .sorted(comparing(Coupon::getDate)
+                    .sorted(comparing(Coupon::getCreatedTime)
                             .reversed())
                     .limit(limit)
                     .collect(Collectors.toList());
         }
         return sortedCoupons;
+    }
+
+    public Coupon retrieveId(String id) {
+        return database.get(id);
     }
 }

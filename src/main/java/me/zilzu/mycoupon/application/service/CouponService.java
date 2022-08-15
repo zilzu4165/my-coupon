@@ -4,9 +4,8 @@ import me.zilzu.mycoupon.api.controller.CouponRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
-
-import static java.util.Comparator.comparing;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CouponService {
@@ -29,7 +28,7 @@ public class CouponService {
         List<Coupon> coupons = new ArrayList<>();
 
         for (int i = 0; i < limit; i++) {
-            coupons.add(new Coupon("Z4OV52SU", "coupon", null, System.currentTimeMillis() / 1000, "usd",
+            coupons.add(new Coupon("Z4OV52SU", "coupon", null, null,
                     "repeating", 3, false,
                     null, "25.5% off", 25.5F, true, LocalDateTime.now()));
         }
@@ -39,12 +38,25 @@ public class CouponService {
     public Coupon create(CouponRequest couponRequest) {
 
         String couponId = couponIdGenerate.generate();
-        Coupon coupon = new Coupon(couponId, "coupon", null, System.currentTimeMillis() / 1000, "usd",
+        Coupon coupon = new Coupon(couponId, "coupon", null, CouponCurrency.USD,
                 couponRequest.getDuration(), couponRequest.getDurationInMonths(), false,
                 null, "25.5% off", 25.5F, true, LocalDateTime.now());
 
         couponRepository.save(coupon);
         return coupon;
+    }
+
+    public String createWithCurrency(CouponRequest couponRequest, CouponCurrency couponCurrency) {
+        String couponId = couponIdGenerate.generate();
+
+        couponRepository.save(new Coupon(couponId, "coupon", null, couponCurrency,
+                couponRequest.getDuration(), couponRequest.getDurationInMonths(), false,
+                null, "25.5% off", 25.5F, true, LocalDateTime.now()));
+        return couponId;
+    }
+
+    public String createWithCurrency(CouponRequest couponRequest) {
+        return createWithCurrency(couponRequest, CouponCurrency.USD);
     }
 
     public CouponDeleteResult delete(String id) {
