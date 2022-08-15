@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.enums.SortingOrder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,10 +17,7 @@ public class CouponRepository {
     public void save(Coupon coupon) {
         if (database.containsKey(coupon.id)) {
             throw new RuntimeException("Duplicate key");
-        }else if (!coupon.couponCurrency.getDeclaringClass().isEnum()) {
-            throw new RuntimeException("not ISO 4217 Currency");
         }
-
         database.put(coupon.id, coupon);
     }
 
@@ -60,9 +58,5 @@ public class CouponRepository {
                     .collect(Collectors.toList());
         }
         return sortedCoupons;
-    }
-
-    public Coupon retrieveId(String id) {
-        return database.get(id);
     }
 }
