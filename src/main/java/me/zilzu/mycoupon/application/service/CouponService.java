@@ -2,6 +2,8 @@ package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
+import me.zilzu.mycoupon.storage.CouponEntity;
+import me.zilzu.mycoupon.storage.CouponRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,7 +24,8 @@ public class CouponService {
     }
 
     public Coupon retrieve(String id) {
-        return couponRepository.retrieve(id);
+        CouponEntity retrieve = couponRepository.retrieve(id);
+        return new Coupon(retrieve.id, null, retrieve.couponCurrency, retrieve.createdTime);
     }
 
     public List<Coupon> retrieveList(Integer limit) {
@@ -41,9 +44,10 @@ public class CouponService {
     public Coupon createWithCurrency(CouponRequest couponRequest, CouponCurrency couponCurrency) {
         String couponId = couponIdGenerate.generate();
 
-        Coupon coupon = new Coupon(couponId, couponRequest.duration, couponCurrency, LocalDateTime.now());
+        CouponEntity coupon = new CouponEntity(couponId, couponRequest.duration, couponCurrency, LocalDateTime.now());
         couponRepository.save(coupon);
-        return coupon;
+
+        return new Coupon(coupon.id, coupon.duration, coupon.couponCurrency, coupon.createdTime);
     }
 
     public CouponDeleteResult delete(String id) {
@@ -63,6 +67,14 @@ public class CouponService {
     }
 
     public List<Coupon> findRecentlyCreatedCoupon(Integer limit, SortingOrder sortedBy) {
-        return couponRepository.selectRecently(limit, sortedBy);
+        List<CouponEntity> couponEntities = couponRepository.selectRecently(limit, sortedBy);
+        List<Coupon> coupons = new ArrayList<>();
+
+        for (CouponEntity couponEntity : couponEntities) {
+            Coupon coupon = new Coupon(couponEntity.id, couponEntity.duration, couponEntity.couponCurrency, couponEntity.createdTime);
+            coupons.add(coupon);
+        }
+
+        return coupons;
     }
 }
