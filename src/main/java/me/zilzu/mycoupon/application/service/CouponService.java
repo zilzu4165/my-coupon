@@ -1,6 +1,7 @@
 package me.zilzu.mycoupon.application.service;
 
-import me.zilzu.mycoupon.api.controller.CouponRequest;
+import me.zilzu.mycoupon.common.enums.CouponCurrency;
+import me.zilzu.mycoupon.common.enums.SortingOrder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,9 +29,7 @@ public class CouponService {
         List<Coupon> coupons = new ArrayList<>();
 
         for (int i = 0; i < limit; i++) {
-            coupons.add(new Coupon("Z4OV52SU", "coupon", null, null,
-                    "repeating", 3, false,
-                    null, "25.5% off", 25.5F, true, LocalDateTime.now()));
+            coupons.add(new Coupon("Z4OV52SU", null, null, LocalDateTime.now()));
         }
         return coupons;
     }
@@ -42,9 +41,7 @@ public class CouponService {
     public Coupon createWithCurrency(CouponRequest couponRequest, CouponCurrency couponCurrency) {
         String couponId = couponIdGenerate.generate();
 
-        Coupon coupon = new Coupon(couponId, "coupon", null, couponCurrency,
-                couponRequest.getDuration(), couponRequest.getDurationInMonths(), false,
-                null, "25.5% off", 25.5F, true, LocalDateTime.now());
+        Coupon coupon = new Coupon(couponId, couponRequest.duration, couponCurrency, LocalDateTime.now());
         couponRepository.save(coupon);
         return coupon;
     }
@@ -63,14 +60,6 @@ public class CouponService {
 
     public List<Coupon> findRecentlyCreatedCoupon(Integer limit) {
         return findRecentlyCreatedCoupon(limit, SortingOrder.DESC);
-    }
-
-    public List<Coupon> findRecentlyCreatedCoupon() {
-        return findRecentlyCreatedCoupon(10, SortingOrder.DESC);
-    }
-
-    public List<Coupon> findRecentlyCreatedCoupon(SortingOrder sortedBy) {
-        return findRecentlyCreatedCoupon(10, sortedBy);
     }
 
     public List<Coupon> findRecentlyCreatedCoupon(Integer limit, SortingOrder sortedBy) {

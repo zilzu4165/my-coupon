@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.api.controller;
 
+import me.zilzu.mycoupon.application.service.CouponRequest;
 import me.zilzu.mycoupon.application.service.Coupon;
 import me.zilzu.mycoupon.application.service.CouponDeleteResult;
 import me.zilzu.mycoupon.application.service.CouponService;
@@ -42,8 +43,8 @@ public class CouponController {
     }
 
     @PostMapping("/api/v1/coupons")
-    public CouponCreatedResponse createCoupons(@RequestBody CouponRequest couponRequest) {
-        Coupon coupon = couponService.create(couponRequest);
+    public CouponCreatedResponse createCoupons(@RequestBody CouponRequestDto couponRequestDto) {
+        Coupon coupon = couponService.create(new CouponRequest( couponRequestDto.duration, couponRequestDto.durationInMonths));
 
         return new CouponCreatedResponse(coupon);
     }
