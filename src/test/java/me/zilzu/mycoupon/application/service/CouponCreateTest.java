@@ -1,6 +1,7 @@
 package me.zilzu.mycoupon.application.service;
 
-import me.zilzu.mycoupon.api.controller.CouponRequest;
+import me.zilzu.mycoupon.common.enums.CouponCurrency;
+import me.zilzu.mycoupon.common.enums.SortingOrder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,8 +9,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Comparator;
 import java.util.List;
@@ -19,8 +18,6 @@ import java.util.concurrent.Executors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@WebAppConfiguration
-@ComponentScan(basePackages = {"me.zilzu.mycoupon.application.service"})
 public class CouponCreateTest {
 
     @Autowired
