@@ -1,36 +1,24 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.enums.CouponCurrency;
+
 import java.time.LocalDateTime;
 
 public class Coupon {
-    public String id;
-    public String object;
-    public Integer amountOff;
-    public CouponCurrency couponCurrency;
-    public String duration;
-    public Integer durationInMonths;
-    public Boolean livemode;
-    public Integer maxRedemptions;
-    public String name;
-    public Float percentOff;
-    public Boolean valid;
-    public LocalDateTime createdTime;
+    public final String id;
+    public final String duration;
+    public final CouponCurrency couponCurrency;
+    public final LocalDateTime createdTime;
+
+
     public LocalDateTime getCreatedTime() {
         return createdTime;
     }
 
-    public Coupon(String id, String object, Integer amountOff, CouponCurrency couponCurrency, String duration, Integer durationInMonths, Boolean livemode, Integer maxRedemptions, String name, Float percentOff, Boolean valid, LocalDateTime createdTime) {
+    public Coupon(String id, String duration, CouponCurrency couponCurrency, LocalDateTime createdTime) {
         this.id = id;
-        this.object = object;
-        this.amountOff = amountOff;
-        this.couponCurrency = couponCurrency;
         this.duration = duration;
-        this.durationInMonths = durationInMonths;
-        this.livemode = livemode;
-        this.maxRedemptions = maxRedemptions;
-        this.name = name;
-        this.percentOff = percentOff;
-        this.valid = valid;
+        this.couponCurrency = couponCurrency;
         this.createdTime = createdTime;
     }
 
