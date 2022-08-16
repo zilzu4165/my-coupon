@@ -2,7 +2,7 @@ package me.zilzu.mycoupon.api.controller;
 
 
 import me.zilzu.mycoupon.application.service.Coupon;
-import me.zilzu.mycoupon.common.enums.CouponCurrency;
+import me.zilzu.mycoupon.application.service.CouponCurrency;
 
 import java.time.LocalDateTime;
 

@@ -1,7 +1,5 @@
 package me.zilzu.mycoupon.application.service;
 
-import me.zilzu.mycoupon.common.enums.CouponCurrency;
-import me.zilzu.mycoupon.common.enums.SortingOrder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

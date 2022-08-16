@@ -1,6 +1,5 @@
 package me.zilzu.mycoupon.application.service;
 
-import me.zilzu.mycoupon.common.enums.SortingOrder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
