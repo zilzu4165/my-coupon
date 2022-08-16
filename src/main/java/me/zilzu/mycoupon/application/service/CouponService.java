@@ -25,7 +25,7 @@ public class CouponService {
 
     public Coupon retrieve(String id) {
         CouponEntity retrieve = couponRepository.retrieve(id);
-        return new Coupon(retrieve.id, null, retrieve.couponCurrency, retrieve.createdTime);
+        return new Coupon(retrieve.id, "3", retrieve.couponCurrency, retrieve.createdTime);
     }
 
     public List<Coupon> retrieveList(Integer limit) {

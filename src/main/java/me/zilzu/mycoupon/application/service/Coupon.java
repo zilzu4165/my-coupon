@@ -1,8 +1,10 @@
 package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Coupon {
     public final String id;
@@ -23,10 +25,25 @@ public class Coupon {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Coupon coupon = (Coupon) o;
+        return Objects.equals(id, coupon.id) && Objects.equals(duration, coupon.duration) && couponCurrency == coupon.couponCurrency && Objects.equals(createdTime, coupon.createdTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, duration, couponCurrency, createdTime);
+    }
+
+    @Override
     public String toString() {
-        return "Coupon{" +
-                "id='" + id + '\'' +
-                ", date=" + createdTime +
-                '}';
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("duration", duration)
+                .append("couponCurrency", couponCurrency)
+                .append("createdTime", createdTime)
+                .toString();
     }
 }
