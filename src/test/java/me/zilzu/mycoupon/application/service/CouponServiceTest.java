@@ -1,6 +1,5 @@
 package me.zilzu.mycoupon.application.service;
 
-import me.zilzu.mycoupon.api.controller.CouponRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

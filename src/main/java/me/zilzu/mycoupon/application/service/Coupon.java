@@ -1,46 +1,46 @@
 package me.zilzu.mycoupon.application.service;
 
+
+
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Coupon {
-    public String id;
-    public String object;
-    public Integer amountOff;
-    public long created;
-    public String currency;
-    public String duration;
-    public Integer durationInMonths;
-    public Boolean livemode;
-    public Integer maxRedemptions;
-    public String name;
-    public Float percentOff;
-    public Boolean valid;
-    public LocalDateTime date;
-    public LocalDateTime getDate() {
-        return date;
+    public final String id;
+    public final String duration;
+    public final CouponCurrency couponCurrency;
+    public final LocalDateTime createdTime;
+
+
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
     }
 
-    public Coupon(String id, String object, Integer amountOff, long created, String currency, String duration, Integer durationInMonths, Boolean livemode, Integer maxRedemptions, String name, Float percentOff, Boolean valid, LocalDateTime date) {
+    public Coupon(String id, String duration, CouponCurrency couponCurrency, LocalDateTime createdTime) {
         this.id = id;
-        this.object = object;
-        this.amountOff = amountOff;
-        this.created = created;
-        this.currency = currency;
         this.duration = duration;
-        this.durationInMonths = durationInMonths;
-        this.livemode = livemode;
-        this.maxRedemptions = maxRedemptions;
-        this.name = name;
-        this.percentOff = percentOff;
-        this.valid = valid;
-        this.date = date;
+        this.couponCurrency = couponCurrency;
+        this.createdTime = createdTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Coupon coupon = (Coupon) o;
+        return Objects.equals(id, coupon.id) && Objects.equals(duration, coupon.duration) && couponCurrency == coupon.couponCurrency && Objects.equals(createdTime, coupon.createdTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, duration, couponCurrency, createdTime);
     }
 
     @Override
     public String toString() {
         return "Coupon{" +
                 "id='" + id + '\'' +
-                ", date=" + date +
+                ", date=" + createdTime +
                 '}';
     }
 }

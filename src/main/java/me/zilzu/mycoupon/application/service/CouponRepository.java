@@ -17,7 +17,6 @@ public class CouponRepository {
         if (database.containsKey(coupon.id)) {
             throw new RuntimeException("Duplicate key");
         }
-
         database.put(coupon.id, coupon);
     }
 
@@ -46,13 +45,13 @@ public class CouponRepository {
         if (sortedBy == SortingOrder.ASC) {
             sortedCoupons = database.values()
                     .stream()
-                    .sorted(comparing(Coupon::getDate))
+                    .sorted(comparing(Coupon::getCreatedTime))
                     .limit(limit)
                     .collect(Collectors.toList());
         } else if (sortedBy == SortingOrder.DESC) {
             sortedCoupons = database.values()
                     .stream()
-                    .sorted(comparing(Coupon::getDate)
+                    .sorted(comparing(Coupon::getCreatedTime)
                             .reversed())
                     .limit(limit)
                     .collect(Collectors.toList());
