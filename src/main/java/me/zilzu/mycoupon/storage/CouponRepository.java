@@ -3,9 +3,11 @@ package me.zilzu.mycoupon.storage;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparing;
@@ -44,13 +46,13 @@ public class CouponRepository {
         if (sortedBy == SortingOrder.ASC) {
             sortedCoupons = database.values()
                     .stream()
-                    .sorted(comparing(CouponEntity::getCreatedTime))
+                    .sorted(comparing(entity -> entity.createdTime))
                     .limit(limit)
                     .collect(Collectors.toList());
         } else if (sortedBy == SortingOrder.DESC) {
             sortedCoupons = database.values()
                     .stream()
-                    .sorted(comparing(CouponEntity::getCreatedTime)
+                    .sorted(comparing((Function<CouponEntity, LocalDateTime>) entity -> entity.createdTime)
                             .reversed())
                     .limit(limit)
                     .collect(Collectors.toList());

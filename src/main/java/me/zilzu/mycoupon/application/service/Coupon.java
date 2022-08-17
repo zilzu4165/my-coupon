@@ -39,11 +39,11 @@ public class Coupon {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("duration", duration)
-                .append("couponCurrency", couponCurrency)
-                .append("createdTime", createdTime)
-                .toString();
+        return "Coupon{" +
+                "id='" + id + '\'' +
+                ", duration='" + duration + '\'' +
+                ", couponCurrency=" + couponCurrency +
+                ", createdTime=" + createdTime +
+                '}';
     }
 }

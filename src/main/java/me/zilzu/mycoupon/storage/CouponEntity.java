@@ -9,13 +9,8 @@ public class CouponEntity {
     public final String id;
     public final String duration;
     public final CouponCurrency couponCurrency;
-
     public final LocalDateTime createdTime;
 
-
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
 
     public CouponEntity(String id, String duration, CouponCurrency couponCurrency, LocalDateTime createdTime) {
         this.id = id;

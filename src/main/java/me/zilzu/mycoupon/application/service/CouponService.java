@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CouponService {
@@ -24,8 +25,8 @@ public class CouponService {
     }
 
     public Coupon retrieve(String id) {
-        CouponEntity retrieve = couponRepository.retrieve(id);
-        return new Coupon(retrieve.id, "3", retrieve.couponCurrency, retrieve.createdTime);
+        CouponEntity entity = couponRepository.retrieve(id);
+        return new Coupon(entity.id, "3", entity.couponCurrency, entity.createdTime);
     }
 
     public List<Coupon> retrieveList(Integer limit) {
@@ -44,10 +45,10 @@ public class CouponService {
     public Coupon createWithCurrency(CouponRequest couponRequest, CouponCurrency couponCurrency) {
         String couponId = couponIdGenerate.generate();
 
-        CouponEntity coupon = new CouponEntity(couponId, couponRequest.duration, couponCurrency, LocalDateTime.now());
-        couponRepository.save(coupon);
+        CouponEntity entity = new CouponEntity(couponId, couponRequest.duration, couponCurrency, LocalDateTime.now());
+        couponRepository.save(entity);
 
-        return new Coupon(coupon.id, coupon.duration, coupon.couponCurrency, coupon.createdTime);
+        return new Coupon(entity.id, entity.duration, entity.couponCurrency, entity.createdTime);
     }
 
     public CouponDeleteResult delete(String id) {
@@ -68,12 +69,10 @@ public class CouponService {
 
     public List<Coupon> findRecentlyCreatedCoupon(Integer limit, SortingOrder sortedBy) {
         List<CouponEntity> couponEntities = couponRepository.selectRecently(limit, sortedBy);
-        List<Coupon> coupons = new ArrayList<>();
 
-        for (CouponEntity couponEntity : couponEntities) {
-            Coupon coupon = new Coupon(couponEntity.id, couponEntity.duration, couponEntity.couponCurrency, couponEntity.createdTime);
-            coupons.add(coupon);
-        }
+        List<Coupon> coupons = couponEntities.stream()
+                .map(entity -> new Coupon(entity.id, entity.duration, entity.couponCurrency, entity.createdTime))
+                .collect(Collectors.toList());
 
         return coupons;
     }
