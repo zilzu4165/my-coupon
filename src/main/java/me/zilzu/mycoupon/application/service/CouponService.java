@@ -70,10 +70,8 @@ public class CouponService {
     public List<Coupon> findRecentlyCreatedCoupon(Integer limit, SortingOrder sortedBy) {
         List<CouponEntity> couponEntities = couponRepository.selectRecently(limit, sortedBy);
 
-        List<Coupon> coupons = couponEntities.stream()
+        return couponEntities.stream()
                 .map(entity -> new Coupon(entity.id, entity.duration, entity.couponCurrency, entity.createdTime))
                 .collect(Collectors.toList());
-
-        return coupons;
     }
 }

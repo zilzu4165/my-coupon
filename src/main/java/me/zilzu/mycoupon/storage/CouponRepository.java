@@ -52,7 +52,7 @@ public class CouponRepository {
         } else if (sortedBy == SortingOrder.DESC) {
             sortedCoupons = database.values()
                     .stream()
-                    .sorted(comparing((Function<CouponEntity, LocalDateTime>) entity -> entity.createdTime)
+                    .sorted(comparing((Function<CouponEntity, LocalDateTime>) couponEntity -> couponEntity.createdTime)
                             .reversed())
                     .limit(limit)
                     .collect(Collectors.toList());

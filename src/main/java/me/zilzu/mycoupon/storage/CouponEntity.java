@@ -11,7 +11,6 @@ public class CouponEntity {
     public final CouponCurrency couponCurrency;
     public final LocalDateTime createdTime;
 
-
     public CouponEntity(String id, String duration, CouponCurrency couponCurrency, LocalDateTime createdTime) {
         this.id = id;
         this.duration = duration;

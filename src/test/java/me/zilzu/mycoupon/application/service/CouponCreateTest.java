@@ -10,10 +10,12 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,7 +55,9 @@ public class CouponCreateTest {
         List<Coupon> coupons = couponService.findRecentlyCreatedCoupon(10);
 
         assertThat(coupons.size()).isEqualTo(10);
-        assertThat(coupons).isSortedAccordingTo(Comparator.comparing(Coupon::getCreatedTime).reversed()); // 내림차순 정렬인지 확인
+        assertThat(coupons).isSortedAccordingTo(
+                Comparator.comparing((Function<Coupon, LocalDateTime>) coupon -> coupon.createdTime).reversed()
+        ); // 내림차순 정렬인지 확인
     }
 
     @Test
@@ -63,7 +67,7 @@ public class CouponCreateTest {
         List<Coupon> coupons = couponService.findRecentlyCreatedCoupon(10, SortingOrder.ASC);
 
         assertThat(coupons.size()).isEqualTo(10);
-        assertThat(coupons).isSortedAccordingTo(Comparator.comparing(Coupon::getCreatedTime));  // 내림차순 정렬인지 확인
+        assertThat(coupons).isSortedAccordingTo(Comparator.comparing(coupon -> coupon.createdTime));  // 내림차순 정렬인지 확인
     }
 
     @Test
@@ -74,7 +78,9 @@ public class CouponCreateTest {
         List<Coupon> coupons = couponService.findRecentlyCreatedCoupon(10, SortingOrder.DESC);
 
         assertThat(coupons.size()).isEqualTo(10);
-        assertThat(coupons).isSortedAccordingTo(Comparator.comparing(Coupon::getCreatedTime).reversed());  // 내림차순 정렬인지 확인
+        assertThat(coupons).isSortedAccordingTo(
+                Comparator.comparing((Function<Coupon, LocalDateTime>) coupon -> coupon.createdTime).reversed()
+        );  // 내림차순 정렬인지 확인
     }
 
     @DisplayName("생성한 coupon을 조회했을 때, 유저가 정한 통화로 조회가 된다.")
