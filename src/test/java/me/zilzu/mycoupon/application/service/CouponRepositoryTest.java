@@ -1,11 +1,10 @@
 package me.zilzu.mycoupon.application.service;
 
-import org.assertj.core.api.ThrowableAssert;
+import me.zilzu.mycoupon.storage.CouponRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 class CouponRepositoryTest {
 

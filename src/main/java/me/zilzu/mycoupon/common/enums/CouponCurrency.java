@@ -1,4 +1,4 @@
-package me.zilzu.mycoupon.application.service;
+package me.zilzu.mycoupon.common.enums;
 
 // ISO 4217
 public enum CouponCurrency {

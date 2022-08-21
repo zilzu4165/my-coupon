@@ -1,10 +1,15 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.enums.CouponCurrency;
+import me.zilzu.mycoupon.common.enums.SortingOrder;
+import me.zilzu.mycoupon.storage.CouponEntity;
+import me.zilzu.mycoupon.storage.CouponRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CouponService {
@@ -20,7 +25,8 @@ public class CouponService {
     }
 
     public Coupon retrieve(String id) {
-        return couponRepository.retrieve(id);
+        CouponEntity entity = couponRepository.retrieve(id);
+        return new Coupon(entity.id, "3", entity.couponCurrency, entity.createdTime);
     }
 
     public List<Coupon> retrieveList(Integer limit) {
@@ -39,9 +45,10 @@ public class CouponService {
     public Coupon createWithCurrency(CouponRequest couponRequest, CouponCurrency couponCurrency) {
         String couponId = couponIdGenerate.generate();
 
-        Coupon coupon = new Coupon(couponId, couponRequest.duration, couponCurrency, LocalDateTime.now());
-        couponRepository.save(coupon);
-        return coupon;
+        CouponEntity entity = new CouponEntity(couponId, couponRequest.duration, couponCurrency, LocalDateTime.now());
+        couponRepository.save(entity);
+
+        return new Coupon(entity.id, entity.duration, entity.couponCurrency, entity.createdTime);
     }
 
     public CouponDeleteResult delete(String id) {
@@ -61,6 +68,10 @@ public class CouponService {
     }
 
     public List<Coupon> findRecentlyCreatedCoupon(Integer limit, SortingOrder sortedBy) {
-        return couponRepository.selectRecently(limit, sortedBy);
+        List<CouponEntity> couponEntities = couponRepository.selectRecently(limit, sortedBy);
+
+        return couponEntities.stream()
+                .map(entity -> new Coupon(entity.id, entity.duration, entity.couponCurrency, entity.createdTime))
+                .collect(Collectors.toList());
     }
 }
