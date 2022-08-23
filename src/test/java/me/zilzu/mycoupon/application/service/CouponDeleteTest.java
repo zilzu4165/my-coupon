@@ -14,9 +14,6 @@ public class CouponDeleteTest {
     @Autowired
     CouponService couponService;
 
-    @Autowired
-    CouponIdGenerate couponIdGenerate;
-
     @Test
     @DisplayName("쿠폰의 ID값이 주어졌을 때, 해당 ID 값에 해당하는 쿠폰을 repository에서 삭제한다. 존재하지 않는 쿠폰을 조회하면 Exception 발생시킨다.")
     public void test1() {
