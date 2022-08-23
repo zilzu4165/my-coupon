@@ -51,8 +51,10 @@ public class CouponService {
         return new Coupon(entity.id, entity.duration, entity.couponCurrency, entity.createdTime);
     }
 
-    public CouponDeleteResult delete(String id) {
-        return new CouponDeleteResult(id, "coupon", true);
+    public Coupon delete(String id) {
+        CouponEntity deletedCouponEntity = couponRepository.delete(id);
+        return new Coupon(deletedCouponEntity.id, deletedCouponEntity.duration, deletedCouponEntity.couponCurrency, deletedCouponEntity.createdTime);
+
     }
 
     public Long getAllCouponSize() {
