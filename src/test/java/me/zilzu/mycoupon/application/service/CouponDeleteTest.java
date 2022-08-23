@@ -22,21 +22,23 @@ public class CouponDeleteTest {
     public void test1() {
         CouponRequest couponRequest = new CouponRequest("3", 3);
         Coupon coupon = couponService.create(couponRequest);
-        String id = coupon.id;
 
-        Coupon deletedCoupon = couponService.delete(id);
+        CouponDeleteResult deletedCoupon = couponService.delete(coupon.id);
 
-        Assertions.assertThat(deletedCoupon.id).isEqualTo(id);
+        Assertions.assertThat(deletedCoupon.deletedCouponId).isEqualTo(coupon.id);
     }
 
     @Test
-    @DisplayName("존재하지 않는 쿠폰 ID값을 삭제하려하면 Exception을 발생시킨다.")
+    @DisplayName("삭제된 쿠폰 id 값을 조회하려하면 IllegalArgumentException이 발생한다.")
     public void test2() {
-        String notExistId = "ZILZU";
+        CouponRequest couponRequest = new CouponRequest("3", 3);
+        Coupon coupon = couponService.create(couponRequest);
+
+        couponService.delete(coupon.id);
 
         assertThatThrownBy(() -> {
-            couponService.delete(notExistId);
-        }).isInstanceOf(RuntimeException.class);
+            couponService.retrieve(coupon.id);
+        }).isInstanceOf(IllegalArgumentException.class);
 
     }
 }
