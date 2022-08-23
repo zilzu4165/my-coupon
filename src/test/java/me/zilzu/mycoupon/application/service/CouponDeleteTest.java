@@ -18,7 +18,7 @@ public class CouponDeleteTest {
     CouponIdGenerate couponIdGenerate;
 
     @Test
-    @DisplayName("쿠폰의 ID값이 주어졌을 때, 해당 ID 값에 해당하는 쿠폰을 repository에서 삭제한다.")
+    @DisplayName("쿠폰의 ID값이 주어졌을 때, 해당 ID 값에 해당하는 쿠폰을 repository에서 삭제한다. 존재하지 않는 쿠폰을 조회하면 Exception 발생시킨다.")
     public void test1() {
         CouponRequest couponRequest = new CouponRequest("3", 3);
         Coupon coupon = couponService.create(couponRequest);
@@ -26,19 +26,23 @@ public class CouponDeleteTest {
         CouponDeleteResult deletedCoupon = couponService.delete(coupon.id);
 
         Assertions.assertThat(deletedCoupon.deletedCouponId).isEqualTo(coupon.id);
-    }
-
-    @Test
-    @DisplayName("삭제된 쿠폰 id 값을 조회하려하면 IllegalArgumentException이 발생한다.")
-    public void test2() {
-        CouponRequest couponRequest = new CouponRequest("3", 3);
-        Coupon coupon = couponService.create(couponRequest);
-
-        couponService.delete(coupon.id);
 
         assertThatThrownBy(() -> {
             couponService.retrieve(coupon.id);
         }).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 쿠폰 ID값을 삭제하려하면 Exception을 발생시킨다.")
+    public void test2() {
+        CouponRequest couponRequest = new CouponRequest("3", 3);
+        couponService.create(couponRequest);
+
+        String notExistId = "ZILZU";
+
+        assertThatThrownBy(() -> {
+            couponService.delete(notExistId);
+        }).isInstanceOf(RuntimeException.class);
 
     }
 }
