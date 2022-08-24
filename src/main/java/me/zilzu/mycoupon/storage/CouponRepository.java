@@ -56,7 +56,15 @@ public class CouponRepository {
                             .reversed())
                     .limit(limit)
                     .collect(Collectors.toList());
+
         }
         return sortedCoupons;
+    }
+
+    public CouponEntity delete(String id) {
+        if (!database.containsKey(id)) {
+            throw new RuntimeException("존재하지 않는 id 입니다.");
+        }
+        return database.remove(id);
     }
 }

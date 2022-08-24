@@ -54,7 +54,7 @@ public class CouponController {
 
         CouponDeleteResult deleteResult = couponService.delete(id);
 
-        return new CouponDeletedResponse(deleteResult.id, deleteResult.object, deleteResult.deleted);
+        return new CouponDeletedResponse(deleteResult.deletedCouponId);
     }
 
 
