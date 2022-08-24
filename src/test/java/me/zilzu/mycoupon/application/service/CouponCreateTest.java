@@ -1,6 +1,7 @@
 package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
+import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -87,7 +88,7 @@ public class CouponCreateTest {
     @ParameterizedTest
     @EnumSource(value = CouponCurrency.class)
     void test6(CouponCurrency couponCurrency) {
-        CouponRequest couponRequest = new CouponRequest("3", 3);
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null);
 
         Coupon coupon = couponService.createWithCurrency(couponRequest, couponCurrency);
         Coupon foundCoupon = couponService.retrieve(coupon.id);
@@ -99,7 +100,7 @@ public class CouponCreateTest {
     @DisplayName("생성한 coupon을 조회했을 때, 유저가 정한 통화로 조회가 된다. 기본 통화는 USD이다.")
     @Test
     void test7() {
-        CouponRequest couponRequest = new CouponRequest("3", 3);
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null);
 
         Coupon coupon = couponService.createWithCurrency(couponRequest, CouponCurrency.USD);
         Coupon foundCoupon = couponService.retrieve(coupon.id);
@@ -108,9 +109,27 @@ public class CouponCreateTest {
         assertThat(foundCoupon.couponCurrency).isEqualTo(CouponCurrency.USD);
     }
 
+    @DisplayName("쿠폰을 생성할 때 세가지중 하나로 생성되어야 한다. ONCE, REPEATING, FOREVER")
+    @Test
+    void test8() {
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null);
+        Coupon coupon = couponService.create(couponRequest);
+
+        Coupon retrieve = couponService.retrieve(coupon.id);
+
+        assertThat(retrieve.duration).isEqualTo(coupon.duration);
+    }
+
+    @DisplayName("REPEATING 유형의 경우 duration_in_month에 대한 정보가 담겨 있어야 한다.")
+    @Test
+    void test9() {
+
+    }
+
 
     private void createCoupons(int count, int nThreads) throws InterruptedException {
-        CouponRequest couponRequest = new CouponRequest("3", 3);
+
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null);
 
         ExecutorService executorService = Executors.newFixedThreadPool(nThreads); // threadPoolSize 100
 
