@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.enums.CouponDuration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ class CouponServiceTest {
 
     @Test
     void coupon_create_and_retrieve_test() {
-        CouponRequest request = new CouponRequest("3", 3);
+        CouponRequest request = new CouponRequest(CouponDuration.ONCE, null);
         Coupon coupon = couponService.create(request);
 
         Coupon retrievedCoupon = couponService.retrieve(coupon.id);

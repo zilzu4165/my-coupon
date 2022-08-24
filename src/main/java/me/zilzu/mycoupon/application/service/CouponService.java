@@ -1,6 +1,7 @@
 package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
+import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
 import me.zilzu.mycoupon.storage.CouponRepository;
@@ -26,7 +27,7 @@ public class CouponService {
 
     public Coupon retrieve(String id) {
         CouponEntity entity = couponRepository.retrieve(id);
-        return new Coupon(entity.id, "3", entity.couponCurrency, entity.createdTime);
+        return new Coupon(entity.id, CouponDuration.ONCE, entity.couponCurrency, entity.createdTime);
     }
 
     public List<Coupon> retrieveList(Integer limit) {
