@@ -123,7 +123,13 @@ public class CouponCreateTest {
     @DisplayName("REPEATING 유형의 경우 duration_in_month에 대한 정보가 담겨 있어야 한다.")
     @Test
     void test9() {
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3);
+        Coupon coupon = couponService.create(couponRequest);
 
+        Coupon retrieve = couponService.retrieve(coupon.id);
+
+        System.out.println("coupon.duration_in_month = " + coupon.duration_in_month);
+        assertThat(retrieve.duration_in_month).isEqualTo(coupon.duration_in_month);
     }
 
 
