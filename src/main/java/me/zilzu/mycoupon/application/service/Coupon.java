@@ -9,13 +9,15 @@ import java.util.Objects;
 public class Coupon {
     public final String id;
     public final CouponDuration duration;
+    public final Integer duration_in_month;
     public final CouponCurrency couponCurrency;
     public final LocalDateTime createdTime;
 
 
-    public Coupon(String id, CouponDuration duration, CouponCurrency couponCurrency, LocalDateTime createdTime) {
+    public Coupon(String id, CouponDuration duration, Integer duration_in_month, CouponCurrency couponCurrency, LocalDateTime createdTime) {
         this.id = id;
         this.duration = duration;
+        this.duration_in_month = duration_in_month;
         this.couponCurrency = couponCurrency;
         this.createdTime = createdTime;
     }
