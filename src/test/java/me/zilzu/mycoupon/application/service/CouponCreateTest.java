@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 public class CouponCreateTest {
@@ -110,26 +111,40 @@ public class CouponCreateTest {
     }
 
     @DisplayName("쿠폰을 생성할 때 세가지중 하나로 생성되어야 한다. ONCE, REPEATING, FOREVER")
-    @Test
-    void test8() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null);
+    @ParameterizedTest
+    @EnumSource(value = CouponDuration.class, names = {"ONCE", "FOREVER"})
+    void test9(CouponDuration duration) {
+        CouponRequest couponRequest = new CouponRequest(duration, null);
         Coupon coupon = couponService.create(couponRequest);
 
         Coupon retrieve = couponService.retrieve(coupon.id);
 
         assertThat(retrieve.duration).isEqualTo(coupon.duration);
+        assertThat(retrieve.durationInMonth).isNull();
+    }
+
+    @DisplayName("REPEATING 유형이 아닌데 durationInMonths 값이 들어오면 IllegalArgumentException 발생시킨다. ")
+    @ParameterizedTest
+    @EnumSource(value = CouponDuration.class, names = {"ONCE", "FOREVER"})
+    void test10(CouponDuration duration) {
+        CouponRequest couponRequest = new CouponRequest(duration, 0);
+
+        assertThatThrownBy(() -> {
+            couponService.create(couponRequest);
+        }).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("REPEATING 유형의 경우 duration_in_month에 대한 정보가 담겨 있어야 한다.")
-    @Test
-    void test9() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3);
+    @ParameterizedTest
+    @EnumSource(value = CouponDuration.class, names = "REPEATING")
+    void test11(CouponDuration duration) {
+        CouponRequest couponRequest = new CouponRequest(duration, 3);
         Coupon coupon = couponService.create(couponRequest);
 
         Coupon retrieve = couponService.retrieve(coupon.id);
 
-        System.out.println("coupon.duration_in_month = " + coupon.duration_in_month);
-        assertThat(retrieve.duration_in_month).isEqualTo(coupon.duration_in_month);
+        assertThat(retrieve.duration).isEqualTo(coupon.duration);
+        assertThat(retrieve.durationInMonth).isNotNull();
     }
 
 
