@@ -110,7 +110,7 @@ public class CouponCreateTest {
         assertThat(foundCoupon.couponCurrency).isEqualTo(CouponCurrency.USD);
     }
 
-    @DisplayName("쿠폰을 생성할 때 세가지중 하나로 생성되어야 한다. ONCE, REPEATING, FOREVER")
+    @DisplayName("쿠폰을 생성 할 때 duration이 {ONCE, FOREVER} 유형은 durationInMonths가 값이 존재할 수 없다.")
     @ParameterizedTest
     @EnumSource(value = CouponDuration.class, names = {"ONCE", "FOREVER"})
     void test9(CouponDuration duration) {
@@ -134,11 +134,10 @@ public class CouponCreateTest {
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("REPEATING 유형의 경우 duration_in_month에 대한 정보가 담겨 있어야 한다.")
-    @ParameterizedTest
-    @EnumSource(value = CouponDuration.class, names = "REPEATING")
-    void test11(CouponDuration duration) {
-        CouponRequest couponRequest = new CouponRequest(duration, 3);
+    @DisplayName("REPEATING 유형의 경우 durationInMonth에 대한 정보가 담겨 있어야 한다.")
+    @Test
+    void test11() {
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3);
         Coupon coupon = couponService.create(couponRequest);
 
         Coupon retrieve = couponService.retrieve(coupon.id);
