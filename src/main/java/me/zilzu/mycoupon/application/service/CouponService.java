@@ -27,7 +27,7 @@ public class CouponService {
 
     public Coupon retrieve(String id) {
         CouponEntity entity = couponRepository.retrieve(id);
-        return new Coupon(entity.id, entity.duration, entity.duration_in_month, entity.couponCurrency, entity.createdTime);
+        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.createdTime);
     }
 
     public List<Coupon> retrieveList(Integer limit) {
@@ -46,16 +46,14 @@ public class CouponService {
     public Coupon createWithCurrency(CouponRequest couponRequest, CouponCurrency couponCurrency) {
         String couponId = couponIdGenerate.generate();
 
-        if (!couponRequest.duration.equals(CouponDuration.REPEATING)) {
-            if (null != couponRequest.durationInMonths) {
-                throw new IllegalArgumentException("duration이 REPEATING 유형이 아니라면 durationInMonths 값을 가질 수 없습니다");
-            }
+        if (couponRequest.duration != CouponDuration.REPEATING && null != couponRequest.durationInMonths) {
+            throw new IllegalArgumentException("duration이 REPEATING 유형이 아니라면 durationInMonths 값을 가질 수 없습니다");
         }
 
         CouponEntity entity = new CouponEntity(couponId, couponRequest.duration, couponRequest.durationInMonths, couponCurrency, LocalDateTime.now());
         couponRepository.save(entity);
 
-        return new Coupon(entity.id, entity.duration, entity.duration_in_month, entity.couponCurrency, entity.createdTime);
+        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.createdTime);
     }
 
     public CouponDeleteResult delete(String id) {
@@ -80,7 +78,7 @@ public class CouponService {
         List<CouponEntity> couponEntities = couponRepository.selectRecently(limit, sortedBy);
 
         return couponEntities.stream()
-                .map(entity -> new Coupon(entity.id, entity.duration, entity.duration_in_month, entity.couponCurrency, entity.createdTime))
+                .map(entity -> new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.createdTime))
                 .collect(Collectors.toList());
     }
 }
