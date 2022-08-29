@@ -46,7 +46,7 @@ public class CouponService {
     public Coupon createWithCurrency(CouponRequest couponRequest, CouponCurrency couponCurrency) {
         String couponId = couponIdGenerate.generate();
 
-        if (couponRequest.duration != CouponDuration.REPEATING && null != couponRequest.durationInMonths) {
+        if (couponRequest.duration != CouponDuration.REPEATING && couponRequest.durationInMonths != null) {
             throw new IllegalArgumentException("duration이 REPEATING 유형이 아니라면 durationInMonths 값을 가질 수 없습니다");
         }
 
