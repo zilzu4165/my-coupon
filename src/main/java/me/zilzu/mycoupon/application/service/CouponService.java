@@ -2,6 +2,7 @@ package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
+import me.zilzu.mycoupon.common.enums.DiscountType;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
 import me.zilzu.mycoupon.storage.CouponRepository;
@@ -27,14 +28,14 @@ public class CouponService {
 
     public Coupon retrieve(String id) {
         CouponEntity entity = couponRepository.retrieve(id);
-        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.createdTime);
+        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, null, null, null, entity.createdTime);
     }
 
     public List<Coupon> retrieveList(Integer limit) {
         List<Coupon> coupons = new ArrayList<>();
 
         for (int i = 0; i < limit; i++) {
-            coupons.add(new Coupon("Z4OV52SU", null, null, null, LocalDateTime.now()));
+            coupons.add(new Coupon("Z4OV52SU", null, null, null, null, null, null, LocalDateTime.now()));
         }
         return coupons;
     }
@@ -46,14 +47,33 @@ public class CouponService {
     public Coupon createWithCurrency(CouponRequest couponRequest, CouponCurrency couponCurrency) {
         String couponId = couponIdGenerate.generate();
 
+        couponCreateValidate(couponRequest);
+
+        CouponEntity entity = new CouponEntity(couponId, couponRequest.duration, couponRequest.durationInMonths, couponCurrency, couponRequest.discountType, couponRequest.amountOff, couponRequest.percentOff, LocalDateTime.now());
+        couponRepository.save(entity);
+
+        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, null, null, null, entity.createdTime);
+    }
+
+    private static void couponCreateValidate(CouponRequest couponRequest) {
         if (couponRequest.duration != CouponDuration.REPEATING && couponRequest.durationInMonths != null) {
             throw new IllegalArgumentException("duration이 REPEATING 유형이 아니라면 durationInMonths 값을 가질 수 없습니다");
         }
-
-        CouponEntity entity = new CouponEntity(couponId, couponRequest.duration, couponRequest.durationInMonths, couponCurrency, LocalDateTime.now());
-        couponRepository.save(entity);
-
-        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.createdTime);
+        if (couponRequest.amountOff != null && couponRequest.percentOff != null) {
+            throw new IllegalArgumentException("금액할인과 비율할인이 동시에 값을 가질 수 없습니다.");
+        }
+        if (couponRequest.discountType == DiscountType.AMOUNT && couponRequest.amountOff == null) {
+            throw new IllegalArgumentException("discountType이 AMOUNT일 경우 amountOff 에 값이 존재해야 합니다.");
+        }
+        if (couponRequest.discountType == DiscountType.AMOUNT && couponRequest.percentOff != null) {
+            throw new IllegalArgumentException("discountType이 AMOUNT일 경우 percentOff 에 값이 존재할 수 없습니다.");
+        }
+        if (couponRequest.discountType == DiscountType.PERCENTAGE && couponRequest.percentOff == null) {
+            throw new IllegalArgumentException("discountType이 PERCENTAGE일 경우 percentOff 에 값이 존재해야 합니다.");
+        }
+        if (couponRequest.discountType == DiscountType.PERCENTAGE && couponRequest.amountOff != null) {
+            throw new IllegalArgumentException("discountType이 PERCENTAGE일 경우 amountOff 에 값이 존재할 수 없습니다.");
+        }
     }
 
     public CouponDeleteResult delete(String id) {
@@ -78,7 +98,7 @@ public class CouponService {
         List<CouponEntity> couponEntities = couponRepository.selectRecently(limit, sortedBy);
 
         return couponEntities.stream()
-                .map(entity -> new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.createdTime))
+                .map(entity -> new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, null, null, null, entity.createdTime))
                 .collect(Collectors.toList());
     }
 }
