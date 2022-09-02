@@ -44,7 +44,7 @@ public class CouponController {
 
     @PostMapping("/api/v1/coupons")
     public CouponCreatedResponse createCoupons(@RequestBody CouponRequestDto couponRequestDto) {
-        Coupon coupon = couponService.create(new CouponRequest(couponRequestDto.duration, couponRequestDto.durationInMonths, null, null, null));
+        Coupon coupon = couponService.create(new CouponRequest(couponRequestDto.duration, couponRequestDto.durationInMonths, couponRequestDto.discountType, couponRequestDto.amountOff, couponRequestDto.percentOff));
 
         return new CouponCreatedResponse(coupon);
     }

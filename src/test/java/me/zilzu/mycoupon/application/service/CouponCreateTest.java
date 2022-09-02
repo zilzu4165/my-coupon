@@ -163,7 +163,7 @@ public class CouponCreateTest {
     @DisplayName("쿠폰 생성시 DiscountType이 AMOUNT 일 때, percentOff 에 값이 존재하면 IllegalArgumentException을 발생시킨다.")
     @Test
     void test13() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.AMOUNT, 1000L, 1000F);
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.AMOUNT, 1000L, 1000.0);
 
         assertThatThrownBy(() ->
                 couponService.create(couponRequest)
@@ -173,7 +173,7 @@ public class CouponCreateTest {
     @DisplayName("쿠폰 생성시 DiscountType이 PERCENTAGE 일 때, percentOff 에 값이 존재해야한다.")
     @Test
     void test14() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.PERCENTAGE, null, 1000F);
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.PERCENTAGE, null, 1000.0);
         Coupon coupon = couponService.create(couponRequest);
 
         Coupon retrieve = couponService.retrieve(coupon.id);
@@ -186,7 +186,7 @@ public class CouponCreateTest {
     @DisplayName("쿠폰 생성시 DiscountType이 PERCENTAGE라면 amountOff 에 값이 존재하면 IllegaArgumentException을 발생시킨다.")
     @Test
     void test15() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.PERCENTAGE, 1000L, 1000F);
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.PERCENTAGE, 1000L, 1000.0);
 
         assertThatThrownBy(() ->
                 couponService.create(couponRequest)
@@ -196,7 +196,7 @@ public class CouponCreateTest {
     @DisplayName("쿠폰 생성시 amountOff , percentOff 두 값이 동시에 존재하면 IllegalArgumentException 을 발생시킨다.")
     @Test
     void test16() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.AMOUNT, 1000L, 1000F);
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.AMOUNT, 1000L, 1000.0);
 
         assertThatThrownBy(() -> {
             couponService.create(couponRequest);

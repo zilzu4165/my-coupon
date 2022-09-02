@@ -28,7 +28,7 @@ public class CouponService {
 
     public Coupon retrieve(String id) {
         CouponEntity entity = couponRepository.retrieve(id);
-        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, null, null, null, entity.createdTime);
+        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.createdTime);
     }
 
     public List<Coupon> retrieveList(Integer limit) {
@@ -52,7 +52,7 @@ public class CouponService {
         CouponEntity entity = new CouponEntity(couponId, couponRequest.duration, couponRequest.durationInMonths, couponCurrency, couponRequest.discountType, couponRequest.amountOff, couponRequest.percentOff, LocalDateTime.now());
         couponRepository.save(entity);
 
-        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, null, null, null, entity.createdTime);
+        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.createdTime);
     }
 
     private static void couponCreateValidate(CouponRequest couponRequest) {
@@ -98,7 +98,7 @@ public class CouponService {
         List<CouponEntity> couponEntities = couponRepository.selectRecently(limit, sortedBy);
 
         return couponEntities.stream()
-                .map(entity -> new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, null, null, null, entity.createdTime))
+                .map(entity -> new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.createdTime))
                 .collect(Collectors.toList());
     }
 }
