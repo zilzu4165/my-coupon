@@ -108,6 +108,13 @@ public class CouponService {
         if (!foundCoupon.valid) {
             throw new RuntimeException("사용할 수 없는 쿠폰입니다.");
         }
+        // CouponDuration이 ONCE 유형이면 사용후 valid false
+        if (foundCoupon.duration == CouponDuration.ONCE) {
+            CouponEntity entity = new CouponEntity(foundCoupon.id, foundCoupon.duration, foundCoupon.durationInMonth, foundCoupon.couponCurrency,
+                    foundCoupon.discountType, foundCoupon.amountOff, foundCoupon.percentOff, false, foundCoupon.createdTime);
+
+            couponRepository.setValidFalse(entity);
+        }
 
         return "사용됨";
     }
