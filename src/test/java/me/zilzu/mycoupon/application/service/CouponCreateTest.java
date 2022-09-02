@@ -2,6 +2,7 @@ package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
+import me.zilzu.mycoupon.common.enums.DiscountType;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -89,7 +90,7 @@ public class CouponCreateTest {
     @ParameterizedTest
     @EnumSource(value = CouponCurrency.class)
     void test6(CouponCurrency couponCurrency) {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null);
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, null, null, null);
 
         Coupon coupon = couponService.createWithCurrency(couponRequest, couponCurrency);
         Coupon foundCoupon = couponService.retrieve(coupon.id);
@@ -101,7 +102,7 @@ public class CouponCreateTest {
     @DisplayName("생성한 coupon을 조회했을 때, 유저가 정한 통화로 조회가 된다. 기본 통화는 USD이다.")
     @Test
     void test7() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null);
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, null, null, null);
 
         Coupon coupon = couponService.createWithCurrency(couponRequest, CouponCurrency.USD);
         Coupon foundCoupon = couponService.retrieve(coupon.id);
@@ -114,7 +115,7 @@ public class CouponCreateTest {
     @ParameterizedTest
     @EnumSource(value = CouponDuration.class, names = {"ONCE", "FOREVER"})
     void test9(CouponDuration duration) {
-        CouponRequest couponRequest = new CouponRequest(duration, null);
+        CouponRequest couponRequest = new CouponRequest(duration, null, null, null, null);
         Coupon coupon = couponService.create(couponRequest);
 
         Coupon retrieve = couponService.retrieve(coupon.id);
@@ -127,7 +128,7 @@ public class CouponCreateTest {
     @ParameterizedTest
     @EnumSource(value = CouponDuration.class, names = {"ONCE", "FOREVER"})
     void test10(CouponDuration duration) {
-        CouponRequest couponRequest = new CouponRequest(duration, 0);
+        CouponRequest couponRequest = new CouponRequest(duration, 0, null, null, null);
 
         assertThatThrownBy(() -> {
             couponService.create(couponRequest);
@@ -137,7 +138,7 @@ public class CouponCreateTest {
     @DisplayName("REPEATING 유형의 경우 durationInMonth에 대한 정보가 담겨 있어야 한다.")
     @Test
     void test11() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3);
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, null, null, null);
         Coupon coupon = couponService.create(couponRequest);
 
         Coupon retrieve = couponService.retrieve(coupon.id);
@@ -146,10 +147,66 @@ public class CouponCreateTest {
         assertThat(retrieve.durationInMonth).isNotNull();
     }
 
+    @DisplayName("쿠폰 생성시 DiscountType이 AMOUNT 일 때, amountOff 에 값이 존재해야한다.")
+    @Test
+    void test12() {
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.AMOUNT, 1000L, null);
+        Coupon coupon = couponService.create(couponRequest);
+
+        Coupon retrieve = couponService.retrieve(coupon.id);
+
+        assertThat(retrieve.discountType).isEqualTo(coupon.discountType);
+        assertThat(retrieve.amountOff).isEqualTo(coupon.amountOff);
+        assertThat(retrieve.percentOff).isEqualTo(coupon.percentOff);
+    }
+
+    @DisplayName("쿠폰 생성시 DiscountType이 AMOUNT 일 때, percentOff 에 값이 존재하면 IllegalArgumentException을 발생시킨다.")
+    @Test
+    void test13() {
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.AMOUNT, 1000L, 1000.0);
+
+        assertThatThrownBy(() ->
+                couponService.create(couponRequest)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("쿠폰 생성시 DiscountType이 PERCENTAGE 일 때, percentOff 에 값이 존재해야한다.")
+    @Test
+    void test14() {
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.PERCENTAGE, null, 1000.0);
+        Coupon coupon = couponService.create(couponRequest);
+
+        Coupon retrieve = couponService.retrieve(coupon.id);
+
+        assertThat(retrieve.discountType).isEqualTo(coupon.discountType);
+        assertThat(retrieve.amountOff).isEqualTo(coupon.amountOff);
+        assertThat(retrieve.percentOff).isEqualTo(coupon.percentOff);
+    }
+
+    @DisplayName("쿠폰 생성시 DiscountType이 PERCENTAGE라면 amountOff 에 값이 존재하면 IllegaArgumentException을 발생시킨다.")
+    @Test
+    void test15() {
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.PERCENTAGE, 1000L, 1000.0);
+
+        assertThatThrownBy(() ->
+                couponService.create(couponRequest)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("쿠폰 생성시 amountOff , percentOff 두 값이 동시에 존재하면 IllegalArgumentException 을 발생시킨다.")
+    @Test
+    void test16() {
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, 3, DiscountType.AMOUNT, 1000L, 1000.0);
+
+        assertThatThrownBy(() -> {
+            couponService.create(couponRequest);
+        }).isInstanceOf(IllegalArgumentException.class);
+    }
+
 
     private void createCoupons(int count, int nThreads) throws InterruptedException {
 
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null);
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, null, null, null);
 
         ExecutorService executorService = Executors.newFixedThreadPool(nThreads); // threadPoolSize 100
 
