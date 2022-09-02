@@ -28,14 +28,14 @@ public class CouponService {
 
     public Coupon retrieve(String id) {
         CouponEntity entity = couponRepository.retrieve(id);
-        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.createdTime);
+        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
     }
 
     public List<Coupon> retrieveList(Integer limit) {
         List<Coupon> coupons = new ArrayList<>();
 
         for (int i = 0; i < limit; i++) {
-            coupons.add(new Coupon("Z4OV52SU", null, null, null, null, null, null, LocalDateTime.now()));
+            coupons.add(new Coupon("Z4OV52SU", null, null, null, null, null, null, null, LocalDateTime.now()));
         }
         return coupons;
     }
@@ -49,10 +49,10 @@ public class CouponService {
 
         couponCreateValidate(couponRequest);
 
-        CouponEntity entity = new CouponEntity(couponId, couponRequest.duration, couponRequest.durationInMonths, couponCurrency, couponRequest.discountType, couponRequest.amountOff, couponRequest.percentOff, LocalDateTime.now());
+        CouponEntity entity = new CouponEntity(couponId, couponRequest.duration, couponRequest.durationInMonths, couponCurrency, couponRequest.discountType, couponRequest.amountOff, couponRequest.percentOff, true, LocalDateTime.now());
         couponRepository.save(entity);
 
-        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.createdTime);
+        return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, true, entity.createdTime);
     }
 
     private static void couponCreateValidate(CouponRequest couponRequest) {
@@ -98,7 +98,7 @@ public class CouponService {
         List<CouponEntity> couponEntities = couponRepository.selectRecently(limit, sortedBy);
 
         return couponEntities.stream()
-                .map(entity -> new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.createdTime))
+                .map(entity -> new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime))
                 .collect(Collectors.toList());
     }
 }
