@@ -8,15 +8,13 @@ public class CouponRequest {
     public final Integer durationInMonths;
     public final DiscountType discountType;
     public final Long amountOff;
-    public final Float percentOff;
+    public final Double percentOff;
 
-    public CouponRequest(CouponDuration duration, Integer durationInMonths, DiscountType discountType, Long amountOff, Float percentOff) {
+    public CouponRequest(CouponDuration duration, Integer durationInMonths, DiscountType discountType, Long amountOff, Double percentOff) {
         this.duration = duration;
         this.durationInMonths = durationInMonths;
         this.discountType = discountType;
         this.amountOff = amountOff;
         this.percentOff = percentOff;
     }
-
-
 }

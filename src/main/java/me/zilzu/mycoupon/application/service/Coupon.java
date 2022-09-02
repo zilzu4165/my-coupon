@@ -15,10 +15,10 @@ public class Coupon {
     public final CouponCurrency couponCurrency;
     public final DiscountType discountType;
     public final Long amountOff;
-    public final Float percentOff;
+    public final Double percentOff;
     public final LocalDateTime createdTime;
 
-    public Coupon(String id, CouponDuration duration, Integer durationInMonth, CouponCurrency couponCurrency, DiscountType discountType, Long amountOff, Float percentOff, LocalDateTime createdTime) {
+    public Coupon(String id, CouponDuration duration, Integer durationInMonth, CouponCurrency couponCurrency, DiscountType discountType, Long amountOff, Double percentOff, LocalDateTime createdTime) {
         this.id = id;
         this.duration = duration;
         this.durationInMonth = durationInMonth;
