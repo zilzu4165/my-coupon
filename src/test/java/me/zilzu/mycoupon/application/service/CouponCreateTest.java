@@ -203,6 +203,17 @@ public class CouponCreateTest {
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("쿠폰 생성시 valid 는 true로 생성되어야 한다.")
+    @Test
+    void test17() {
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+
+        Coupon coupon = couponService.create(couponRequest);
+        Coupon foundCoupon = couponService.retrieve(coupon.id);
+
+        assertThat(coupon.valid).isTrue();
+        assertThat(foundCoupon.valid).isTrue();
+    }
 
     private void createCoupons(int count, int nThreads) throws InterruptedException {
 
