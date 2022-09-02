@@ -209,10 +209,10 @@ public class CouponCreateTest {
         CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
 
         Coupon coupon = couponService.create(couponRequest);
-        Coupon retrieve = couponService.retrieve(coupon.id);
+        Coupon foundCoupon = couponService.retrieve(coupon.id);
 
         assertThat(coupon.valid).isTrue();
-        assertThat(retrieve.valid).isTrue();
+        assertThat(foundCoupon.valid).isTrue();
     }
 
     private void createCoupons(int count, int nThreads) throws InterruptedException {
