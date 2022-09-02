@@ -101,4 +101,14 @@ public class CouponService {
                 .map(entity -> new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime))
                 .collect(Collectors.toList());
     }
+
+    public String apply(String id) {
+        Coupon foundCoupon = retrieve(id);
+
+        if (!foundCoupon.valid) {
+            throw new RuntimeException("사용할 수 없는 쿠폰입니다.");
+        }
+
+        return "사용됨";
+    }
 }
