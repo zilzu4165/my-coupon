@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 public class CouponApplyTest {
@@ -37,7 +38,27 @@ public class CouponApplyTest {
         Coupon foundCoupon = couponService.retrieve(coupon.id);
 
         assertThat(foundCoupon.valid).isFalse();
-
     }
 
+    @DisplayName("없는 쿠폰을 사용하려고 하면 IllegalArgumentException 발생")
+    @Test
+    void test3() {
+        assertThatThrownBy(() -> {
+            couponService.apply("zilzu");
+        }).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("쿠폰이 존재하지만 valid가 false 일때 Exception 발생")
+    @Test
+    void test4() {
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+
+        Coupon coupon = couponService.create(couponRequest);
+        Coupon foundCoupon = couponService.retrieve(coupon.id);
+        couponService.apply(foundCoupon.id);  // valid false
+
+        assertThatThrownBy(() -> {
+            couponService.apply(coupon.id);
+        }).isInstanceOf(RuntimeException.class);
+    }
 }
