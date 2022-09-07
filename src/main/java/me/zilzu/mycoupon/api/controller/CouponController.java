@@ -57,7 +57,7 @@ public class CouponController {
         return new CouponDeletedResponse(deleteResult.deletedCouponId);
     }
 
-    @GetMapping("/api/v1/coupons/{id}/apply")
+    @PatchMapping("/api/v1/coupons/{id}/apply")
     public String applyCoupon(@PathVariable String id) {
         couponService.apply(id);
 
