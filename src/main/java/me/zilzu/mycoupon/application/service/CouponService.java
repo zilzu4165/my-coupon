@@ -113,9 +113,8 @@ public class CouponService {
             CouponEntity entity = new CouponEntity(foundCoupon.id, foundCoupon.duration, foundCoupon.durationInMonth, foundCoupon.couponCurrency,
                     foundCoupon.discountType, foundCoupon.amountOff, foundCoupon.percentOff, false, foundCoupon.createdTime);
 
-            couponRepository.setValidFalse(entity);
+            couponRepository.applyCoupon(entity);
         }
-
         return "사용됨";
     }
 }
