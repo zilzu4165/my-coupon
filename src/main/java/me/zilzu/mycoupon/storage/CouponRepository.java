@@ -68,7 +68,7 @@ public class CouponRepository {
         return database.remove(id);
     }
 
-    public void setValidFalse(CouponEntity entity) {
+    public void applyCoupon(CouponEntity entity) {
         database.put(entity.id, entity);
     }
 }
