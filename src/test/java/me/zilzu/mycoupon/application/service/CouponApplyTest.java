@@ -48,7 +48,7 @@ public class CouponApplyTest {
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("쿠폰이 존재하지만 valid가 false 일때 Exception 발생")
+    @DisplayName("Duration 이 ONCE인 쿠폰을 두번 사용하려고 하면 Exception 발생")
     @Test
     void test4() {
         CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
