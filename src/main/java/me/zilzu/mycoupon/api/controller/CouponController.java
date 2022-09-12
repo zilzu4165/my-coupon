@@ -57,12 +57,10 @@ public class CouponController {
         return new CouponDeletedResponse(deleteResult.deletedCouponId);
     }
 
-    @PatchMapping("/api/v1/coupons/{id}/apply")
+    @PostMapping("/api/v1/coupons/{id}/apply")
     public String applyCoupon(@PathVariable String id) {
         couponService.apply(id);
 
         return "쿠폰을 적용했습니다.";
     }
-
-
 }
