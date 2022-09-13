@@ -67,4 +67,10 @@ public class CouponRepository {
         }
         return database.remove(id);
     }
+
+    public void invalidate(String couponId) {
+        CouponEntity entity = database.get(couponId);
+        entity.valid = false;
+        database.put(entity.id, entity);
+    }
 }
