@@ -57,7 +57,7 @@ public class CouponController {
         return new CouponDeletedResponse(deleteResult.deletedCouponId);
     }
 
-    @PostMapping("/api/v1/coupons/{id}/apply")
+    @PostMapping("/api/트v1/coupons/{id}/apply")
     public String applyCoupon(@PathVariable String id) {
         couponService.apply(id);
         System.out.println("commit Test");
