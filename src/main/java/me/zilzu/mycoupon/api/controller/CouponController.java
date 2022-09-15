@@ -60,7 +60,7 @@ public class CouponController {
     @PostMapping("/api/v1/coupons/{id}/apply")
     public String applyCoupon(@PathVariable String id) {
         couponService.apply(id);
-
+        System.out.println("commit Test");
         return "쿠폰을 적용했습니다.";
     }
 
