@@ -5,6 +5,7 @@ import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
 import me.zilzu.mycoupon.storage.CouponRepository;
+import me.zilzu.mycoupon.storage.CouponUsageHistoryEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -92,6 +93,16 @@ public class CouponService {
         if (foundCoupon.duration == CouponDuration.ONCE) {
             couponRepository.invalidate(foundCoupon.id);
         }
+
+        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(foundCoupon.id, LocalDateTime.now());
+
+        couponRepository.saveCouponHistory(historyEntity);
+
         return "사용됨";
+    }
+
+    public CouponHistory retrieveCouponHistory(String id) {
+        CouponUsageHistoryEntity historyEntity = couponRepository.selectCouponHistory(id);
+        return new CouponHistory(historyEntity.id, historyEntity.usageTime);
     }
 }
