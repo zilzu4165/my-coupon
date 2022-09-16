@@ -8,15 +8,15 @@ import me.zilzu.mycoupon.common.enums.DiscountType;
 import java.time.LocalDateTime;
 
 public class CouponEntity {
-    public String id;
-    public CouponDuration duration;
-    public Integer durationInMonth;
-    public CouponCurrency couponCurrency;
-    public DiscountType discountType;
-    public Long amountOff;
-    public Double percentOff;
+    public final String id;
+    public final CouponDuration duration;
+    public final Integer durationInMonth;
+    public final CouponCurrency couponCurrency;
+    public final DiscountType discountType;
+    public final Long amountOff;
+    public final Double percentOff;
     public Boolean valid;
-    public LocalDateTime createdTime;
+    public final LocalDateTime createdTime;
 
     public CouponEntity(String id, CouponDuration duration, Integer durationInMonth, CouponCurrency couponCurrency, DiscountType discountType, Long amountOff, Double percentOff, Boolean valid, LocalDateTime createdTime) {
         this.id = id;
