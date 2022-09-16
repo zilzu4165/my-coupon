@@ -16,7 +16,6 @@ public class CouponEntity {
     public Long amountOff;
     public Double percentOff;
     public Boolean valid;
-    public Boolean valid;
     public LocalDateTime createdTime;
 
     public CouponEntity(String id, CouponDuration duration, Integer durationInMonth, CouponCurrency couponCurrency, DiscountType discountType, Long amountOff, Double percentOff, Boolean valid, LocalDateTime createdTime) {
