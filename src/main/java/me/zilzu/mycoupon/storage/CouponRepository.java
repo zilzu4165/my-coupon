@@ -15,7 +15,6 @@ import static java.util.Comparator.comparing;
 @Component
 public class CouponRepository {
     private Map<String, CouponEntity> database = new ConcurrentHashMap<>();  // db를 대체할 Map, 멀티쓰레드환경에서는 ConcurrentHashMap
-    private Map<String, CouponUsageHistoryEntity> historyManagementDatabase = new ConcurrentHashMap<>();
 
 
     public void save(CouponEntity coupon) {
@@ -74,17 +73,5 @@ public class CouponRepository {
         CouponEntity entity = database.get(couponId);
         entity.valid = false;
         database.put(entity.id, entity);
-    }
-
-    public void saveCouponHistory(CouponUsageHistoryEntity entity) {
-        historyManagementDatabase.put(entity.id, entity);
-    }
-
-    public CouponUsageHistoryEntity selectCouponHistory(String id) {
-        CouponUsageHistoryEntity historyEntity = historyManagementDatabase.get(id);
-        if (historyEntity == null) {
-            throw new IllegalArgumentException("해당하는 coupon id가 없습니다.");
-        }
-        return historyEntity;
     }
 }

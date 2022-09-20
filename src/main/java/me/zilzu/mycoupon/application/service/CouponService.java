@@ -4,6 +4,7 @@ import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
+import me.zilzu.mycoupon.storage.CouponHistoryRepository;
 import me.zilzu.mycoupon.storage.CouponRepository;
 import me.zilzu.mycoupon.storage.CouponUsageHistoryEntity;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,16 @@ public class CouponService {
     // 접근제어자는 가능한 좁게 만든다. 'private 부터 !' 좁은 상태 -> 넓은 상태 o , 넓은 상태 -> 좁은 상태 x
     // autowired 는 테스트 코드 x
     private final CouponRepository couponRepository; // final : 변수에 값이 반드시 한번 할당이 되어야한다.
+    private final CouponHistoryRepository couponHistoryRepository; // final : 변수에 값이 반드시 한번 할당이 되어야한다.
     private final CouponIdGenerate couponIdGenerate;
     private final CouponValidator couponValidator;
 
     public CouponService(CouponRepository couponRepository,
-                         CouponIdGenerate couponIdGenerate, CouponValidator couponValidator) {
+                         CouponHistoryRepository couponHistoryRepository,
+                         CouponIdGenerate couponIdGenerate,
+                         CouponValidator couponValidator) {
         this.couponRepository = couponRepository;
+        this.couponHistoryRepository = couponHistoryRepository;
         this.couponIdGenerate = couponIdGenerate;
         this.couponValidator = couponValidator;
     }
@@ -96,13 +101,13 @@ public class CouponService {
 
         CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(foundCoupon.id, LocalDateTime.now());
 
-        couponRepository.saveCouponHistory(historyEntity);
+        couponHistoryRepository.save(historyEntity);
 
         return "사용됨";
     }
 
-    public CouponHistory retrieveCouponHistory(String id) {
-        CouponUsageHistoryEntity historyEntity = couponRepository.selectCouponHistory(id);
+    public CouponHistory retrieveCouponHistory(String historyId) {
+        CouponUsageHistoryEntity historyEntity = couponHistoryRepository.selectCouponUsageHistory(historyId);
         return new CouponHistory(historyEntity.id, historyEntity.usageTime);
     }
 }
