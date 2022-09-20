@@ -17,7 +17,7 @@ public class CouponHistoryRepository {
     public CouponUsageHistoryEntity selectCouponUsageHistory(String historyId) {
         CouponUsageHistoryEntity historyEntity = historyManagementDatabase.get(historyId);
         if (historyEntity == null) {
-            throw new IllegalArgumentException("해당하는 coupon id가 없습니다.");
+            throw new IllegalArgumentException("해당 쿠폰 사용기록이 없습니다.");
         }
         return historyEntity;
     }
