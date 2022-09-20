@@ -14,8 +14,8 @@ public class CouponHistoryRepository {
         historyManagementDatabase.put(entity.id, entity);
     }
 
-    public CouponUsageHistoryEntity selectCouponUsageHistory(String id) {
-        CouponUsageHistoryEntity historyEntity = historyManagementDatabase.get(id);
+    public CouponUsageHistoryEntity selectCouponUsageHistory(String historyId) {
+        CouponUsageHistoryEntity historyEntity = historyManagementDatabase.get(historyId);
         if (historyEntity == null) {
             throw new IllegalArgumentException("해당하는 coupon id가 없습니다.");
         }
