@@ -5,11 +5,14 @@ import java.time.LocalDateTime;
 public class CouponUsageHistoryEntity {
 
     public String id;
-    //    public Integer usageCount;
+
+    public String refCouponId;
+
     public LocalDateTime usageTime;
 
-    public CouponUsageHistoryEntity(String id, LocalDateTime usageTime) {
+    public CouponUsageHistoryEntity(String id, String refCouponId, LocalDateTime usageTime) {
         this.id = id;
+        this.refCouponId = refCouponId;
         this.usageTime = usageTime;
     }
 }
