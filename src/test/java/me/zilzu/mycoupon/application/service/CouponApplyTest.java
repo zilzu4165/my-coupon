@@ -16,17 +16,6 @@ public class CouponApplyTest {
     @Autowired
     CouponService couponService;
 
-    @DisplayName("쿠폰을 사용하면 쿠폰이 사용되었다는 응답이 와야한다.")
-    @Test
-    void test1() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
-        Coupon coupon = couponService.create(couponRequest);
-
-        String apply = couponService.apply(coupon.id);
-
-        assertThat(apply).isEqualTo("사용됨");
-    }
-
     @DisplayName("duration이 ONCE 유형인 쿠폰은 사용후 valid가 false로 변경된다.")
     @Test
     void test2() {
