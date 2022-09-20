@@ -88,26 +88,25 @@ public class CouponService {
                 .collect(Collectors.toList());
     }
 
-    public String apply(String couponId) {
+    public CouponHistory apply(String couponId) {
         Coupon foundCoupon = retrieve(couponId);
 
         if (!foundCoupon.valid) {
             throw new RuntimeException("사용할 수 없는 쿠폰입니다.");
         }
-
         if (foundCoupon.duration == CouponDuration.ONCE) {
             couponRepository.invalidate(foundCoupon.id);
         }
 
-        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(foundCoupon.id, LocalDateTime.now());
+        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponIdGenerate.generate(), foundCoupon.id, LocalDateTime.now());
 
         couponHistoryRepository.save(historyEntity);
 
-        return "사용됨";
+        return new CouponHistory(historyEntity.id, historyEntity.refCouponId, historyEntity.usageTime);
     }
 
     public CouponHistory retrieveCouponHistory(String historyId) {
         CouponUsageHistoryEntity historyEntity = couponHistoryRepository.selectCouponUsageHistory(historyId);
-        return new CouponHistory(historyEntity.id, historyEntity.usageTime);
+        return new CouponHistory(historyEntity.id, historyEntity.refCouponId, historyEntity.usageTime);
     }
 }
