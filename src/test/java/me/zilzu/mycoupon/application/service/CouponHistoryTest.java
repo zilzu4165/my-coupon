@@ -22,11 +22,11 @@ public class CouponHistoryTest {
         CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
         Coupon coupon = couponService.create(couponRequest);
 
-        couponService.apply(coupon.id);
+        CouponHistory couponHistory = couponService.apply(coupon.id);
 
-        CouponHistory history = couponService.retrieveCouponHistory(coupon.id);
+        CouponHistory history = couponService.retrieveCouponHistory(couponHistory.id);
         assertThat(history).isNotNull();
-        assertThat(history.id).isEqualTo(coupon.id);
+        assertThat(history.refCouponId).isEqualTo(coupon.id);
     }
 
     @Test
@@ -35,5 +35,32 @@ public class CouponHistoryTest {
         assertThatThrownBy(() -> {
             couponService.retrieveCouponHistory("zilzu");
         }).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("couponDuration이 ONCE 인 쿠폰을 두 번 사용하려고 하면 RuntimeException 발생")
+    void test3() {
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+        Coupon coupon = couponService.create(couponRequest);
+
+        couponService.apply(coupon.id);
+
+        assertThatThrownBy(() -> {
+            couponService.apply(coupon.id);
+        }).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    @DisplayName("couponDuration이 ONCE가 아닌 쿠폰은 사용 할 때마다 couponHistory 테이블에 저장된다.")
+    void test4() {
+        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, null, DiscountType.AMOUNT, 1000L, null);
+        Coupon coupon = couponService.create(couponRequest);
+
+        CouponHistory couponHistory = couponService.apply(coupon.id);
+        CouponHistory couponHistory2 = couponService.apply(coupon.id);
+
+        CouponHistory foundCouponHistory1 = couponService.retrieveCouponHistory(couponHistory.id);
+        CouponHistory foundCouponHistory2 = couponService.retrieveCouponHistory(couponHistory2.id);
+        assertThat(foundCouponHistory1.refCouponId).isEqualTo(foundCouponHistory2.refCouponId);
     }
 }
