@@ -1,11 +1,10 @@
 package me.zilzu.mycoupon.application.service;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.RandomUtils;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CouponIdGenerate {
+public class CouponIdGenerator {
 
     private static final String CAPITAL_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private static final String NUMERIC = "0123456789";

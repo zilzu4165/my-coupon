@@ -20,16 +20,16 @@ public class CouponService {
     // autowired 는 테스트 코드 x
     private final CouponRepository couponRepository; // final : 변수에 값이 반드시 한번 할당이 되어야한다.
     private final CouponHistoryRepository couponHistoryRepository; // final : 변수에 값이 반드시 한번 할당이 되어야한다.
-    private final CouponIdGenerate couponIdGenerate;
+    private final CouponIdGenerator couponIdGenerator;
     private final CouponValidator couponValidator;
 
     public CouponService(CouponRepository couponRepository,
                          CouponHistoryRepository couponHistoryRepository,
-                         CouponIdGenerate couponIdGenerate,
+                         CouponIdGenerator couponIdGenerator,
                          CouponValidator couponValidator) {
         this.couponRepository = couponRepository;
         this.couponHistoryRepository = couponHistoryRepository;
-        this.couponIdGenerate = couponIdGenerate;
+        this.couponIdGenerator = couponIdGenerator;
         this.couponValidator = couponValidator;
     }
 
@@ -52,7 +52,7 @@ public class CouponService {
     }
 
     public Coupon createWithCurrency(CouponRequest couponRequest, CouponCurrency couponCurrency) {
-        String couponId = couponIdGenerate.generate();
+        String couponId = couponIdGenerator.generate();
 
         couponValidator.validate(couponRequest);
 
@@ -98,7 +98,7 @@ public class CouponService {
             couponRepository.invalidate(foundCoupon.id);
         }
 
-        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponIdGenerate.generate(), foundCoupon.id, LocalDateTime.now());
+        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponIdGenerator.generate(), foundCoupon.id, LocalDateTime.now());
 
         couponHistoryRepository.save(historyEntity);
 
