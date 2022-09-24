@@ -19,8 +19,8 @@ public class CouponApplyTest {
     @DisplayName("duration이 ONCE 유형인 쿠폰은 사용후 valid가 false로 변경된다.")
     @Test
     void test2() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
-        Coupon coupon = couponService.create(couponRequest);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+        Coupon coupon = couponService.create(couponCreationRequest);
 
         couponService.apply(coupon.id);
 
@@ -40,9 +40,9 @@ public class CouponApplyTest {
     @DisplayName("Duration 이 ONCE인 쿠폰을 두번 사용하려고 하면 Exception 발생")
     @Test
     void test4() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
 
-        Coupon coupon = couponService.create(couponRequest);
+        Coupon coupon = couponService.create(couponCreationRequest);
         Coupon foundCoupon = couponService.retrieve(coupon.id);
         couponService.apply(foundCoupon.id);  // valid false
 

@@ -24,8 +24,8 @@ public class CouponHistoryTest {
     @Test
     @DisplayName("쿠폰 사용시 쿠폰 사용을 저장하는 쿠폰 history 테이블에도 저장된다.")
     void test1() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
-        Coupon coupon = couponService.create(couponRequest);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+        Coupon coupon = couponService.create(couponCreationRequest);
 
         CouponApplicationResult couponHistory = couponService.apply(coupon.id);
         List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(couponHistory.couponId);
@@ -46,8 +46,8 @@ public class CouponHistoryTest {
     @Test
     @DisplayName("couponDuration이 ONCE 인 쿠폰을 두 번 사용하려고 하면 RuntimeException 발생")
     void test3() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
-        Coupon coupon = couponService.create(couponRequest);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+        Coupon coupon = couponService.create(couponCreationRequest);
 
         couponService.apply(coupon.id);
 
@@ -59,8 +59,8 @@ public class CouponHistoryTest {
     @Test
     @DisplayName("couponDuration이 ONCE가 아닌 쿠폰은 사용 할 때마다 couponHistory 테이블에 저장된다.")
     void test4() {
-        CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, null, DiscountType.AMOUNT, 1000L, null);
-        Coupon coupon = couponService.create(couponRequest);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.REPEATING, null, DiscountType.AMOUNT, 1000L, null);
+        Coupon coupon = couponService.create(couponCreationRequest);
 
         couponService.apply(coupon.id);
         couponService.apply(coupon.id);
