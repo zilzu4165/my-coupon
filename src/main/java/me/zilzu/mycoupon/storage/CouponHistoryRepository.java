@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.storage;
 
+import me.zilzu.mycoupon.common.CouponId;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -28,10 +29,10 @@ public class CouponHistoryRepository {
         return historyManagementDatabase.get(historyId);
     }
 
-    public List<CouponUsageHistoryEntity> find(String couponId) {
+    public List<CouponUsageHistoryEntity> find(CouponId couponId) {
         return historyManagementDatabase.values()
                 .stream()
-                .filter(coupon -> coupon.refCouponId.equals(couponId))
+                .filter(coupon -> coupon.refCouponId.equals(couponId.value))
                 .collect(Collectors.toList());
     }
 

@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -36,10 +37,8 @@ public class CouponDeleteTest {
         CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, null, null, null);
         couponService.create(couponRequest);
 
-        String notExistId = "ZILZU";
-
         assertThatThrownBy(() -> {
-            couponService.delete(notExistId);
+            couponService.delete(new CouponId("ZILZU"));
         }).isInstanceOf(RuntimeException.class);
 
     }

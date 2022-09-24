@@ -14,7 +14,7 @@ public class CouponCreatedResponse {
     public LocalDateTime createdTime;
 
     public CouponCreatedResponse(Coupon coupon) {
-        this.id = coupon.id;
+        this.id = coupon.id.value;
         this.couponCurrency = coupon.couponCurrency;
         this.duration = coupon.duration;
         this.createdTime = coupon.createdTime;

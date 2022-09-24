@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.storage.CouponRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ class CouponRepositoryTest {
     void test1() {
         CouponRepository sut = new CouponRepository();
         assertThatThrownBy(() -> {
-            sut.retrieve("12312323");
+            sut.retrieve(new CouponId("123"));
         }).isInstanceOf(Exception.class);
     }
 

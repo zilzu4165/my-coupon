@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
@@ -9,7 +10,7 @@ import java.util.Objects;
 
 public class Coupon {
 
-    public final String id;
+    public final CouponId id;
     public final CouponDuration duration;
     public final Integer durationInMonth;
     public final CouponCurrency couponCurrency;
@@ -19,7 +20,7 @@ public class Coupon {
     public final Boolean valid;
     public final LocalDateTime createdTime;
 
-    public Coupon(String id, CouponDuration duration, Integer durationInMonth, CouponCurrency couponCurrency, DiscountType discountType, Long amountOff, Double percentOff, Boolean valid, LocalDateTime createdTime) {
+    public Coupon(CouponId id, CouponDuration duration, Integer durationInMonth, CouponCurrency couponCurrency, DiscountType discountType, Long amountOff, Double percentOff, Boolean valid, LocalDateTime createdTime) {
         this.id = id;
         this.duration = duration;
         this.durationInMonth = durationInMonth;

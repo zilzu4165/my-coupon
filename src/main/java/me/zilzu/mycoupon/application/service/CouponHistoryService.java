@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.storage.CouponHistoryRepository;
 import me.zilzu.mycoupon.storage.CouponUsageHistoryEntity;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,14 @@ public class CouponHistoryService {
 
     public CouponHistory retrieveCouponHistory(String historyId) {
         CouponUsageHistoryEntity historyEntity = couponHistoryRepository.findCouponHistory(historyId);
-        return new CouponHistory(historyEntity.id, historyEntity.refCouponId, historyEntity.usageTime);
+        return new CouponHistory(historyEntity.id, new CouponId(historyEntity.refCouponId), historyEntity.usageTime);
     }
 
-    public List<CouponHistory> retrieveCouponHistoryList(String couponId) {
+    public List<CouponHistory> retrieveCouponHistoryList(CouponId couponId) {
         List<CouponUsageHistoryEntity> histories = couponHistoryRepository.find(couponId);
         return histories
                 .stream()
-                .map(entity -> new CouponHistory(entity.id, entity.refCouponId, entity.usageTime))
+                .map(entity -> new CouponHistory(entity.id, new CouponId(entity.refCouponId), entity.usageTime))
                 .collect(Collectors.toList());
     }
 }
