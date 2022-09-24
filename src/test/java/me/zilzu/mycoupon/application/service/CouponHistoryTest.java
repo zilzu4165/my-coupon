@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -26,10 +28,11 @@ public class CouponHistoryTest {
         Coupon coupon = couponService.create(couponRequest);
 
         CouponApplicationResult couponHistory = couponService.apply(coupon.id);
+        List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(couponHistory.couponId);
 
-        CouponHistory history = couponHistoryService.retrieveCouponHistory(couponHistory.couponId);
-        assertThat(history).isNotNull();
-        assertThat(history.refCouponId).isEqualTo(coupon.id);
+        assertThat(couponHistories.size()).isEqualTo(1);
+        assertThat(couponHistories.get(0)).isNotNull();
+        assertThat(couponHistories.get(0).refCouponId).isEqualTo(coupon.id);
     }
 
     @Test
@@ -59,11 +62,12 @@ public class CouponHistoryTest {
         CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, null, DiscountType.AMOUNT, 1000L, null);
         Coupon coupon = couponService.create(couponRequest);
 
-        CouponApplicationResult couponHistory = couponService.apply(coupon.id);
-        CouponApplicationResult couponHistory2 = couponService.apply(coupon.id);
+        couponService.apply(coupon.id);
+        couponService.apply(coupon.id);
 
-        CouponHistory foundCouponHistory1 = couponHistoryService.retrieveCouponHistory(couponHistory.couponId);
-        CouponHistory foundCouponHistory2 = couponHistoryService.retrieveCouponHistory(couponHistory2.couponId);
-        assertThat(foundCouponHistory1.refCouponId).isEqualTo(foundCouponHistory2.refCouponId);
+        List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(coupon.id);
+        assertThat(couponHistories.size()).isEqualTo(2);
+        assertThat(couponHistories.get(0).refCouponId).isEqualTo(coupon.id);
+        assertThat(couponHistories.get(1).refCouponId).isEqualTo(coupon.id);
     }
 }
