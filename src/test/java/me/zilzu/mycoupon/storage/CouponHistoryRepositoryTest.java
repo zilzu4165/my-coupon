@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.storage;
 
+import me.zilzu.mycoupon.common.CouponId;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,19 +16,19 @@ class CouponHistoryRepositoryTest {
     @DisplayName("couponId 에 해당하는 history가 없으면 길이가 0인 List를 반환한다.")
     void test1() {
         // given
-        sut.save(couponUsageHistoryEntity("id1", "zilzu"));
-        sut.save(couponUsageHistoryEntity("id1", "zilzu"));
-        sut.save(couponUsageHistoryEntity("id1", "zilzu"));
+        sut.save(couponUsageHistoryEntity("id1", new CouponId("zilzu")));
+        sut.save(couponUsageHistoryEntity("id1", new CouponId("zilzu")));
+        sut.save(couponUsageHistoryEntity("id1", new CouponId("zilzu")));
 
         // when
-        List<CouponUsageHistoryEntity> historyEntities = sut.find("park");
+        List<CouponUsageHistoryEntity> historyEntities = sut.find(new CouponId("park"));
 
         // then
         assertThat(historyEntities.size()).isEqualTo(0);
     }
 
-    private static CouponUsageHistoryEntity couponUsageHistoryEntity(String couponHistoryId, String refCouponId) {
-        return new CouponUsageHistoryEntity(couponHistoryId, refCouponId, LocalDateTime.now());
+    private static CouponUsageHistoryEntity couponUsageHistoryEntity(String couponHistoryId, CouponId refCouponId) {
+        return new CouponUsageHistoryEntity(couponHistoryId, refCouponId.value, LocalDateTime.now());
 
     }
 }

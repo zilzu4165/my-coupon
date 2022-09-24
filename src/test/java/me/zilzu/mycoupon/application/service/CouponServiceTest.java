@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class CouponServiceTest {
     @DisplayName("존재하지 않는 쿠폰을 조회할 때는 exception이 터진다. IllegalaragumentException")
     void test2() {
         assertThatThrownBy(() -> {
-            Coupon coupon = couponService.retrieve("12345678");
+            Coupon coupon = couponService.retrieve(new CouponId("12345678"));
             System.out.println("coupon = " + coupon);
         }).isInstanceOf(IllegalArgumentException.class);
     }

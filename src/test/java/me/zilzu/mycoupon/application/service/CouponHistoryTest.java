@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.CouponHistoryId;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +40,7 @@ public class CouponHistoryTest {
     @DisplayName("없는 쿠폰의 사용이력을 조회 하려고 하면 Exception 발생")
     void test2() {
         assertThatThrownBy(() -> {
-            couponHistoryService.retrieveCouponHistory("zilzu");
+            couponHistoryService.retrieveCouponHistory(new CouponHistoryId("zilzu"));
         }).isInstanceOf(IllegalArgumentException.class);
     }
 

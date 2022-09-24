@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +34,7 @@ public class CouponApplyTest {
     @Test
     void test3() {
         assertThatThrownBy(() -> {
-            couponService.apply("zilzu");
+            couponService.apply(new CouponId("zilzu"));
         }).isInstanceOf(IllegalArgumentException.class);
     }
 

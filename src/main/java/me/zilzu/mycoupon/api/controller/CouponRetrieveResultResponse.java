@@ -16,7 +16,7 @@ public class CouponRetrieveResultResponse {
     public final LocalDateTime createdTime;
 
     public CouponRetrieveResultResponse(Coupon coupon) {
-        this.id = coupon.id;
+        this.id = coupon.id.value;
         this.couponCurrency = coupon.couponCurrency;
         this.duration = coupon.duration;
         this.createdTime = coupon.createdTime;

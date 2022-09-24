@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.storage;
 
+import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import org.springframework.stereotype.Component;
 
@@ -18,15 +19,15 @@ public class CouponRepository {
 
 
     public void save(CouponEntity coupon) {
-        if (database.containsKey(coupon.id)) {
+        if (database.containsKey(coupon.id.value)) {
             throw new RuntimeException("Duplicate key");
         }
-        database.put(coupon.id, coupon);
+        database.put(coupon.id.value, coupon);
     }
 
 
-    public CouponEntity retrieve(String id) {
-        CouponEntity coupon = database.get(id);
+    public CouponEntity retrieve(CouponId id) {
+        CouponEntity coupon = database.get(id.value);
         if (coupon == null) {
             throw new IllegalArgumentException("해당하는 coupon id가 없습니다.");
         }
@@ -57,21 +58,20 @@ public class CouponRepository {
                             .reversed())
                     .limit(limit)
                     .collect(Collectors.toList());
-
         }
         return sortedCoupons;
     }
 
-    public CouponEntity delete(String id) {
-        if (!database.containsKey(id)) {
+    public CouponEntity delete(CouponId id) {
+        if (!database.containsKey(id.value)) {
             throw new RuntimeException("존재하지 않는 id 입니다.");
         }
-        return database.remove(id);
+        return database.remove(id.value);
     }
 
-    public void invalidate(String couponId) {
-        CouponEntity entity = database.get(couponId);
+    public void invalidate(CouponId couponId) {
+        CouponEntity entity = database.get(couponId.value);
         entity.valid = false;
-        database.put(entity.id, entity);
+        database.put(entity.id.value, entity);
     }
 }

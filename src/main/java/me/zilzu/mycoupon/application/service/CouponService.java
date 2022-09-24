@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
@@ -26,13 +27,12 @@ public class CouponService {
                          CouponValidator couponValidator,
                          CouponHistoryRecorder couponHistoryRecorder) {
         this.couponRepository = couponRepository;
-        // final : 변수에 값이 반드시 한번 할당이 되어야한다.
         this.couponIdGenerator = couponIdGenerator;
         this.couponValidator = couponValidator;
         this.couponHistoryRecorder = couponHistoryRecorder;
     }
 
-    public Coupon retrieve(String id) {
+    public Coupon retrieve(CouponId id) {
         CouponEntity entity = couponRepository.retrieve(id);
         return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
     }
@@ -41,7 +41,7 @@ public class CouponService {
         List<Coupon> coupons = new ArrayList<>();
 
         for (int i = 0; i < limit; i++) {
-            coupons.add(new Coupon("Z4OV52SU", null, null, null, null, null, null, null, LocalDateTime.now()));
+            coupons.add(new Coupon(new CouponId("Z4OV52SU"), null, null, null, null, null, null, null, LocalDateTime.now()));
         }
         return coupons;
     }
@@ -55,13 +55,13 @@ public class CouponService {
 
         couponValidator.validate(couponRequest);
 
-        CouponEntity entity = new CouponEntity(couponId, couponRequest.duration, couponRequest.durationInMonths, couponCurrency, couponRequest.discountType, couponRequest.amountOff, couponRequest.percentOff, true, LocalDateTime.now());
+        CouponEntity entity = new CouponEntity(new CouponId(couponId), couponRequest.duration, couponRequest.durationInMonths, couponCurrency, couponRequest.discountType, couponRequest.amountOff, couponRequest.percentOff, true, LocalDateTime.now());
         couponRepository.save(entity);
 
         return new Coupon(entity.id, entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
     }
 
-    public CouponDeleteResult delete(String id) {
+    public CouponDeleteResult delete(CouponId id) {
         CouponEntity deletedCouponEntity = couponRepository.delete(id);
         return new CouponDeleteResult(deletedCouponEntity.id);
 
@@ -87,8 +87,8 @@ public class CouponService {
                 .collect(Collectors.toList());
     }
 
-    public CouponApplicationResult apply(String couponId) {
-        Coupon foundCoupon = retrieve(couponId);
+    public CouponApplicationResult apply(CouponId id) {
+        Coupon foundCoupon = retrieve(id);
 
         if (!foundCoupon.valid) {
             throw notUsableCouponException();
@@ -100,7 +100,7 @@ public class CouponService {
 
         CouponHistory history = couponHistoryRecorder.record(foundCoupon.id);
 
-        return new CouponApplicationResult(couponId, history.usageTime);
+        return new CouponApplicationResult(id, history.usageTime);
     }
 
     private static RuntimeException notUsableCouponException() {
