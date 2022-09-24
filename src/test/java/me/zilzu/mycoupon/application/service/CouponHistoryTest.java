@@ -16,15 +16,18 @@ public class CouponHistoryTest {
     @Autowired
     CouponService couponService;
 
+    @Autowired
+    CouponHistoryService couponHistoryService;
+
     @Test
     @DisplayName("쿠폰 사용시 쿠폰 사용을 저장하는 쿠폰 history 테이블에도 저장된다.")
     void test1() {
         CouponRequest couponRequest = new CouponRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
         Coupon coupon = couponService.create(couponRequest);
 
-        CouponHistory couponHistory = couponService.apply(coupon.id);
+        CouponApplicationResult couponHistory = couponService.apply(coupon.id);
 
-        CouponHistory history = couponService.retrieveCouponHistory(couponHistory.id);
+        CouponHistory history = couponHistoryService.retrieveCouponHistory(couponHistory.couponId);
         assertThat(history).isNotNull();
         assertThat(history.refCouponId).isEqualTo(coupon.id);
     }
@@ -33,7 +36,7 @@ public class CouponHistoryTest {
     @DisplayName("없는 쿠폰의 사용이력을 조회 하려고 하면 Exception 발생")
     void test2() {
         assertThatThrownBy(() -> {
-            couponService.retrieveCouponHistory("zilzu");
+            couponHistoryService.retrieveCouponHistory("zilzu");
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -56,11 +59,11 @@ public class CouponHistoryTest {
         CouponRequest couponRequest = new CouponRequest(CouponDuration.REPEATING, null, DiscountType.AMOUNT, 1000L, null);
         Coupon coupon = couponService.create(couponRequest);
 
-        CouponHistory couponHistory = couponService.apply(coupon.id);
-        CouponHistory couponHistory2 = couponService.apply(coupon.id);
+        CouponApplicationResult couponHistory = couponService.apply(coupon.id);
+        CouponApplicationResult couponHistory2 = couponService.apply(coupon.id);
 
-        CouponHistory foundCouponHistory1 = couponService.retrieveCouponHistory(couponHistory.id);
-        CouponHistory foundCouponHistory2 = couponService.retrieveCouponHistory(couponHistory2.id);
+        CouponHistory foundCouponHistory1 = couponHistoryService.retrieveCouponHistory(couponHistory.couponId);
+        CouponHistory foundCouponHistory2 = couponHistoryService.retrieveCouponHistory(couponHistory2.couponId);
         assertThat(foundCouponHistory1.refCouponId).isEqualTo(foundCouponHistory2.refCouponId);
     }
 }
