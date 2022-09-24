@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.storage;
 
+import me.zilzu.mycoupon.common.CouponHistoryId;
 import me.zilzu.mycoupon.common.CouponId;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +18,8 @@ public class CouponHistoryRepository {
         historyManagementDatabase.put(entity.id, entity);
     }
 
-    public CouponUsageHistoryEntity findCouponHistory(String historyId) {
-        CouponUsageHistoryEntity historyEntity = historyManagementDatabase.get(historyId);
+    public CouponUsageHistoryEntity findCouponHistory(CouponHistoryId historyId) {
+        CouponUsageHistoryEntity historyEntity = historyManagementDatabase.get(historyId.value);
         if (historyEntity == null) {
             throw new IllegalArgumentException("해당 쿠폰 사용기록이 없습니다.");
         }

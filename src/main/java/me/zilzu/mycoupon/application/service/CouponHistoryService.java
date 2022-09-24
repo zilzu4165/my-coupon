@@ -1,5 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.CouponHistoryId;
 import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.storage.CouponHistoryRepository;
 import me.zilzu.mycoupon.storage.CouponUsageHistoryEntity;
@@ -17,7 +18,7 @@ public class CouponHistoryService {
         this.couponHistoryRepository = couponHistoryRepository;
     }
 
-    public CouponHistory retrieveCouponHistory(String historyId) {
+    public CouponHistory retrieveCouponHistory(CouponHistoryId historyId) {
         CouponUsageHistoryEntity historyEntity = couponHistoryRepository.findCouponHistory(historyId);
         return new CouponHistory(historyEntity.id, new CouponId(historyEntity.refCouponId), historyEntity.usageTime);
     }
