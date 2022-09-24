@@ -1,13 +1,14 @@
 package me.zilzu.mycoupon;
 
+import me.zilzu.mycoupon.application.service.CouponIdGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class CouponIdGenerateTest {
-    String generatedId = new me.zilzu.mycoupon.application.service.CouponIdGenerate().generate();
+public class CouponIdGeneratorTest {
+    String generatedId = new CouponIdGenerator().generate();
 
     @Test
     @RepeatedTest(100)

@@ -16,6 +16,7 @@ import static java.util.Comparator.comparing;
 public class CouponRepository {
     private Map<String, CouponEntity> database = new ConcurrentHashMap<>();  // db를 대체할 Map, 멀티쓰레드환경에서는 ConcurrentHashMap
 
+
     public void save(CouponEntity coupon) {
         if (database.containsKey(coupon.id)) {
             throw new RuntimeException("Duplicate key");
@@ -66,5 +67,11 @@ public class CouponRepository {
             throw new RuntimeException("존재하지 않는 id 입니다.");
         }
         return database.remove(id);
+    }
+
+    public void invalidate(String couponId) {
+        CouponEntity entity = database.get(couponId);
+        entity.valid = false;
+        database.put(entity.id, entity);
     }
 }
