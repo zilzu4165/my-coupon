@@ -160,16 +160,6 @@ public class CouponCreateTest {
         assertThat(retrieve.percentOff).isEqualTo(coupon.percentOff);
     }
 
-    @DisplayName("쿠폰 생성시 DiscountType이 AMOUNT 일 때, percentOff 에 값이 존재하면 IllegalArgumentException을 발생시킨다.")
-    @Test
-    void test13() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.REPEATING, 3, DiscountType.AMOUNT, 1000L, 1000.0);
-
-        assertThatThrownBy(() ->
-                couponService.create(couponCreationRequest)
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("쿠폰 생성시 DiscountType이 PERCENTAGE 일 때, percentOff 에 값이 존재해야한다.")
     @Test
     void test14() {
