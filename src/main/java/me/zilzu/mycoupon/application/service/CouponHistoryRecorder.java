@@ -10,17 +10,17 @@ import java.time.LocalDateTime;
 @Component
 public class CouponHistoryRecorder {
 
-    private final CouponIdGenerator couponIdGenerator;
+    private final CouponHistoryIdGenerator couponHistoryIdGenerator;
     private final CouponHistoryRepository couponHistoryRepository;
 
-    public CouponHistoryRecorder(CouponIdGenerator couponIdGenerator,
+    public CouponHistoryRecorder(CouponHistoryIdGenerator couponHistoryIdGenerator,
                                  CouponHistoryRepository couponHistoryRepository) {
-        this.couponIdGenerator = couponIdGenerator;
+        this.couponHistoryIdGenerator = couponHistoryIdGenerator;
         this.couponHistoryRepository = couponHistoryRepository;
     }
 
     public CouponHistory record(CouponId couponId) {
-        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponIdGenerator.generate(), couponId.value, LocalDateTime.now());
+        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponHistoryIdGenerator.generate(), couponId.value, LocalDateTime.now());
         couponHistoryRepository.save(historyEntity);
 
         return new CouponHistory(historyEntity.id, new CouponId(historyEntity.refCouponId), historyEntity.usageTime);
