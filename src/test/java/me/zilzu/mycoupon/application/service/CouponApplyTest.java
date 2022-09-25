@@ -35,7 +35,7 @@ public class CouponApplyTest {
     void test3() {
         assertThatThrownBy(() -> {
             couponService.apply(new CouponId("zilzu"));
-        }).isInstanceOf(IllegalArgumentException.class);
+        }).isInstanceOf(Exception.class);
     }
 
     @DisplayName("Duration 이 ONCE인 쿠폰을 두번 사용하려고 하면 Exception 발생")
