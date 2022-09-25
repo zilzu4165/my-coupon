@@ -6,16 +6,15 @@ import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
 import me.zilzu.mycoupon.storage.NewCouponRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static java.util.Comparator.comparing;
 
 @Service
 public class CouponService {
@@ -84,22 +83,16 @@ public class CouponService {
     }
 
     public List<Coupon> findRecentlyCreatedCoupon(Integer limit, SortingOrder sortedBy) {
-        List<CouponEntity> couponEntities = newCouponRepository.findAll();
         List<CouponEntity> sortedCoupons = new ArrayList<>();
 
         if (sortedBy == SortingOrder.ASC) {
-            sortedCoupons = couponEntities
-                    .stream()
-                    .sorted(comparing(entity -> entity.createdTime))
-                    .limit(limit)
-                    .collect(Collectors.toList());
+            sortedCoupons = newCouponRepository
+                    .findAll(PageRequest.of(0, limit, Sort.by(Sort.Order.asc("createdTime"))))
+                    .getContent();
         } else if (sortedBy == SortingOrder.DESC) {
-            sortedCoupons = couponEntities
-                    .stream()
-                    .sorted(comparing((Function<CouponEntity, LocalDateTime>) couponEntity -> couponEntity.createdTime)
-                            .reversed())
-                    .limit(limit)
-                    .collect(Collectors.toList());
+            sortedCoupons = newCouponRepository
+                    .findAll(PageRequest.of(0, limit, Sort.by(Sort.Order.desc("createdTime"))))
+                    .getContent();
         }
 
         return sortedCoupons.stream()
