@@ -1,8 +1,8 @@
 package me.zilzu.mycoupon.api.controller;
 
 import me.zilzu.mycoupon.application.service.Coupon;
+import me.zilzu.mycoupon.application.service.CouponCreationRequest;
 import me.zilzu.mycoupon.application.service.CouponDeleteResult;
-import me.zilzu.mycoupon.application.service.CouponRequest;
 import me.zilzu.mycoupon.application.service.CouponService;
 import me.zilzu.mycoupon.common.CouponId;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +47,7 @@ public class CouponController {
 
     @PostMapping("/api/v1/coupons")
     public CouponCreatedResponse createCoupons(@RequestBody CouponRequestDto couponRequestDto) {
-        Coupon coupon = couponService.create(new CouponRequest(couponRequestDto.duration, couponRequestDto.durationInMonths, couponRequestDto.discountType, couponRequestDto.amountOff, couponRequestDto.percentOff));
+        Coupon coupon = couponService.create(new CouponCreationRequest(couponRequestDto.duration, couponRequestDto.durationInMonths, couponRequestDto.discountType, couponRequestDto.amountOff, couponRequestDto.percentOff));
 
         return new CouponCreatedResponse(coupon);
     }
