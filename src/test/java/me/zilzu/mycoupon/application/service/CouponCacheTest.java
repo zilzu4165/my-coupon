@@ -2,7 +2,7 @@ package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ class CouponCacheTest {
     @Autowired
     CouponService sut;
 
-    @AfterEach
+    @BeforeEach
     void emptyCoupon() {
         sut.emptyCoupon();
     }

@@ -4,7 +4,7 @@ import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,7 +28,7 @@ public class CouponCreateTest {
     @Autowired
     CouponService couponService;
 
-    @AfterEach
+    @BeforeEach
     void emptyCoupon() {
         couponService.emptyCoupon();
     }

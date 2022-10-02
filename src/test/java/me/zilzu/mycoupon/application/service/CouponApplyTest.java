@@ -3,7 +3,7 @@ package me.zilzu.mycoupon.application.service;
 import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class CouponApplyTest {
     @Autowired
     CouponService couponService;
 
-    @AfterEach
+    @BeforeEach
     void emptyCoupon() {
         couponService.emptyCoupon();
     }

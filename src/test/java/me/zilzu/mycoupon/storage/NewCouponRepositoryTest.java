@@ -2,7 +2,7 @@ package me.zilzu.mycoupon.storage;
 
 import me.zilzu.mycoupon.application.service.CouponService;
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ class NewCouponRepositoryTest {
     @Autowired
     private CouponService couponService;
 
-    @AfterEach
+    @BeforeEach
     void couponEmpty() {
         couponService.emptyCoupon();
     }
