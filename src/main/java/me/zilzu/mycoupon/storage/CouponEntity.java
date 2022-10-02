@@ -38,4 +38,19 @@ public class CouponEntity {
         this.valid = valid;
         this.createdTime = createdTime;
     }
+
+    @Override
+    public String toString() {
+        return "CouponEntity{" +
+                "id='" + id + '\'' +
+                ", duration=" + duration +
+                ", durationInMonth=" + durationInMonth +
+                ", couponCurrency=" + couponCurrency +
+                ", discountType=" + discountType +
+                ", amountOff=" + amountOff +
+                ", percentOff=" + percentOff +
+                ", valid=" + valid +
+                ", createdTime=" + createdTime +
+                '}';
+    }
 }
