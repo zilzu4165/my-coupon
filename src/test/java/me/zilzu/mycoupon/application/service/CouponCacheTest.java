@@ -16,7 +16,7 @@ class CouponCacheTest {
     CouponService sut;
 
     @Test
-    @DisplayName("")
+    @DisplayName("Coupon이 Cache에 저장되는지 확인한다.")
     void test() {
         CouponCreationRequest request = new CouponCreationRequest(
                 CouponDuration.REPEATING
