@@ -6,6 +6,7 @@ import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
 import me.zilzu.mycoupon.storage.NewCouponRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -36,6 +37,7 @@ public class CouponService {
         this.newCouponRepository = newCouponRepository;
     }
 
+    @Cacheable(value = "Coupon", key = "#id")
     public Coupon retrieve(CouponId id) {
         CouponEntity entity = newCouponRepository.findById(id.value).get();
         return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
