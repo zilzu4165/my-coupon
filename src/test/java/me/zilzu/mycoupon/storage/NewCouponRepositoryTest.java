@@ -1,8 +1,12 @@
+package me.zilzu.mycoupon.storage;
+
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class NewCouponRepositoryTest {
@@ -38,16 +42,6 @@ class NewCouponRepositoryTest {
     }
 
     private static CouponEntity couponEntity(String id, boolean valid, CouponCurrency currency) {
-        return new CouponEntity(
-                id,
-                null,
-                null,
-                currency,
-                null,
-                null,
-                null,
-                valid,
-                null
-        );
+        return new CouponEntity(id, null, null, currency, null, null, null, valid, null);
     }
 }
