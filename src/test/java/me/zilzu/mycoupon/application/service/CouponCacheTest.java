@@ -2,6 +2,7 @@ package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,12 @@ class CouponCacheTest {
 
     @Autowired
     CouponService sut;
+
+    @AfterEach
+    void emptyCoupon() {
+        sut.emptyCoupon();
+    }
+
 
     @Test
     @DisplayName("Coupon이 Cache에 저장되는지 확인한다.")
@@ -29,8 +36,8 @@ class CouponCacheTest {
 
         Coupon foundCouponFromDB = sut.retrieve(coupon.id);
         Coupon foundsCouponFromCache = sut.retrieve(coupon.id);
+        System.out.println(coupon.id);
 
         assertThat(foundsCouponFromCache.id).isEqualTo(foundCouponFromDB.id);
-
     }
 }
