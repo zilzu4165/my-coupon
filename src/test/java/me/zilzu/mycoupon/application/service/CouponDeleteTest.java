@@ -28,7 +28,7 @@ public class CouponDeleteTest {
 
         assertThatThrownBy(() -> {
             couponService.retrieve(coupon.id);
-        }).isInstanceOf(IllegalArgumentException.class);
+        }).isInstanceOf(Exception.class);
     }
 
     @Test
