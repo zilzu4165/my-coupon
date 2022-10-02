@@ -5,10 +5,11 @@ import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Coupon {
+public class Coupon implements Serializable {
 
     public final CouponId id;
     public final CouponDuration duration;
@@ -56,6 +57,16 @@ public class Coupon {
 
     @Override
     public String toString() {
-        return "Coupon{" + "id='" + id + '\'' + ", duration='" + duration + '\'' + ", couponCurrency=" + couponCurrency + ", createdTime=" + createdTime + '}';
+        return "Coupon{" +
+                "id=" + id +
+                ", duration=" + duration +
+                ", durationInMonth=" + durationInMonth +
+                ", couponCurrency=" + couponCurrency +
+                ", discountType=" + discountType +
+                ", amountOff=" + amountOff +
+                ", percentOff=" + percentOff +
+                ", valid=" + valid +
+                ", createdTime=" + createdTime +
+                '}';
     }
 }

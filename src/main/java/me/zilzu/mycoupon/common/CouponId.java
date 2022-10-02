@@ -1,8 +1,9 @@
 package me.zilzu.mycoupon.common;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class CouponId {
+public class CouponId implements Serializable {
     public final String value;
 
     public CouponId(String value) {
