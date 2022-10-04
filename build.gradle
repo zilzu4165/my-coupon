@@ -17,6 +17,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.7.2'
 
+    testImplementation(group: 'it.ozimov', name: 'embedded-redis', version: '0.7.3') { exclude group: "org.slf4j", module: "slf4j-simple" }
+
 
     runtimeOnly 'com.h2database:h2:2.1.214'
 
