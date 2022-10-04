@@ -44,8 +44,11 @@ public class CouponCreateTest {
     @DisplayName("100명의 유저가 동시에 총 10000개의 쿠폰을 생성한다. -1")
     void testRunnable() throws InterruptedException {
         createCoupons(10000, 100);
+
+
         // Test Worker Thread
         System.out.println("Thread.currentThread().getName() = " + Thread.currentThread().getName());
+        Thread.sleep(2000);
         assertThat(couponService.getAllCouponSize()).isEqualTo(10000);
     }
 
@@ -148,7 +151,6 @@ public class CouponCreateTest {
     }
 
 
-
     @DisplayName("쿠폰 생성시 valid 는 true로 생성되어야 한다.")
     @Test
     void test17() {
@@ -173,7 +175,6 @@ public class CouponCreateTest {
             });
         }
         executorService.shutdown();
-        Thread.sleep(1000);
     }
 
     private void createCoupons(int count) throws InterruptedException {
