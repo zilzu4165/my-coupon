@@ -7,6 +7,7 @@ import me.zilzu.mycoupon.application.service.CouponService;
 import me.zilzu.mycoupon.common.CouponId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,7 +30,7 @@ public class CouponController {
     }
 
     @GetMapping("/api/v1/coupons")
-    public Page<CouponRetrieveResultResponse> retrieveListCoupons(Pageable pageable) {
+    public Page<CouponRetrieveResultResponse> retrieveListCoupons(@PageableDefault(sort = "createdTime") Pageable pageable) {
         Page<Coupon> coupons = couponService.retrieveList(pageable);
         Page<CouponRetrieveResultResponse> couponRetrieveResultResponsePage = coupons.map(coupon -> new CouponRetrieveResultResponse(coupon));
 
