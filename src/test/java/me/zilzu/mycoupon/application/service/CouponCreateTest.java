@@ -15,9 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -164,17 +167,19 @@ public class CouponCreateTest {
         assertThat(foundCoupon.valid).isTrue();
     }
 
-    private void createCoupons(int count, int nThreads) throws InterruptedException {
-
+    public void createCoupons(int count, int nThreads) throws InterruptedException {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null);
 
         ExecutorService executorService = Executors.newFixedThreadPool(nThreads); // threadPoolSize 100
 
-        for (int i = 0; i < count; i++) {
-            executorService.submit(() -> {
-                couponService.create(couponCreationRequest);
-            });
-        }
+        List<CompletableFuture> futures = IntStream.range(0, count)
+                .boxed()
+                .map(target ->
+                        CompletableFuture.runAsync(() ->
+                                couponService.create(couponCreationRequest), executorService))
+                .collect(Collectors.toList());
+
+        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
         executorService.shutdown();
     }
 
