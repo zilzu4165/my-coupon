@@ -7,6 +7,8 @@ import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
 import me.zilzu.mycoupon.storage.NewCouponRepository;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -43,12 +45,10 @@ public class CouponService {
         return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
     }
 
-    public List<Coupon> retrieveList(Integer limit) {
-        List<Coupon> coupons = new ArrayList<>();
+    public Page<Coupon> retrieveList(Pageable pageable) {
+        Page<CouponEntity> foundAll = newCouponRepository.findAll(pageable);
+        Page<Coupon> coupons = foundAll.map(couponEntity -> new Coupon(new CouponId(couponEntity.id), couponEntity.duration, couponEntity.durationInMonth, couponEntity.couponCurrency, couponEntity.discountType, couponEntity.amountOff, couponEntity.percentOff, couponEntity.valid, couponEntity.createdTime));
 
-        for (int i = 0; i < limit; i++) {
-            coupons.add(new Coupon(new CouponId("Z4OV52SU"), null, null, null, null, null, null, null, LocalDateTime.now()));
-        }
         return coupons;
     }
 

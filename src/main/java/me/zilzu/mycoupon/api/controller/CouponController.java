@@ -5,11 +5,9 @@ import me.zilzu.mycoupon.application.service.CouponCreationRequest;
 import me.zilzu.mycoupon.application.service.CouponDeleteResult;
 import me.zilzu.mycoupon.application.service.CouponService;
 import me.zilzu.mycoupon.common.CouponId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class CouponController {
@@ -31,18 +29,11 @@ public class CouponController {
     }
 
     @GetMapping("/api/v1/coupons")
-    public CouponRetrieveListResponse retrieveListCoupons(HttpServletRequest request,
-                                                          @RequestParam Integer limit) {
+    public Page<CouponRetrieveResultResponse> retrieveListCoupons(Pageable pageable) {
+        Page<Coupon> coupons = couponService.retrieveList(pageable);
+        Page<CouponRetrieveResultResponse> couponRetrieveResultResponsePage = coupons.map(coupon -> new CouponRetrieveResultResponse(coupon));
 
-        String requestURI = request.getRequestURI();
-
-        List<Coupon> coupons = couponService.retrieveList(limit);
-
-        List<CouponRetrieveResultResponse> couponListResults = coupons
-                .stream()
-                .map(CouponRetrieveResultResponse::new)
-                .collect(Collectors.toList());
-        return new CouponRetrieveListResponse("list", requestURI, false, couponListResults);
+        return couponRetrieveResultResponsePage;
     }
 
     @PostMapping("/api/v1/coupons")
