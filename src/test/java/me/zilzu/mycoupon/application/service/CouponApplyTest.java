@@ -3,6 +3,7 @@ package me.zilzu.mycoupon.application.service;
 import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,11 @@ public class CouponApplyTest {
 
     @Autowired
     CouponService couponService;
+
+    @BeforeEach
+    void emptyCoupon() {
+        couponService.emptyCoupon();
+    }
 
     @DisplayName("duration이 ONCE 유형인 쿠폰은 사용후 valid가 false로 변경된다.")
     @Test
@@ -35,7 +41,7 @@ public class CouponApplyTest {
     void test3() {
         assertThatThrownBy(() -> {
             couponService.apply(new CouponId("zilzu"));
-        }).isInstanceOf(IllegalArgumentException.class);
+        }).isInstanceOf(Exception.class);
     }
 
     @DisplayName("Duration 이 ONCE인 쿠폰을 두번 사용하려고 하면 Exception 발생")

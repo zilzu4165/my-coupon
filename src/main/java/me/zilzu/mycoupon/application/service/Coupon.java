@@ -5,10 +5,11 @@ import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Coupon {
+public class Coupon implements Serializable {
 
     public final CouponId id;
     public final CouponDuration duration;

@@ -4,7 +4,7 @@ import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,7 +28,7 @@ public class CouponCreateTest {
     @Autowired
     CouponService couponService;
 
-    @AfterEach
+    @BeforeEach
     void emptyCoupon() {
         couponService.emptyCoupon();
     }
@@ -37,6 +37,7 @@ public class CouponCreateTest {
     @DisplayName("쿠폰 100개가 동시에 생성됐을 때, 100개가 정상적으로 생성된다. ")
     void test1() throws InterruptedException {
         createCoupons(100, 100);
+        Thread.sleep(10000);
         assertThat(couponService.getAllCouponSize()).isEqualTo(100);
     }
 
@@ -44,8 +45,11 @@ public class CouponCreateTest {
     @DisplayName("100명의 유저가 동시에 총 10000개의 쿠폰을 생성한다. -1")
     void testRunnable() throws InterruptedException {
         createCoupons(10000, 100);
+
+
         // Test Worker Thread
         System.out.println("Thread.currentThread().getName() = " + Thread.currentThread().getName());
+        Thread.sleep(10000);
         assertThat(couponService.getAllCouponSize()).isEqualTo(10000);
     }
 
@@ -148,7 +152,6 @@ public class CouponCreateTest {
     }
 
 
-
     @DisplayName("쿠폰 생성시 valid 는 true로 생성되어야 한다.")
     @Test
     void test17() {
@@ -173,7 +176,6 @@ public class CouponCreateTest {
             });
         }
         executorService.shutdown();
-        Thread.sleep(1000);
     }
 
     private void createCoupons(int count) throws InterruptedException {
