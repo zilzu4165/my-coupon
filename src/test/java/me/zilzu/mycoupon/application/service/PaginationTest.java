@@ -1,6 +1,7 @@
 package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.enums.CouponDuration;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,11 @@ public class PaginationTest {
     @Autowired
     CouponService couponService;
 
+    @BeforeEach
+    public void emptyCoupon() {
+        couponService.emptyCoupon();
+    }
+
     @Test
     @DisplayName("쿠폰 생성시각 기준으로 페이징 조회")
     void test1() throws InterruptedException {
@@ -38,8 +44,6 @@ public class PaginationTest {
         assertThat(coupons.getTotalPages()).isEqualTo(20);
         assertThat(coupons.getTotalElements()).isEqualTo(100);
         assertThat(firstCoupon.createdTime).isBefore(lastCoupon.createdTime);
-
-
     }
 
     private void createCoupons(int count, int nThreads) {
