@@ -20,11 +20,12 @@ dependencies {
     testImplementation(group: 'it.ozimov', name: 'embedded-redis', version: '0.7.3') { exclude group: "org.slf4j", module: "slf4j-simple" }
 
 
-    runtimeOnly 'com.h2database:h2:2.1.214'
+    runtimeOnly 'com.h2database:h2'
 
+    testImplementation 'org.mockito:mockito-core'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-
+//    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+    implementation 'org.apache.commons:commons-lang3'
 }
 
 tasks.named('test') {
