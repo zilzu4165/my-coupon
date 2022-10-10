@@ -8,7 +8,8 @@ import me.zilzu.mycoupon.storage.CouponEntity;
 import me.zilzu.mycoupon.storage.NewCouponRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -45,11 +46,10 @@ public class CouponService {
         return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
     }
 
-    public Page<Coupon> retrieveList(Pageable pageable) {
-        Page<CouponEntity> foundAll = newCouponRepository.findAll(pageable);
-        Page<Coupon> coupons = foundAll.map(couponEntity -> new Coupon(new CouponId(couponEntity.id), couponEntity.duration, couponEntity.durationInMonth, couponEntity.couponCurrency, couponEntity.discountType, couponEntity.amountOff, couponEntity.percentOff, couponEntity.valid, couponEntity.createdTime));
-
-        return coupons;
+    public Page<Coupon> retrieveList(Integer page, Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdTime"));
+        Page<CouponEntity> foundAll = newCouponRepository.findAll(pageRequest);
+        return foundAll.map(couponEntity -> new Coupon(new CouponId(couponEntity.id), couponEntity.duration, couponEntity.durationInMonth, couponEntity.couponCurrency, couponEntity.discountType, couponEntity.amountOff, couponEntity.percentOff, couponEntity.valid, couponEntity.createdTime));
     }
 
     public Coupon create(CouponCreationRequest couponCreationRequest) {

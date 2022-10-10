@@ -40,5 +40,4 @@ class CouponServiceTest {
             System.out.println("coupon = " + coupon);
         }).isInstanceOf(Exception.class);
     }
-
 }

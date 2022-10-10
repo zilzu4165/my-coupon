@@ -7,13 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -32,18 +33,20 @@ public class PaginationTest {
 
     @Test
     @DisplayName("쿠폰 생성시각 기준으로 페이징 조회")
-    void test1() throws InterruptedException {
+    void test1() {
         createCoupons(100, 100);
-        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by("createdTime"));
-        Page<Coupon> coupons = couponService.retrieveList(pageRequest);
-// why failed??
-        List<Coupon> couponList = coupons.getContent();
-        Coupon firstCoupon = couponList.get(0);
-        Coupon lastCoupon = couponList.get(4);
+        Page<Coupon> coupons = couponService.retrieveList(0, 5);
 
         assertThat(coupons.getTotalPages()).isEqualTo(20);
         assertThat(coupons.getTotalElements()).isEqualTo(100);
-        assertThat(firstCoupon.createdTime).isBefore(lastCoupon.createdTime);
+        assertThat(coupons.getContent()).hasSize(5);
+
+        List<Coupon> newSortedCoupons = coupons.getContent()
+                .stream()
+                .sorted(Comparator.comparing((Function<Coupon, LocalDateTime>) coupon -> coupon.createdTime).reversed())
+                .collect(Collectors.toList());
+
+        assertThat(coupons.getContent()).containsSequence(newSortedCoupons);
     }
 
     private void createCoupons(int count, int nThreads) {
