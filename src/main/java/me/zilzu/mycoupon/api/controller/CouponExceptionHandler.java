@@ -14,11 +14,16 @@ public class CouponExceptionHandler {
         final String DEFAULT_MESSAGE = "알 수 없는 서버 오류가 발생했습니다.";
 
         CouponExceptionResponse couponExceptionResponse = new CouponExceptionResponse(DEFAULT_ERROR, DEFAULT_MESSAGE);
-
-        if (exception instanceof IllegalArgumentException) {
-            couponExceptionResponse = new CouponExceptionResponse("INVALID_COUPON_CREATION_REQUEST", "쿠폰 생성 규칙에 알맞지 않습니다.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(couponExceptionResponse);
-        }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(couponExceptionResponse);
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<CouponExceptionResponse> handleIllegalArgumentException(RuntimeException exception) {
+        final String DEFAULT_ERROR = "INVALID_COUPON_CREATION_REQUEST";
+        final String DEFAULT_MESSAGE = "쿠폰 생성 규칙에 알맞지 않습니다.";
+
+        CouponExceptionResponse couponExceptionResponse = new CouponExceptionResponse(DEFAULT_ERROR, DEFAULT_MESSAGE);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(couponExceptionResponse);
+    }
+
 }
