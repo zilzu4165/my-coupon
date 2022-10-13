@@ -15,4 +15,13 @@ public class CouponUsageHistoryEntity {
         this.refCouponId = refCouponId;
         this.usageTime = usageTime;
     }
+
+    @Override
+    public String toString() {
+        return "CouponUsageHistoryEntity{" +
+                "id='" + id + '\'' +
+                ", refCouponId='" + refCouponId + '\'' +
+                ", usageTime=" + usageTime +
+                '}';
+    }
 }
