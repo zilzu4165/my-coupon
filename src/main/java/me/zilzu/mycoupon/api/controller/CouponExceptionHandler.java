@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class CouponExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<CouponExceptionResponse> handleNoSuchElementFoundException(RuntimeException exception) {
+    public ResponseEntity<CouponExceptionResponse> handleRuntimeException(RuntimeException exception) {
         final String DEFAULT_ERROR = "INTERNAL_ERROR";
         final String DEFAULT_MESSAGE = "알 수 없는 서버 오류가 발생했습니다.";
 
