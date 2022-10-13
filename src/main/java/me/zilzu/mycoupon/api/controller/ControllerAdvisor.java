@@ -1,6 +1,6 @@
 package me.zilzu.mycoupon.api.controller;
 
-import me.zilzu.mycoupon.application.service.CouponValidException;
+import me.zilzu.mycoupon.application.service.CouponCreationValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,11 +24,10 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
         return new ExceptionResponse(HttpStatus.BAD_REQUEST.toString(), illegalArgumentException.getMessage());
     }
 
-    @ExceptionHandler(CouponValidException.class)
+    @ExceptionHandler(CouponCreationValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ExceptionResponse exceptionCheck() {
-        final String ERROR = "INVALID_COUPON_CREATION_REQUEST";
-        final String MESSAGE = "쿠폰 생성 규칙에 알맞지 않습니다.";
-        return new ExceptionResponse(ERROR, MESSAGE);
+    public ExceptionResponse exceptionCheck(CouponCreationValidationException couponCreationValidationException) {
+        final String error = "INVALID_COUPON_CREATION_REQUEST";
+        return new ExceptionResponse(error, couponCreationValidationException.getMessage());
     }
 }
