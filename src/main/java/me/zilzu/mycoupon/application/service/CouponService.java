@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,12 @@ public class CouponService {
 
     @Cacheable(value = "Coupon", key = "#id")
     public Coupon retrieve(CouponId id) {
-        CouponEntity entity = newCouponRepository.findById(id.value).get();
+        CouponEntity entity;
+        try {
+            entity = newCouponRepository.findById(id.value).get();
+        } catch (IllegalArgumentException | NoSuchElementException exception) {
+            throw new CouponIdNotFoundException(id.value);
+        }
         return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
     }
 
