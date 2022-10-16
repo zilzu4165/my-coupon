@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,13 @@ public class CouponService {
 
     @Cacheable(value = "Coupon", key = "#id")
     public Coupon retrieve(CouponId id) {
-        CouponEntity entity = newCouponRepository.findById(id.value).get();
+        Optional<CouponEntity> foundCouponEntity = newCouponRepository.findById(id.value);
+
+        if (foundCouponEntity.isEmpty()) {
+            throw new RuntimeException("coupon id : " + id + "조회결과가 없습니다.");
+        }
+
+        CouponEntity entity = foundCouponEntity.get();
         return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
     }
 
