@@ -1,6 +1,5 @@
 package me.zilzu.mycoupon.configuration;
 
-import me.zilzu.mycoupon.storage.CouponEntity;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,7 +19,6 @@ public class AopConfig {
         // @Before
         StringBuffer sb = new StringBuffer();
         sb.append("@Before\n");
-//            sb.append("[target] :: " + pjp.getTarget() + "\n");
         sb.append("[Method] :: [" + pjp.getSignature().getName() + "] :: " + pjp.getSignature() + "\n");
         sb.append("[Parameter] :: " + Arrays.toString(pjp.getArgs()) + "\n");
 
@@ -34,12 +32,7 @@ public class AopConfig {
             // 클래스 캐스팅
             if (((Optional<?>) result).isPresent()) {
                 Object o = ((Optional<?>) result).get();
-                if (o instanceof Collection) {
-                    sb.append("result count :: " + ((Collection<?>) o).size() + "\n");
-                }
-                if (o instanceof CouponEntity) {
-                    sb.append("CouponEntity :: " + o + "\n");
-                }
+                    sb.append("Object :: " + o + "\n");
             }
         } else if (result instanceof Collection) {
             sb.append("result count :: " + ((Collection<?>) result).size() + "\n");
