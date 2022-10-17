@@ -32,7 +32,7 @@ public class AopConfig {
             // 클래스 캐스팅
             if (((Optional<?>) result).isPresent()) {
                 Object o = ((Optional<?>) result).get();
-                    sb.append("Object :: " + o + "\n");
+                sb.append("Object :: " + o + "\n");
             }
         } else if (result instanceof Collection) {
             sb.append("result count :: " + ((Collection<?>) result).size() + "\n");
