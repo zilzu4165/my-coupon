@@ -1,1 +1,23 @@
-GET http://localhost:8080/api/v1/coupons?limit=3
+GET http://localhost:8080/api/v1/coupons/Z123ASD
+
+
+
+### coupon 생성 (amount)
+POST http://localhost:8080/api/v1/coupons
+Content-Type: application/json
+
+{"duration":"REPEATING","duration_in_months":3, "discount_type":"AMOUNT", "amount_off":15000,"percent_off":""}
+
+
+### coupon 생성 (percentage)
+POST http://localhost:8080/api/v1/coupons
+Content-Type: application/json
+
+{"duration":"REPEATING","duration_in_months":1, "discount_type":"PERCENTAGE", "amount_off": "","percent_off": 32.5 }
+
+
+### coupon apply 고도화
+POST http://localhost:8080/api/v1/coupons/V30OR8DV/apply
+Content-Type: application/json
+
+{"prduct_name":"2022 임영웅 연말 콘서트 티켓","price":145000.0, "quantity":1, "currency":"KRW"}

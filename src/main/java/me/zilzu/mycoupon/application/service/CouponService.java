@@ -31,14 +31,18 @@ public class CouponService {
     private final CouponValidator couponValidator;
     private final CouponHistoryRecorder couponHistoryRecorder;
     private final NewCouponRepository newCouponRepository;
+    private final CouponHistoryService couponHistoryService;
 
     public CouponService(CouponIdGenerator couponIdGenerator,
                          CouponValidator couponValidator,
-                         CouponHistoryRecorder couponHistoryRecorder, NewCouponRepository newCouponRepository) {
+                         CouponHistoryRecorder couponHistoryRecorder,
+                         NewCouponRepository newCouponRepository,
+                         CouponHistoryService couponHistoryService) {
         this.couponIdGenerator = couponIdGenerator;
         this.couponValidator = couponValidator;
         this.couponHistoryRecorder = couponHistoryRecorder;
         this.newCouponRepository = newCouponRepository;
+        this.couponHistoryService = couponHistoryService;
     }
 
     @Cacheable(value = "Coupon", key = "#id")
@@ -120,7 +124,6 @@ public class CouponService {
     @Transactional
     public CouponApplicationResult apply(CouponId id) {
         Coupon foundCoupon = retrieve(id);
-
         if (!foundCoupon.valid) {
             throw notUsableCouponException();
         }
@@ -137,5 +140,30 @@ public class CouponService {
 
     private static RuntimeException notUsableCouponException() {
         throw new RuntimeException("사용할 수 없는 쿠폰입니다.");
+    }
+
+    @Transactional
+    public CouponHistory apply(CouponId couponId, Double price) {
+        if (price < 0) throw new IllegalArgumentException("잘못된 가격입니다. 가격은 0보다 작을 수 없습니다.");
+
+        Coupon foundCoupon = retrieve(couponId);
+        if (!foundCoupon.valid) {
+            throw notUsableCouponException();
+        }
+
+        if (foundCoupon.duration == CouponDuration.ONCE) {
+            CouponEntity entity = newCouponRepository.findById(foundCoupon.id.value).get();
+            entity.valid = false;
+        }
+
+        Double discountedPrice = 0.0;
+        if (Optional.ofNullable(foundCoupon.amountOff).isPresent()) {
+            discountedPrice = Double.valueOf(foundCoupon.amountOff);
+            if (foundCoupon.amountOff > price) discountedPrice = price;
+
+        } else if (Optional.ofNullable(foundCoupon.percentOff).isPresent()) {
+            discountedPrice = price * (foundCoupon.percentOff / 100);
+        }
+        return couponHistoryService.saveApplicationHistory(couponId, price, discountedPrice);
     }
 }

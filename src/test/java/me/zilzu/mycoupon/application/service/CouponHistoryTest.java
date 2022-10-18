@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -28,8 +29,8 @@ public class CouponHistoryTest {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
 
-        CouponApplicationResult couponHistory = couponService.apply(coupon.id);
-        List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(couponHistory.couponId);
+        CouponHistory couponHistory = couponService.apply(coupon.id, 200.0);
+        List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(couponHistory.refCouponId);
 
         assertThat(couponHistories.size()).isEqualTo(1);
         assertThat(couponHistories.get(0)).isNotNull();
@@ -41,7 +42,7 @@ public class CouponHistoryTest {
     void test2() {
         assertThatThrownBy(() -> {
             couponHistoryService.retrieveCouponHistory(new CouponHistoryId("zilzu"));
-        }).isInstanceOf(IllegalArgumentException.class);
+        }).isInstanceOf(NoSuchElementException.class);
     }
 
     @Test
@@ -63,8 +64,8 @@ public class CouponHistoryTest {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.REPEATING, null, DiscountType.AMOUNT, 1000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
 
-        couponService.apply(coupon.id);
-        couponService.apply(coupon.id);
+        couponService.apply(coupon.id, 150.0);
+        couponService.apply(coupon.id, 150.0);
 
         List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(coupon.id);
         assertThat(couponHistories.size()).isEqualTo(2);
