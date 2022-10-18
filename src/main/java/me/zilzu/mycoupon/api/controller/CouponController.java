@@ -53,7 +53,7 @@ public class CouponController {
 
     @PostMapping("/api/v1/coupons/{id}/apply")
     public String applyCoupon(@PathVariable String id) {
-        couponService.apply(new CouponId(id));
+//        couponService.apply(new CouponId(id));
         return "쿠폰을 적용했습니다.";
     }
 
