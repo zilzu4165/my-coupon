@@ -23,6 +23,6 @@ public class CouponHistoryRecorder {
         CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponHistoryIdGenerator.generate(), couponId.value, LocalDateTime.now());
         couponHistoryRepository.save(historyEntity);
 
-        return new CouponHistory(historyEntity.id, new CouponId(historyEntity.refCouponId), historyEntity.usageTime);
+        return new CouponHistory(historyEntity.id, new CouponId(historyEntity.refCouponId), historyEntity.usageTime, null, null);
     }
 }
