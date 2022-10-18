@@ -27,8 +27,8 @@ public class CouponHistoryTest {
     void test1() {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
-
-        CouponApplicationResult couponHistory = couponService.apply(coupon.id);
+        Double price = 1000d;
+        CouponApplicationResult couponHistory = couponService.apply(coupon.id, price);
         List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(couponHistory.couponId);
 
         assertThat(couponHistories.size()).isEqualTo(1);
@@ -47,13 +47,13 @@ public class CouponHistoryTest {
     @Test
     @DisplayName("couponDuration이 ONCE 인 쿠폰을 두 번 사용하려고 하면 RuntimeException 발생")
     void test3() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 10000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
-
-        couponService.apply(coupon.id);
+        Double price = 1000d;
+        couponService.apply(coupon.id, price);
 
         assertThatThrownBy(() -> {
-            couponService.apply(coupon.id);
+            couponService.apply(coupon.id, price);
         }).isInstanceOf(RuntimeException.class);
     }
 
@@ -62,9 +62,9 @@ public class CouponHistoryTest {
     void test4() {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.REPEATING, null, DiscountType.AMOUNT, 1000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
-
-        couponService.apply(coupon.id);
-        couponService.apply(coupon.id);
+        Double price = 1000d;
+        couponService.apply(coupon.id, price);
+        couponService.apply(coupon.id, price);
 
         List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(coupon.id);
         assertThat(couponHistories.size()).isEqualTo(2);

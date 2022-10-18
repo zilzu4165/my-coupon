@@ -3,6 +3,7 @@ package me.zilzu.mycoupon.application.service;
 import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
+import me.zilzu.mycoupon.common.enums.DiscountType;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
 import me.zilzu.mycoupon.storage.NewCouponRepository;
@@ -118,7 +119,7 @@ public class CouponService {
     }
 
     @Transactional
-    public CouponApplicationResult apply(CouponId id) {
+    public CouponApplicationResult apply(CouponId id, Double price) {
         Coupon foundCoupon = retrieve(id);
 
         if (!foundCoupon.valid) {
@@ -129,10 +130,21 @@ public class CouponService {
             CouponEntity entity = newCouponRepository.findById(foundCoupon.id.value).get();
             entity.valid = false;
         }
+        Double discountedPrice = getDiscountedPrice(price, foundCoupon);
 
-        CouponHistory history = couponHistoryRecorder.record(foundCoupon.id);
+        CouponHistory history = couponHistoryRecorder.record(foundCoupon.id, price, discountedPrice);
 
         return new CouponApplicationResult(id, history.usageTime);
+    }
+
+    private static Double getDiscountedPrice(Double price, Coupon foundCoupon) {
+        Double discountedPrice = null;
+        if (foundCoupon.discountType == DiscountType.AMOUNT) {
+            discountedPrice = price - foundCoupon.amountOff;
+        } else if (foundCoupon.discountType == DiscountType.PERCENTAGE) {
+            discountedPrice = price * (foundCoupon.percentOff / 100);
+        }
+        return discountedPrice;
     }
 
     private static RuntimeException notUsableCouponException() {
