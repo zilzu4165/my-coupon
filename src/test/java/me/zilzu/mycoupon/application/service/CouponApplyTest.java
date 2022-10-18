@@ -96,7 +96,7 @@ public class CouponApplyTest {
 
         for (CouponHistory couponHistory : couponHistories) {
             assertThat(couponHistory.price).isEqualTo(price);
-            assertThat(couponHistory.discountedPrice).isEqualTo(1000);
+            assertThat(couponHistory.discountedPrice).isEqualTo(9000);
             assertThat(couponHistory.couponCurrency).isEqualTo(CouponCurrency.KRW); // 기본통화는 KRW
         }
     }

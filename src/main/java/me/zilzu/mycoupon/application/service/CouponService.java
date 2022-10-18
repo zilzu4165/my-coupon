@@ -1,9 +1,9 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.CouponDiscountAmountCalculator;
 import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
-import me.zilzu.mycoupon.common.enums.DiscountType;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
 import me.zilzu.mycoupon.storage.NewCouponRepository;
@@ -29,14 +29,16 @@ public class CouponService {
     // autowired 는 테스트 코드 x
     // final : 변수에 값이 반드시 한번 할당이 되어야한다.
     private final CouponIdGenerator couponIdGenerator;
+    private final CouponDiscountAmountCalculator couponDiscountAmountCalculator;
     private final CouponValidator couponValidator;
     private final CouponHistoryRecorder couponHistoryRecorder;
     private final NewCouponRepository newCouponRepository;
 
     public CouponService(CouponIdGenerator couponIdGenerator,
-                         CouponValidator couponValidator,
+                         CouponDiscountAmountCalculator couponDiscountAmountCalculator, CouponValidator couponValidator,
                          CouponHistoryRecorder couponHistoryRecorder, NewCouponRepository newCouponRepository) {
         this.couponIdGenerator = couponIdGenerator;
+        this.couponDiscountAmountCalculator = couponDiscountAmountCalculator;
         this.couponValidator = couponValidator;
         this.couponHistoryRecorder = couponHistoryRecorder;
         this.newCouponRepository = newCouponRepository;
@@ -130,22 +132,13 @@ public class CouponService {
             CouponEntity entity = newCouponRepository.findById(foundCoupon.id.value).get();
             entity.valid = false;
         }
-        Double discountedPrice = getDiscountedPrice(price, foundCoupon);
+        Double discountedPrice = couponDiscountAmountCalculator.getDiscountedPrice(price, foundCoupon);
 
         CouponHistory history = couponHistoryRecorder.record(foundCoupon.id, price, discountedPrice);
 
         return new CouponApplicationResult(id, history.usageTime);
     }
 
-    private static Double getDiscountedPrice(Double price, Coupon foundCoupon) {
-        Double discountedPrice = null;
-        if (foundCoupon.discountType == DiscountType.AMOUNT) {
-            discountedPrice = price - foundCoupon.amountOff;
-        } else if (foundCoupon.discountType == DiscountType.PERCENTAGE) {
-            discountedPrice = price * (foundCoupon.percentOff / 100);
-        }
-        return discountedPrice;
-    }
 
     private static RuntimeException notUsableCouponException() {
         throw new RuntimeException("사용할 수 없는 쿠폰입니다.");
