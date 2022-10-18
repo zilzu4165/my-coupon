@@ -20,14 +20,14 @@ public class CouponHistoryService {
 
     public CouponHistory retrieveCouponHistory(CouponHistoryId historyId) {
         CouponUsageHistoryEntity historyEntity = couponHistoryRepository.findCouponHistory(historyId);
-        return new CouponHistory(historyEntity.id, new CouponId(historyEntity.refCouponId), historyEntity.usageTime, historyEntity.price, historyEntity.discountedPrice);
+        return new CouponHistory(historyEntity.id, new CouponId(historyEntity.refCouponId), historyEntity.usageTime, historyEntity.couponCurrency, historyEntity.price, historyEntity.discountedPrice);
     }
 
     public List<CouponHistory> retrieveCouponHistoryList(CouponId couponId) {
         List<CouponUsageHistoryEntity> histories = couponHistoryRepository.find(couponId);
         return histories
                 .stream()
-                .map(entity -> new CouponHistory(entity.id, new CouponId(entity.refCouponId), entity.usageTime, entity.price, entity.discountedPrice))
+                .map(entity -> new CouponHistory(entity.id, new CouponId(entity.refCouponId), entity.usageTime, entity.couponCurrency, entity.price, entity.discountedPrice))
                 .collect(Collectors.toList());
     }
 }

@@ -1,6 +1,7 @@
 package me.zilzu.mycoupon.storage;
 
 import me.zilzu.mycoupon.common.CouponId;
+import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ class CouponHistoryRepositoryTest {
     }
 
     private static CouponUsageHistoryEntity couponUsageHistoryEntity(String couponHistoryId, CouponId refCouponId, Double price, Double discountedPrice) {
-        return new CouponUsageHistoryEntity(couponHistoryId, refCouponId.value, LocalDateTime.now(), price, discountedPrice);
+        return new CouponUsageHistoryEntity(couponHistoryId, refCouponId.value, LocalDateTime.now(), CouponCurrency.KRW, price, discountedPrice);
 
     }
 }

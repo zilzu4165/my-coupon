@@ -1,6 +1,7 @@
 package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.CouponId;
+import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.storage.CouponHistoryRepository;
 import me.zilzu.mycoupon.storage.CouponUsageHistoryEntity;
 import org.springframework.stereotype.Component;
@@ -20,9 +21,13 @@ public class CouponHistoryRecorder {
     }
 
     public CouponHistory record(CouponId couponId, Double price, Double discountedPrice) {
-        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponHistoryIdGenerator.generate(), couponId.value, LocalDateTime.now(), price, discountedPrice);
+        return record(couponId, price, discountedPrice, CouponCurrency.KRW);
+    }
+
+    public CouponHistory record(CouponId couponId, Double price, Double discountedPrice, CouponCurrency couponCurrency) {
+        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponHistoryIdGenerator.generate(), couponId.value, LocalDateTime.now(), CouponCurrency.KRW, price, discountedPrice);
         couponHistoryRepository.save(historyEntity);
 
-        return new CouponHistory(historyEntity.id, new CouponId(historyEntity.refCouponId), historyEntity.usageTime, price, discountedPrice);
+        return new CouponHistory(historyEntity.id, new CouponId(historyEntity.refCouponId), historyEntity.usageTime, historyEntity.couponCurrency, price, discountedPrice);
     }
 }

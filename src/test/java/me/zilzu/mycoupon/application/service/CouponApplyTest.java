@@ -1,7 +1,7 @@
 package me.zilzu.mycoupon.application.service;
 
-import me.zilzu.mycoupon.common.CouponHistoryId;
 import me.zilzu.mycoupon.common.CouponId;
+import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,22 +65,20 @@ public class CouponApplyTest {
     }
 
     @Test
-    @DisplayName("쿠폰 history 에 할인된 가격이 표시된다.DiscountType AMOUNT 일 때")
+    @DisplayName("쿠폰 history 에 할인된 가격이 표시된다. DiscountType AMOUNT 일 때")
     void test5() {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 10000L, null);
 
         Coupon coupon = couponService.create(couponCreationRequest);
-        Coupon foundCoupon = couponService.retrieve(coupon.id);
 
-        double price = 1000d;
-        couponService.apply(foundCoupon.id, price);
+        Double price = 20000d;
+        couponService.apply(coupon.id, price);
 
-        List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(foundCoupon.id);
+        List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(coupon.id);
 
         for (CouponHistory couponHistory : couponHistories) {
-            CouponHistory foundCouponHistory = couponHistoryService.retrieveCouponHistory(new CouponHistoryId(couponHistory.id));
-            assertThat(foundCouponHistory.price).isEqualTo(price);
-            assertThat(foundCouponHistory.discountedPrice).isEqualTo(price - foundCoupon.amountOff);
+            assertThat(couponHistory.price).isEqualTo(price);
+            assertThat(couponHistory.discountedPrice).isEqualTo(10000);
         }
     }
 
@@ -90,17 +88,16 @@ public class CouponApplyTest {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.PERCENTAGE, null, 10d);
 
         Coupon coupon = couponService.create(couponCreationRequest);
-        Coupon foundCoupon = couponService.retrieve(coupon.id);
 
-        double price = 10d;
-        couponService.apply(foundCoupon.id, price);
+        Double price = 10000d;
+        couponService.apply(coupon.id, price);
 
-        List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(foundCoupon.id);
+        List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(coupon.id);
 
         for (CouponHistory couponHistory : couponHistories) {
-            CouponHistory foundCouponHistory = couponHistoryService.retrieveCouponHistory(new CouponHistoryId(couponHistory.id));
-            assertThat(foundCouponHistory.price).isEqualTo(price);
-            assertThat(foundCouponHistory.discountedPrice).isEqualTo(price * foundCoupon.percentOff / 100);
+            assertThat(couponHistory.price).isEqualTo(price);
+            assertThat(couponHistory.discountedPrice).isEqualTo(1000);
+            assertThat(couponHistory.couponCurrency).isEqualTo(CouponCurrency.KRW); // 기본통화는 KRW
         }
     }
 }
