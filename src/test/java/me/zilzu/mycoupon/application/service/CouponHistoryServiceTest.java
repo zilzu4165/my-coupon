@@ -4,7 +4,6 @@ import me.zilzu.mycoupon.common.CouponHistoryId;
 import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.DiscountType;
-import me.zilzu.mycoupon.storage.CouponUsageHistoryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,6 @@ class CouponHistoryServiceTest {
     CouponService couponService;
     @Autowired
     CouponHistoryService couponHistoryService;
-    @Autowired
-    CouponUsageHistoryRepository couponUsageHistoryRepository;
     @Autowired
     CouponDiscountAmountCalculator couponDiscountAmountCalculator;
 
@@ -43,12 +40,9 @@ class CouponHistoryServiceTest {
 
         System.out.println("==== evaluate discounted price");
         Double price = 175.5; //USD
-        CouponHistory applyAmount = couponService.saveCouponHistory(coupon01.id, price,
-                couponDiscountAmountCalculator.calculate(coupon01, price));
-        CouponHistory applyPercent = couponService.saveCouponHistory(coupon02.id, price,
-                couponDiscountAmountCalculator.calculate(coupon02, price));
-        CouponHistory applyAmountOver = couponService.saveCouponHistory(coupon03.id, price,
-                couponDiscountAmountCalculator.calculate(coupon03, price));
+        CouponHistory applyAmount = couponService.saveCouponHistory(coupon01, price, couponDiscountAmountCalculator.calculate(coupon01, price));
+        CouponHistory applyPercent = couponService.saveCouponHistory(coupon02, price, couponDiscountAmountCalculator.calculate(coupon02, price));
+        CouponHistory applyAmountOver = couponService.saveCouponHistory(coupon03, price, couponDiscountAmountCalculator.calculate(coupon03, price));
         assertThat(applyAmount.discountedPrice).isEqualTo(70L);
         assertThat(applyPercent.discountedPrice).isEqualTo(65.19825);
         assertThat(applyAmountOver.discountedPrice).isEqualTo(price);
@@ -70,14 +64,18 @@ class CouponHistoryServiceTest {
         assertThat(result03).isNotNull();
         //findAll로 테스트 하는 것은 프로젝트 통합테스트 시 오류가 발생!
         //assertThat(couponUsageHistoryRepository.findAll()).hasSize(3);
+    }
 
-        System.out.println("==== evaluate repeatable coupon data in DB");
+    @Test
+    @DisplayName("반복 가능한 쿠폰 사용시 쿠폰 사용이력에 해당 쿠폰id로 n 건수가 저장되는지 확인")
+    void repeatable_coupon_apply_history() {
+        Double price = 255.5;
         CouponCreationRequest requestRepeat = new CouponCreationRequest(CouponDuration.REPEATING, 1, DiscountType.AMOUNT, 25L, null);
-        Coupon coupon04 = couponService.create(requestRepeat);
-        couponService.apply(coupon04.id, price);
-        couponService.apply(coupon04.id, price);
-        couponService.apply(coupon04.id, price);
-        List<CouponHistory> sameCouponHistories = couponHistoryService.retrieveCouponHistoryList(coupon04.id);
+        Coupon repeatableCoupon = couponService.create(requestRepeat);
+        couponService.apply(repeatableCoupon.id, price);
+        couponService.apply(repeatableCoupon.id, price);
+        couponService.apply(repeatableCoupon.id, price);
+        List<CouponHistory> sameCouponHistories = couponHistoryService.retrieveCouponHistoryList(repeatableCoupon.id);
         assertThat(sameCouponHistories).hasSize(3);
         Set<String> historyIdSet = sameCouponHistories.stream().map(couponHistory -> couponHistory.id).collect(Collectors.toSet());
         assertThat(historyIdSet).hasSize(3);

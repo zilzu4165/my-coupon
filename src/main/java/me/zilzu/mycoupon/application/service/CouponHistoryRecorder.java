@@ -18,11 +18,4 @@ public class CouponHistoryRecorder {
         this.couponHistoryIdGenerator = couponHistoryIdGenerator;
         this.couponHistoryRepository = couponHistoryRepository;
     }
-
-    public CouponHistory record(CouponId couponId) {
-        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponHistoryIdGenerator.generate(), couponId.value, LocalDateTime.now());
-        couponHistoryRepository.save(historyEntity);
-
-        return new CouponHistory(historyEntity.id, new CouponId(historyEntity.refCouponId), historyEntity.usageTime, null, null);
-    }
 }

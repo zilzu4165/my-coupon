@@ -37,9 +37,9 @@ public class CouponHistoryService {
     }
 
     @Transactional
-    public CouponHistory saveApplicationHistory(CouponId couponId, Double price, Double discountedPrice) {
-        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponHistoryIdGenerator.generate(), couponId.value, LocalDateTime.now(), price, discountedPrice);
+    public CouponHistory saveApplicationHistory(Coupon coupon, Double price, Double discountedPrice) {
+        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponHistoryIdGenerator.generate(), coupon.id.value, LocalDateTime.now(), price, discountedPrice, coupon.couponCurrency.name());
         couponUsageHistoryRepository.save(historyEntity);
-        return new CouponHistory(historyEntity.id, couponId, historyEntity.usageTime, historyEntity.price, historyEntity.discountedPrice);
+        return new CouponHistory(historyEntity.id, coupon.id, historyEntity.usageTime, historyEntity.price, historyEntity.discountedPrice);
     }
 }
