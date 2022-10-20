@@ -19,7 +19,7 @@ public class CouponDeleteTest {
     @Test
     @DisplayName("쿠폰의 ID값이 주어졌을 때, 해당 ID 값에 해당하는 쿠폰을 repository에서 삭제한다. 존재하지 않는 쿠폰을 조회하면 Exception 발생시킨다.")
     public void test1() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null, null);
         Coupon coupon = couponService.create(couponCreationRequest);
 
         CouponDeleteResult deletedCoupon = couponService.delete(coupon.id);
@@ -34,7 +34,7 @@ public class CouponDeleteTest {
     @Test
     @DisplayName("존재하지 않는 쿠폰 ID값을 삭제하려하면 Exception을 발생시킨다.")
     public void test2() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null, null);
         couponService.create(couponCreationRequest);
 
         assertThatThrownBy(() -> {

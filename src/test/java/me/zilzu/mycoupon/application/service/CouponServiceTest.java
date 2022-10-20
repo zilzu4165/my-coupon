@@ -24,7 +24,7 @@ class CouponServiceTest {
 
     @Test
     void coupon_create_and_retrieve_test() {
-        CouponCreationRequest request = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null);
+        CouponCreationRequest request = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null, null);
         Coupon coupon = couponService.create(request);
 
         Coupon retrievedCoupon = couponService.retrieve(coupon.id);

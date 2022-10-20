@@ -17,7 +17,7 @@ class CouponDiscountAmountCalculatorTest {
     @Test
     @DisplayName("DiscountType이 AMOUNT일 경우 amount양 만큼 계산된다.")
     void test1() {
-        Double discountedPrice = sut.getDiscountedPrice(10000d, createCoupon(DiscountType.AMOUNT, 1000L, null));
+        Double discountedPrice = sut.getDiscountedPrice(createCoupon(DiscountType.AMOUNT, 1000L, null), 10000d);
 
         assertThat(discountedPrice).isEqualTo(9000);
     }
@@ -25,7 +25,7 @@ class CouponDiscountAmountCalculatorTest {
     @Test
     @DisplayName("DiscountType이 PERCENTAGE일 경우 percentage 비율만큼 계산된다.")
     void test2() {
-        Double discountedPrice = sut.getDiscountedPrice(10000d, createCoupon(DiscountType.PERCENTAGE, 0, 20d));
+        Double discountedPrice = sut.getDiscountedPrice(createCoupon(DiscountType.PERCENTAGE, 0, 20d), 10000d);
 
         assertThat(discountedPrice).isEqualTo(8000);
     }

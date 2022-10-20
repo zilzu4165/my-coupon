@@ -32,7 +32,7 @@ public class CouponApplyTest {
     @DisplayName("duration이 ONCE 유형인 쿠폰은 사용후 valid가 false로 변경된다.")
     @Test
     void test2() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, CouponCurrency.KRW, 1000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
         Double price = 1000d;
         couponService.apply(coupon.id, price);
@@ -53,7 +53,7 @@ public class CouponApplyTest {
     @DisplayName("Duration 이 ONCE인 쿠폰을 두번 사용하려고 하면 Exception 발생")
     @Test
     void test4() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, CouponCurrency.KRW, 1000L, null);
 
         Coupon coupon = couponService.create(couponCreationRequest);
         Coupon foundCoupon = couponService.retrieve(coupon.id);
@@ -67,7 +67,7 @@ public class CouponApplyTest {
     @Test
     @DisplayName("쿠폰 history 에 할인된 가격이 표시된다. DiscountType AMOUNT 일 때")
     void test5() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 10000L, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, CouponCurrency.KRW, 10000L, null);
 
         Coupon coupon = couponService.create(couponCreationRequest);
 
@@ -85,7 +85,7 @@ public class CouponApplyTest {
     @Test
     @DisplayName("쿠폰 history 에 할인된 가격이 표시된다. DiscountType PERCENTAGE 일 때")
     void test6() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.PERCENTAGE, null, 10d);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.PERCENTAGE, CouponCurrency.KRW, null, 10d);
 
         Coupon coupon = couponService.create(couponCreationRequest);
 
@@ -98,6 +98,22 @@ public class CouponApplyTest {
             assertThat(couponHistory.price).isEqualTo(price);
             assertThat(couponHistory.discountedPrice).isEqualTo(9000);
             assertThat(couponHistory.couponCurrency).isEqualTo(CouponCurrency.KRW); // 기본통화는 KRW
+        }
+    }
+
+    @Test
+    @DisplayName("couponHistory 의 CouponCurrency가 정상적으로 조회된다.")
+    void test7() {
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.PERCENTAGE, CouponCurrency.USD, null, 10d);
+        Coupon coupon = couponService.create(couponCreationRequest);
+
+        Double price = 10000d;
+        couponService.apply(coupon.id, price);
+
+        List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(coupon.id);
+
+        for (CouponHistory couponHistory : couponHistories) {
+            assertThat(couponHistory.couponCurrency).isEqualTo(couponCreationRequest.couponCurrency);
         }
     }
 }

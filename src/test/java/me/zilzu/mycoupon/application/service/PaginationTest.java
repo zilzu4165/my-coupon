@@ -55,7 +55,7 @@ public class PaginationTest {
     }
 
     private void createCoupons(int count, int nThreads) {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null, null);
 
         ExecutorService executorService = Executors.newFixedThreadPool(nThreads); // threadPoolSize 100
 
