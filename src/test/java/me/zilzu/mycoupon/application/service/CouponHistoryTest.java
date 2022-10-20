@@ -29,8 +29,8 @@ public class CouponHistoryTest {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
 
-        CouponHistory couponHistory = couponService.apply(coupon.id, 200.0);
-        List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(couponHistory.refCouponId);
+        CouponApplicationResult couponHistory = couponService.apply(coupon.id, 200.0);
+        List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(couponHistory.couponId);
 
         assertThat(couponHistories.size()).isEqualTo(1);
         assertThat(couponHistories.get(0)).isNotNull();
@@ -51,10 +51,10 @@ public class CouponHistoryTest {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
 
-        couponService.apply(coupon.id);
+        couponService.apply(coupon.id, 225.5);
 
         assertThatThrownBy(() -> {
-            couponService.apply(coupon.id);
+            couponService.apply(coupon.id, 225.5);
         }).isInstanceOf(RuntimeException.class);
     }
 

@@ -29,7 +29,7 @@ public class CouponApplyTest {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
 
-        couponService.apply(coupon.id);
+        couponService.apply(coupon.id, 225.5);
 
         Coupon foundCoupon = couponService.retrieve(coupon.id);
 
@@ -40,7 +40,7 @@ public class CouponApplyTest {
     @Test
     void test3() {
         assertThatThrownBy(() -> {
-            couponService.apply(new CouponId("zilzu"));
+            couponService.apply(new CouponId("zilzu"), 225.5);
         }).isInstanceOf(Exception.class);
     }
 
@@ -51,10 +51,10 @@ public class CouponApplyTest {
 
         Coupon coupon = couponService.create(couponCreationRequest);
         Coupon foundCoupon = couponService.retrieve(coupon.id);
-        couponService.apply(foundCoupon.id);  // valid false
+        couponService.apply(foundCoupon.id, 225.5);  // valid false
 
         assertThatThrownBy(() -> {
-            couponService.apply(coupon.id);
+            couponService.apply(coupon.id, 225.5);
         }).isInstanceOf(RuntimeException.class);
     }
 }
