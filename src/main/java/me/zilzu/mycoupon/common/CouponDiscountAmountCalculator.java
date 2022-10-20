@@ -13,6 +13,9 @@ public class CouponDiscountAmountCalculator {
         } else if (foundCoupon.discountType == DiscountType.PERCENTAGE) {
             discountedPrice = price - (price * (foundCoupon.percentOff / 100));
         }
+        if (discountedPrice == null) {
+            throw new RuntimeException("할인 가격을 계산하던 중 문제가 발생했습니다.");
+        }
         return discountedPrice;
     }
 }

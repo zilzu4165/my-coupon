@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CouponDiscountAmountCalculatorTest {
 
@@ -27,6 +28,15 @@ class CouponDiscountAmountCalculatorTest {
         Double discountedPrice = sut.getDiscountedPrice(10000d, createCoupon(DiscountType.PERCENTAGE, 0, 20d));
 
         assertThat(discountedPrice).isEqualTo(8000);
+    }
+
+    @Test
+    @DisplayName("할인 가격이 null일 경우 RuntimeException 발생")
+    void test3() {
+        assertThatThrownBy(() -> {
+            sut.getDiscountedPrice(null, null);
+        }).isInstanceOf(RuntimeException.class);
+
     }
 
     private static Coupon createCoupon(DiscountType discountType, long amountOff, Double percentOff) {
