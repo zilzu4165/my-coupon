@@ -141,22 +141,21 @@ public class CouponService {
 
         Double discountedPrice = couponDiscountAmountCalculator.calculate(foundCoupon, price);
 
-        CouponHistory history = saveCouponHistory(couponId, price, discountedPrice);
+        CouponHistory history = saveCouponHistory(foundCoupon, price, discountedPrice);
 
         return new CouponApplicationResult(couponId, history.usageTime);
     }
 
     @Transactional
-    public Coupon consumeCoupon(Coupon foundCoupon) {
+    public void consumeCoupon(Coupon foundCoupon) {
         if (foundCoupon.duration == CouponDuration.ONCE) {
             CouponEntity entity = newCouponRepository.findById(foundCoupon.id.value).get();
             entity.valid = false;
         }
-        return foundCoupon;
     }
 
     @Transactional
-    public CouponHistory saveCouponHistory(CouponId couponId, Double price, Double discountedPrice) {
-        return couponHistoryService.saveApplicationHistory(couponId, price, discountedPrice);
+    public CouponHistory saveCouponHistory(Coupon coupon, Double price, Double discountedPrice) {
+        return couponHistoryService.saveApplicationHistory(coupon, price, discountedPrice);
     }
 }

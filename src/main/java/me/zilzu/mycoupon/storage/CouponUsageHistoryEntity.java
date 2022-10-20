@@ -18,6 +18,8 @@ public class CouponUsageHistoryEntity {
 
     public Double discountedPrice;
 
+    public String couponCurrency;
+
     public CouponUsageHistoryEntity() {
 
     }
@@ -28,12 +30,14 @@ public class CouponUsageHistoryEntity {
         this.usageTime = usageTime;
     }
 
-    public CouponUsageHistoryEntity(String id, String refCouponId, LocalDateTime usageTime, Double price, Double discountedPrice) {
+    public CouponUsageHistoryEntity(String id, String refCouponId, LocalDateTime usageTime, Double price,
+                                    Double discountedPrice, String couponCurrency) {
         this.id = id;
         this.refCouponId = refCouponId;
         this.usageTime = usageTime;
         this.price = price;
         this.discountedPrice = discountedPrice;
+        this.couponCurrency = couponCurrency;
     }
 
 
@@ -45,7 +49,7 @@ public class CouponUsageHistoryEntity {
                 ", usageTime=" + usageTime +
                 ", price=" + price +
                 ", discountedPrice=" + discountedPrice +
+                ", couponCurrency='" + couponCurrency + '\'' +
                 '}';
     }
-
 }
