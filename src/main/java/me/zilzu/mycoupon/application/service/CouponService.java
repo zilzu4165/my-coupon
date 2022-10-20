@@ -33,16 +33,19 @@ public class CouponService {
     private final NewCouponRepository newCouponRepository;
     private final CouponHistoryService couponHistoryService;
 
+    private final CouponDiscountAmountCalculator couponDiscountAmountCalculator;
+
     public CouponService(CouponIdGenerator couponIdGenerator,
                          CouponValidator couponValidator,
                          CouponHistoryRecorder couponHistoryRecorder,
                          NewCouponRepository newCouponRepository,
-                         CouponHistoryService couponHistoryService) {
+                         CouponHistoryService couponHistoryService, CouponDiscountAmountCalculator couponDiscountAmountCalculator) {
         this.couponIdGenerator = couponIdGenerator;
         this.couponValidator = couponValidator;
         this.couponHistoryRecorder = couponHistoryRecorder;
         this.newCouponRepository = newCouponRepository;
         this.couponHistoryService = couponHistoryService;
+        this.couponDiscountAmountCalculator = couponDiscountAmountCalculator;
     }
 
     @Cacheable(value = "Coupon", key = "#id")
@@ -121,29 +124,12 @@ public class CouponService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public CouponApplicationResult apply(CouponId id) {
-        Coupon foundCoupon = retrieve(id);
-        if (!foundCoupon.valid) {
-            throw notUsableCouponException();
-        }
-
-        if (foundCoupon.duration == CouponDuration.ONCE) {
-            CouponEntity entity = newCouponRepository.findById(foundCoupon.id.value).get();
-            entity.valid = false;
-        }
-
-        CouponHistory history = couponHistoryRecorder.record(foundCoupon.id);
-
-        return new CouponApplicationResult(id, history.usageTime);
-    }
-
     private static RuntimeException notUsableCouponException() {
         throw new RuntimeException("사용할 수 없는 쿠폰입니다.");
     }
 
     @Transactional
-    public CouponHistory apply(CouponId couponId, Double price) {
+    public CouponApplicationResult apply(CouponId couponId, Double price) {
         if (price < 0) throw new IllegalArgumentException("잘못된 가격입니다. 가격은 0보다 작을 수 없습니다.");
 
         Coupon foundCoupon = retrieve(couponId);
@@ -151,19 +137,26 @@ public class CouponService {
             throw notUsableCouponException();
         }
 
+        consumeCoupon(foundCoupon);
+
+        Double discountedPrice = couponDiscountAmountCalculator.calculate(foundCoupon, price);
+
+        CouponHistory history = saveCouponHistory(couponId, price, discountedPrice);
+
+        return new CouponApplicationResult(couponId, history.usageTime);
+    }
+
+    @Transactional
+    public Coupon consumeCoupon(Coupon foundCoupon) {
         if (foundCoupon.duration == CouponDuration.ONCE) {
             CouponEntity entity = newCouponRepository.findById(foundCoupon.id.value).get();
             entity.valid = false;
         }
+        return foundCoupon;
+    }
 
-        Double discountedPrice = 0.0;
-        if (Optional.ofNullable(foundCoupon.amountOff).isPresent()) {
-            discountedPrice = Double.valueOf(foundCoupon.amountOff);
-            if (foundCoupon.amountOff > price) discountedPrice = price;
-
-        } else if (Optional.ofNullable(foundCoupon.percentOff).isPresent()) {
-            discountedPrice = price * (foundCoupon.percentOff / 100);
-        }
+    @Transactional
+    public CouponHistory saveCouponHistory(CouponId couponId, Double price, Double discountedPrice) {
         return couponHistoryService.saveApplicationHistory(couponId, price, discountedPrice);
     }
 }
