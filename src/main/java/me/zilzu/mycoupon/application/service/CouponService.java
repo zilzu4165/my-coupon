@@ -2,7 +2,6 @@ package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.CouponDiscountAmountCalculator;
 import me.zilzu.mycoupon.common.CouponId;
-import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
@@ -65,15 +64,11 @@ public class CouponService {
     }
 
     public Coupon create(CouponCreationRequest couponCreationRequest) {
-        return createWithCurrency(couponCreationRequest, CouponCurrency.USD);
-    }
-
-    public Coupon createWithCurrency(CouponCreationRequest couponCreationRequest, CouponCurrency couponCurrency) {
         String couponId = couponIdGenerator.generate();
 
         couponValidator.validate(couponCreationRequest);
 
-        CouponEntity entity = new CouponEntity(couponId, couponCreationRequest.duration, couponCreationRequest.durationInMonths, couponCurrency, couponCreationRequest.discountType, couponCreationRequest.amountOff, couponCreationRequest.percentOff, true, LocalDateTime.now());
+        CouponEntity entity = new CouponEntity(couponId, couponCreationRequest.duration, couponCreationRequest.durationInMonths, couponCreationRequest.couponCurrency, couponCreationRequest.discountType, couponCreationRequest.amountOff, couponCreationRequest.percentOff, true, LocalDateTime.now());
         newCouponRepository.save(entity);
 
         return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
@@ -132,9 +127,9 @@ public class CouponService {
             CouponEntity entity = newCouponRepository.findById(foundCoupon.id.value).get();
             entity.valid = false;
         }
-        Double discountedPrice = couponDiscountAmountCalculator.getDiscountedPrice(price, foundCoupon);
+        Double discountedPrice = couponDiscountAmountCalculator.getDiscountedPrice(foundCoupon, price);
 
-        CouponHistory history = couponHistoryRecorder.record(foundCoupon.id, price, discountedPrice);
+        CouponHistory history = couponHistoryRecorder.record(foundCoupon, price, discountedPrice);
 
         return new CouponApplicationResult(id, history.usageTime);
     }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CouponDiscountAmountCalculator {
-    public Double getDiscountedPrice(Double price, Coupon foundCoupon) {
+    public Double getDiscountedPrice(Coupon foundCoupon, Double price) {
         Double discountedPrice = null;
         if (foundCoupon.discountType == DiscountType.AMOUNT) {
             discountedPrice = price - foundCoupon.amountOff;
