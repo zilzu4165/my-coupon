@@ -5,6 +5,7 @@ import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,9 +18,9 @@ class CouponHistoryRepositoryTest {
     @DisplayName("couponId 에 해당하는 history가 없으면 길이가 0인 List를 반환한다.")
     void test1() {
         // given
-        sut.save(couponUsageHistoryEntity("id1", new CouponId("zilzu"), 0d, 0d));
-        sut.save(couponUsageHistoryEntity("id1", new CouponId("zilzu"), 0d, 0d));
-        sut.save(couponUsageHistoryEntity("id1", new CouponId("zilzu"), 0d, 0d));
+        sut.save(couponUsageHistoryEntity("id1", new CouponId("zilzu"), 0d, BigDecimal.valueOf(0)));
+        sut.save(couponUsageHistoryEntity("id1", new CouponId("zilzu"), 0d, BigDecimal.valueOf(0)));
+        sut.save(couponUsageHistoryEntity("id1", new CouponId("zilzu"), 0d, BigDecimal.valueOf(0)));
 
         // when
         List<CouponUsageHistoryEntity> historyEntities = sut.find(new CouponId("park"));
@@ -28,7 +29,7 @@ class CouponHistoryRepositoryTest {
         assertThat(historyEntities.size()).isEqualTo(0);
     }
 
-    private static CouponUsageHistoryEntity couponUsageHistoryEntity(String couponHistoryId, CouponId refCouponId, Double price, Double discountedPrice) {
+    private static CouponUsageHistoryEntity couponUsageHistoryEntity(String couponHistoryId, CouponId refCouponId, Double price, BigDecimal discountedPrice) {
         return new CouponUsageHistoryEntity(couponHistoryId, refCouponId.value, LocalDateTime.now(), CouponCurrency.KRW, price, discountedPrice);
 
     }

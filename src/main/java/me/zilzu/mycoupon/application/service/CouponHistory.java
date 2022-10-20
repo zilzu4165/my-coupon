@@ -3,6 +3,7 @@ package me.zilzu.mycoupon.application.service;
 import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponCurrency;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class CouponHistory {
@@ -12,9 +13,9 @@ public class CouponHistory {
     public final LocalDateTime usageTime;
     public final CouponCurrency couponCurrency;
     public final Double price;
-    public final Double discountedPrice;
+    public final BigDecimal discountedPrice;
 
-    public CouponHistory(String id, CouponId refCouponId, LocalDateTime usageTime, CouponCurrency couponCurrency, Double price, Double discountedPrice) {
+    public CouponHistory(String id, CouponId refCouponId, LocalDateTime usageTime, CouponCurrency couponCurrency, Double price, BigDecimal discountedPrice) {
         this.id = id;
         this.refCouponId = refCouponId;
         this.usageTime = usageTime;

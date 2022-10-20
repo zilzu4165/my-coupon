@@ -5,6 +5,7 @@ import me.zilzu.mycoupon.storage.CouponHistoryRepository;
 import me.zilzu.mycoupon.storage.CouponUsageHistoryEntity;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Component
@@ -19,7 +20,7 @@ public class CouponHistoryRecorder {
         this.couponHistoryRepository = couponHistoryRepository;
     }
 
-    public CouponHistory record(Coupon coupon, Double price, Double discountedPrice) {
+    public CouponHistory record(Coupon coupon, Double price, BigDecimal discountedPrice) {
         CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponHistoryIdGenerator.generate(), coupon.id.value, LocalDateTime.now(), coupon.couponCurrency, price, discountedPrice);
         couponHistoryRepository.save(historyEntity);
 

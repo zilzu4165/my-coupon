@@ -7,6 +7,8 @@ import me.zilzu.mycoupon.common.enums.DiscountType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -17,17 +19,18 @@ class CouponDiscountAmountCalculatorTest {
     @Test
     @DisplayName("DiscountType이 AMOUNT일 경우 amount양 만큼 계산된다.")
     void test1() {
-        Double discountedPrice = sut.getDiscountedPrice(createCoupon(DiscountType.AMOUNT, 1000L, null), 10000d);
+        BigDecimal discountedPrice = sut.getDiscountedPrice(createCoupon(DiscountType.AMOUNT, 1000L, null), 10000d);
 
-        assertThat(discountedPrice).isEqualTo(9000);
+        assertThat(discountedPrice.doubleValue()).isEqualTo(9000);
     }
 
     @Test
     @DisplayName("DiscountType이 PERCENTAGE일 경우 percentage 비율만큼 계산된다.")
     void test2() {
-        Double discountedPrice = sut.getDiscountedPrice(createCoupon(DiscountType.PERCENTAGE, 0, 20d), 10000d);
+        BigDecimal discountedPrice = sut.getDiscountedPrice(createCoupon(DiscountType.PERCENTAGE, 0, 20d), 10000d);
 
-        assertThat(discountedPrice).isEqualTo(8000);
+
+        assertThat(discountedPrice.doubleValue()).isEqualTo(8000);
     }
 
     @Test

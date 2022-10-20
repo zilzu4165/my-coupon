@@ -78,7 +78,7 @@ public class CouponApplyTest {
 
         for (CouponHistory couponHistory : couponHistories) {
             assertThat(couponHistory.price).isEqualTo(price);
-            assertThat(couponHistory.discountedPrice).isEqualTo(10000);
+            assertThat(couponHistory.discountedPrice.doubleValue()).isEqualTo(10000);
         }
     }
 
@@ -96,8 +96,8 @@ public class CouponApplyTest {
 
         for (CouponHistory couponHistory : couponHistories) {
             assertThat(couponHistory.price).isEqualTo(price);
-            assertThat(couponHistory.discountedPrice).isEqualTo(9000);
-            assertThat(couponHistory.couponCurrency).isEqualTo(CouponCurrency.KRW); // 기본통화는 KRW
+            assertThat(couponHistory.discountedPrice.doubleValue()).isEqualTo(9000);
+            assertThat(couponHistory.couponCurrency).isEqualTo(CouponCurrency.KRW);
         }
     }
 

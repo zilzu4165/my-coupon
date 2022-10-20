@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +128,7 @@ public class CouponService {
             CouponEntity entity = newCouponRepository.findById(foundCoupon.id.value).get();
             entity.valid = false;
         }
-        Double discountedPrice = couponDiscountAmountCalculator.getDiscountedPrice(foundCoupon, price);
+        BigDecimal discountedPrice = couponDiscountAmountCalculator.getDiscountedPrice(foundCoupon, price);
 
         CouponHistory history = couponHistoryRecorder.record(foundCoupon, price, discountedPrice);
 
