@@ -21,9 +21,9 @@ public class CouponHistoryRecorder {
     }
 
     public CouponHistory record(Coupon coupon, Double price, BigDecimal discountedPrice) {
-        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponHistoryIdGenerator.generate(), coupon.id.value, LocalDateTime.now(), coupon.couponCurrency, price, discountedPrice);
+        CouponUsageHistoryEntity historyEntity = new CouponUsageHistoryEntity(couponHistoryIdGenerator.generate(), coupon.id.value, LocalDateTime.now(), coupon.currency, price, discountedPrice);
         couponHistoryRepository.save(historyEntity);
 
-        return new CouponHistory(historyEntity.id, new CouponId(historyEntity.refCouponId), historyEntity.usageTime, historyEntity.couponCurrency, price, discountedPrice);
+        return new CouponHistory(historyEntity.id, new CouponId(historyEntity.refCouponId), historyEntity.usageTime, historyEntity.currency, price, discountedPrice);
     }
 }

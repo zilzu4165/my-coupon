@@ -1,8 +1,8 @@
 package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.CouponId;
-import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
+import me.zilzu.mycoupon.common.enums.Currency;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +32,7 @@ public class CouponApplyTest {
     @DisplayName("duration이 ONCE 유형인 쿠폰은 사용후 valid가 false로 변경된다.")
     @Test
     void test2() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, CouponCurrency.KRW, 1000L, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, Currency.KRW, 1000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
         Double price = 1000d;
         couponService.apply(coupon.id, price);
@@ -53,7 +53,7 @@ public class CouponApplyTest {
     @DisplayName("Duration 이 ONCE인 쿠폰을 두번 사용하려고 하면 Exception 발생")
     @Test
     void test4() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, CouponCurrency.KRW, 1000L, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, Currency.KRW, 1000L, null);
 
         Coupon coupon = couponService.create(couponCreationRequest);
         Coupon foundCoupon = couponService.retrieve(coupon.id);
@@ -67,7 +67,7 @@ public class CouponApplyTest {
     @Test
     @DisplayName("쿠폰 history 에 할인된 가격이 표시된다. DiscountType AMOUNT 일 때")
     void test5() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, CouponCurrency.KRW, 10000L, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, Currency.KRW, 10000L, null);
 
         Coupon coupon = couponService.create(couponCreationRequest);
 
@@ -85,7 +85,7 @@ public class CouponApplyTest {
     @Test
     @DisplayName("쿠폰 history 에 할인된 가격이 표시된다. DiscountType PERCENTAGE 일 때")
     void test6() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.PERCENTAGE, CouponCurrency.KRW, null, 10d);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.PERCENTAGE, Currency.KRW, null, 10d);
 
         Coupon coupon = couponService.create(couponCreationRequest);
 
@@ -97,14 +97,14 @@ public class CouponApplyTest {
         for (CouponHistory couponHistory : couponHistories) {
             assertThat(couponHistory.price).isEqualTo(price);
             assertThat(couponHistory.discountedPrice.doubleValue()).isEqualTo(9000);
-            assertThat(couponHistory.couponCurrency).isEqualTo(CouponCurrency.KRW);
+            assertThat(couponHistory.currency).isEqualTo(Currency.KRW);
         }
     }
 
     @Test
     @DisplayName("couponHistory 의 CouponCurrency가 정상적으로 조회된다.")
     void test7() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.PERCENTAGE, CouponCurrency.USD, null, 10d);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.PERCENTAGE, Currency.USD, null, 10d);
         Coupon coupon = couponService.create(couponCreationRequest);
 
         Double price = 10000d;
@@ -113,7 +113,7 @@ public class CouponApplyTest {
         List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(coupon.id);
 
         for (CouponHistory couponHistory : couponHistories) {
-            assertThat(couponHistory.couponCurrency).isEqualTo(couponCreationRequest.couponCurrency);
+            assertThat(couponHistory.currency).isEqualTo(couponCreationRequest.currency);
         }
     }
 }

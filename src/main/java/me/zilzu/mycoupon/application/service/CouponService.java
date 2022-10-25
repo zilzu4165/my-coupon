@@ -53,13 +53,13 @@ public class CouponService {
         }
 
         CouponEntity entity = foundCouponEntity.get();
-        return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
+        return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.currency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
     }
 
     public Page<Coupon> retrieveList(Integer page, Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.Direction.DESC, "createdTime");
         Page<CouponEntity> foundAll = newCouponRepository.findAll(pageRequest);
-        Page<Coupon> coupons = foundAll.map(couponEntity -> new Coupon(new CouponId(couponEntity.id), couponEntity.duration, couponEntity.durationInMonth, couponEntity.couponCurrency, couponEntity.discountType, couponEntity.amountOff, couponEntity.percentOff, couponEntity.valid, couponEntity.createdTime));
+        Page<Coupon> coupons = foundAll.map(couponEntity -> new Coupon(new CouponId(couponEntity.id), couponEntity.duration, couponEntity.durationInMonth, couponEntity.currency, couponEntity.discountType, couponEntity.amountOff, couponEntity.percentOff, couponEntity.valid, couponEntity.createdTime));
 
         return coupons;
     }
@@ -69,10 +69,10 @@ public class CouponService {
 
         couponValidator.validate(couponCreationRequest);
 
-        CouponEntity entity = new CouponEntity(couponId, couponCreationRequest.duration, couponCreationRequest.durationInMonths, couponCreationRequest.couponCurrency, couponCreationRequest.discountType, couponCreationRequest.amountOff, couponCreationRequest.percentOff, true, LocalDateTime.now());
+        CouponEntity entity = new CouponEntity(couponId, couponCreationRequest.duration, couponCreationRequest.durationInMonths, couponCreationRequest.currency, couponCreationRequest.discountType, couponCreationRequest.amountOff, couponCreationRequest.percentOff, true, LocalDateTime.now());
         newCouponRepository.save(entity);
 
-        return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
+        return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.currency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
     }
 
     public CouponDeleteResult delete(CouponId id) {
@@ -112,7 +112,7 @@ public class CouponService {
         }
 
         return sortedCoupons.stream()
-                .map(entity -> new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime))
+                .map(entity -> new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.currency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime))
                 .collect(Collectors.toList());
     }
 

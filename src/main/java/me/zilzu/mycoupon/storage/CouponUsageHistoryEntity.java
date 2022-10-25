@@ -1,6 +1,6 @@
 package me.zilzu.mycoupon.storage;
 
-import me.zilzu.mycoupon.common.enums.CouponCurrency;
+import me.zilzu.mycoupon.common.enums.Currency;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,15 +10,15 @@ public class CouponUsageHistoryEntity {
     public String id;
     public String refCouponId;
     public LocalDateTime usageTime;
-    public CouponCurrency couponCurrency;
+    public Currency currency;
     public Double price;
     public BigDecimal discountedPrice;
 
-    public CouponUsageHistoryEntity(String id, String refCouponId, LocalDateTime usageTime, CouponCurrency couponCurrency, Double price, BigDecimal discountedPrice) {
+    public CouponUsageHistoryEntity(String id, String refCouponId, LocalDateTime usageTime, Currency currency, Double price, BigDecimal discountedPrice) {
         this.id = id;
         this.refCouponId = refCouponId;
         this.usageTime = usageTime;
-        this.couponCurrency = couponCurrency;
+        this.currency = currency;
         this.price = price;
         this.discountedPrice = discountedPrice;
     }

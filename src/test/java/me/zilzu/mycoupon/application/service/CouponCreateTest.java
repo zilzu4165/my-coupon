@@ -1,7 +1,7 @@
 package me.zilzu.mycoupon.application.service;
 
-import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
+import me.zilzu.mycoupon.common.enums.Currency;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import org.junit.jupiter.api.BeforeEach;
@@ -96,13 +96,13 @@ public class CouponCreateTest {
     @DisplayName("생성한 coupon을 조회했을 때, 유저가 정한 통화로 조회가 된다.")
     @Test
     void test6() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, CouponCurrency.USD, null, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, Currency.USD, null, null);
 
         Coupon coupon = couponService.create(couponCreationRequest);
         Coupon foundCoupon = couponService.retrieve(coupon.id);
 
         assertThat(foundCoupon.id).isEqualTo(coupon.id);
-        assertThat(foundCoupon.couponCurrency).isEqualTo(couponCreationRequest.couponCurrency);
+        assertThat(foundCoupon.currency).isEqualTo(couponCreationRequest.currency);
     }
 
     @DisplayName("쿠폰을 생성 할 때 duration이 {ONCE, FOREVER} 유형은 durationInMonths가 값이 존재할 수 없다.")
