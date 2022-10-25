@@ -29,6 +29,7 @@ class CouponCacheTest {
                 CouponDuration.REPEATING
                 , 3
                 , DiscountType.AMOUNT
+                , null
                 , 10L
                 , null
         );

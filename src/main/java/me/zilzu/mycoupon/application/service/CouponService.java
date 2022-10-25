@@ -1,7 +1,7 @@
 package me.zilzu.mycoupon.application.service;
 
+import me.zilzu.mycoupon.common.CouponDiscountAmountCalculator;
 import me.zilzu.mycoupon.common.CouponId;
-import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +29,16 @@ public class CouponService {
     // autowired 는 테스트 코드 x
     // final : 변수에 값이 반드시 한번 할당이 되어야한다.
     private final CouponIdGenerator couponIdGenerator;
+    private final CouponDiscountAmountCalculator couponDiscountAmountCalculator;
     private final CouponValidator couponValidator;
     private final CouponHistoryRecorder couponHistoryRecorder;
     private final NewCouponRepository newCouponRepository;
 
     public CouponService(CouponIdGenerator couponIdGenerator,
-                         CouponValidator couponValidator,
+                         CouponDiscountAmountCalculator couponDiscountAmountCalculator, CouponValidator couponValidator,
                          CouponHistoryRecorder couponHistoryRecorder, NewCouponRepository newCouponRepository) {
         this.couponIdGenerator = couponIdGenerator;
+        this.couponDiscountAmountCalculator = couponDiscountAmountCalculator;
         this.couponValidator = couponValidator;
         this.couponHistoryRecorder = couponHistoryRecorder;
         this.newCouponRepository = newCouponRepository;
@@ -50,30 +53,26 @@ public class CouponService {
         }
 
         CouponEntity entity = foundCouponEntity.get();
-        return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
+        return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.currency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
     }
 
     public Page<Coupon> retrieveList(Integer page, Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.Direction.DESC, "createdTime");
         Page<CouponEntity> foundAll = newCouponRepository.findAll(pageRequest);
-        Page<Coupon> coupons = foundAll.map(couponEntity -> new Coupon(new CouponId(couponEntity.id), couponEntity.duration, couponEntity.durationInMonth, couponEntity.couponCurrency, couponEntity.discountType, couponEntity.amountOff, couponEntity.percentOff, couponEntity.valid, couponEntity.createdTime));
+        Page<Coupon> coupons = foundAll.map(couponEntity -> new Coupon(new CouponId(couponEntity.id), couponEntity.duration, couponEntity.durationInMonth, couponEntity.currency, couponEntity.discountType, couponEntity.amountOff, couponEntity.percentOff, couponEntity.valid, couponEntity.createdTime));
 
         return coupons;
     }
 
     public Coupon create(CouponCreationRequest couponCreationRequest) {
-        return createWithCurrency(couponCreationRequest, CouponCurrency.USD);
-    }
-
-    public Coupon createWithCurrency(CouponCreationRequest couponCreationRequest, CouponCurrency couponCurrency) {
         String couponId = couponIdGenerator.generate();
 
         couponValidator.validate(couponCreationRequest);
 
-        CouponEntity entity = new CouponEntity(couponId, couponCreationRequest.duration, couponCreationRequest.durationInMonths, couponCurrency, couponCreationRequest.discountType, couponCreationRequest.amountOff, couponCreationRequest.percentOff, true, LocalDateTime.now());
+        CouponEntity entity = new CouponEntity(couponId, couponCreationRequest.duration, couponCreationRequest.durationInMonths, couponCreationRequest.currency, couponCreationRequest.discountType, couponCreationRequest.amountOff, couponCreationRequest.percentOff, true, LocalDateTime.now());
         newCouponRepository.save(entity);
 
-        return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
+        return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.currency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
     }
 
     public CouponDeleteResult delete(CouponId id) {
@@ -113,12 +112,12 @@ public class CouponService {
         }
 
         return sortedCoupons.stream()
-                .map(entity -> new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.couponCurrency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime))
+                .map(entity -> new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.currency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime))
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public CouponApplicationResult apply(CouponId id) {
+    public CouponApplicationResult apply(CouponId id, Double price) {
         Coupon foundCoupon = retrieve(id);
 
         if (!foundCoupon.valid) {
@@ -129,11 +128,13 @@ public class CouponService {
             CouponEntity entity = newCouponRepository.findById(foundCoupon.id.value).get();
             entity.valid = false;
         }
+        BigDecimal discountedPrice = couponDiscountAmountCalculator.getDiscountedPrice(foundCoupon, price);
 
-        CouponHistory history = couponHistoryRecorder.record(foundCoupon.id);
+        CouponHistory history = couponHistoryRecorder.record(foundCoupon, price, discountedPrice);
 
         return new CouponApplicationResult(id, history.usageTime);
     }
+
 
     private static RuntimeException notUsableCouponException() {
         throw new RuntimeException("사용할 수 없는 쿠폰입니다.");

@@ -1,7 +1,7 @@
 package me.zilzu.mycoupon.application.service;
 
-import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
+import me.zilzu.mycoupon.common.enums.Currency;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,35 +94,22 @@ public class CouponCreateTest {
     }
 
     @DisplayName("생성한 coupon을 조회했을 때, 유저가 정한 통화로 조회가 된다.")
-    @ParameterizedTest
-    @EnumSource(value = CouponCurrency.class)
-    void test6(CouponCurrency couponCurrency) {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null);
-
-        Coupon coupon = couponService.createWithCurrency(couponCreationRequest, couponCurrency);
-        Coupon foundCoupon = couponService.retrieve(coupon.id);
-
-        assertThat(foundCoupon.id).isEqualTo(coupon.id);
-        assertThat(foundCoupon.couponCurrency).isEqualTo(couponCurrency);
-    }
-
-    @DisplayName("생성한 coupon을 조회했을 때, 유저가 정한 통화로 조회가 된다. 기본 통화는 USD이다.")
     @Test
-    void test7() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null);
+    void test6() {
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, Currency.USD, null, null);
 
-        Coupon coupon = couponService.createWithCurrency(couponCreationRequest, CouponCurrency.USD);
+        Coupon coupon = couponService.create(couponCreationRequest);
         Coupon foundCoupon = couponService.retrieve(coupon.id);
 
         assertThat(foundCoupon.id).isEqualTo(coupon.id);
-        assertThat(foundCoupon.couponCurrency).isEqualTo(CouponCurrency.USD);
+        assertThat(foundCoupon.currency).isEqualTo(couponCreationRequest.currency);
     }
 
     @DisplayName("쿠폰을 생성 할 때 duration이 {ONCE, FOREVER} 유형은 durationInMonths가 값이 존재할 수 없다.")
     @ParameterizedTest
     @EnumSource(value = CouponDuration.class, names = {"ONCE", "FOREVER"})
     void test9(CouponDuration duration) {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(duration, null, null, null, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(duration, null, null, null, null, null);
         Coupon coupon = couponService.create(couponCreationRequest);
 
         Coupon retrieve = couponService.retrieve(coupon.id);
@@ -135,7 +122,7 @@ public class CouponCreateTest {
     @ParameterizedTest
     @EnumSource(value = CouponDuration.class, names = {"ONCE", "FOREVER"})
     void test10(CouponDuration duration) {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(duration, 0, null, null, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(duration, 0, null, null, null, null);
 
         assertThatThrownBy(() -> {
             couponService.create(couponCreationRequest);
@@ -145,7 +132,7 @@ public class CouponCreateTest {
     @DisplayName("REPEATING 유형의 경우 durationInMonth에 대한 정보가 담겨 있어야 한다.")
     @Test
     void test11() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.REPEATING, 3, null, null, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.REPEATING, 3, null, null, null, null);
         Coupon coupon = couponService.create(couponCreationRequest);
 
         Coupon retrieve = couponService.retrieve(coupon.id);
@@ -158,7 +145,7 @@ public class CouponCreateTest {
     @DisplayName("쿠폰 생성시 valid 는 true로 생성되어야 한다.")
     @Test
     void test17() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, null, 1000L, null);
 
         Coupon coupon = couponService.create(couponCreationRequest);
         Coupon foundCoupon = couponService.retrieve(coupon.id);
@@ -168,7 +155,7 @@ public class CouponCreateTest {
     }
 
     public void createCoupons(int count, int nThreads) throws InterruptedException {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null, null);
 
         ExecutorService executorService = Executors.newFixedThreadPool(nThreads); // threadPoolSize 100
 

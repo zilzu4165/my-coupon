@@ -2,6 +2,7 @@ package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.CouponHistoryId;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
+import me.zilzu.mycoupon.common.enums.Currency;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,10 +26,10 @@ public class CouponHistoryTest {
     @Test
     @DisplayName("쿠폰 사용시 쿠폰 사용을 저장하는 쿠폰 history 테이블에도 저장된다.")
     void test1() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, Currency.KRW, 1000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
-
-        CouponApplicationResult couponHistory = couponService.apply(coupon.id);
+        Double price = 1000d;
+        CouponApplicationResult couponHistory = couponService.apply(coupon.id, price);
         List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(couponHistory.couponId);
 
         assertThat(couponHistories.size()).isEqualTo(1);
@@ -47,24 +48,24 @@ public class CouponHistoryTest {
     @Test
     @DisplayName("couponDuration이 ONCE 인 쿠폰을 두 번 사용하려고 하면 RuntimeException 발생")
     void test3() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, 1000L, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, Currency.KRW, 10000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
-
-        couponService.apply(coupon.id);
+        Double price = 1000d;
+        couponService.apply(coupon.id, price);
 
         assertThatThrownBy(() -> {
-            couponService.apply(coupon.id);
+            couponService.apply(coupon.id, price);
         }).isInstanceOf(RuntimeException.class);
     }
 
     @Test
     @DisplayName("couponDuration이 ONCE가 아닌 쿠폰은 사용 할 때마다 couponHistory 테이블에 저장된다.")
     void test4() {
-        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.REPEATING, null, DiscountType.AMOUNT, 1000L, null);
+        CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.REPEATING, null, DiscountType.AMOUNT, Currency.KRW, 1000L, null);
         Coupon coupon = couponService.create(couponCreationRequest);
-
-        couponService.apply(coupon.id);
-        couponService.apply(coupon.id);
+        Double price = 1000d;
+        couponService.apply(coupon.id, price);
+        couponService.apply(coupon.id, price);
 
         List<CouponHistory> couponHistories = couponHistoryService.retrieveCouponHistoryList(coupon.id);
         assertThat(couponHistories.size()).isEqualTo(2);

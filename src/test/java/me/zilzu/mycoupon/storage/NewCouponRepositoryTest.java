@@ -1,7 +1,7 @@
 package me.zilzu.mycoupon.storage;
 
 import me.zilzu.mycoupon.application.service.CouponService;
-import me.zilzu.mycoupon.common.enums.CouponCurrency;
+import me.zilzu.mycoupon.common.enums.Currency;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,19 +39,19 @@ class NewCouponRepositoryTest {
     @Test
     @DisplayName("KRW 인 coupon 만 찾기")
     void test2() {
-        sut.save(couponEntity("1", true, CouponCurrency.ALL));
-        sut.save(couponEntity("2", true, CouponCurrency.JPY));
-        sut.save(couponEntity("3", false, CouponCurrency.KRW));
-        sut.save(couponEntity("4", true, CouponCurrency.KRW));
+        sut.save(couponEntity("1", true, Currency.ALL));
+        sut.save(couponEntity("2", true, Currency.JPY));
+        sut.save(couponEntity("3", false, Currency.KRW));
+        sut.save(couponEntity("4", true, Currency.KRW));
 
-        assertThat(sut.findByCouponCurrency(CouponCurrency.KRW)).hasSize(2);
+        assertThat(sut.findByCouponCurrency(Currency.KRW)).hasSize(2);
     }
 
     private static CouponEntity couponEntity(String id, boolean valid) {
         return couponEntity(id, valid, null);
     }
 
-    private static CouponEntity couponEntity(String id, boolean valid, CouponCurrency currency) {
+    private static CouponEntity couponEntity(String id, boolean valid, Currency currency) {
         return new CouponEntity(id, null, null, currency, null, null, null, valid, null);
     }
 }

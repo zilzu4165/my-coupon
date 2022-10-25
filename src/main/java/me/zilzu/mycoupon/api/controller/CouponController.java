@@ -37,7 +37,7 @@ public class CouponController {
 
     @PostMapping("/api/v1/coupons")
     public CouponCreatedResponse createCoupons(@RequestBody CouponRequestDto couponRequestDto) {
-        Coupon coupon = couponService.create(new CouponCreationRequest(couponRequestDto.duration, couponRequestDto.durationInMonths, couponRequestDto.discountType, couponRequestDto.amountOff, couponRequestDto.percentOff));
+        Coupon coupon = couponService.create(new CouponCreationRequest(couponRequestDto.duration, couponRequestDto.durationInMonths, couponRequestDto.discountType, couponRequestDto.currency, couponRequestDto.amountOff, couponRequestDto.percentOff));
 
         return new CouponCreatedResponse(coupon);
     }
@@ -53,7 +53,7 @@ public class CouponController {
 
     @PostMapping("/api/v1/coupons/{id}/apply")
     public String applyCoupon(@PathVariable String id) {
-        couponService.apply(new CouponId(id));
+//        couponService.apply(new CouponId(id));
         return "쿠폰을 적용했습니다.";
     }
 
