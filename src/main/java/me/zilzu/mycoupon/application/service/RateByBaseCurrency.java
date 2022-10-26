@@ -11,10 +11,7 @@ import java.util.Map;
 public class RateByBaseCurrency {
     public LocalDate date;
     public Currency base;
-    public Map<Currency, BigDecimal> rates; // 정상
-
-    //public List<CurrencyAmount> rates; //cannot deserialize
-    //public CurrencyAmount[] rates; //cannot deserialize
+    public Map<Currency, BigDecimal> rates;
 
     @Override
     public String toString() {
