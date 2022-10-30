@@ -44,7 +44,7 @@ class NewCouponRepositoryTest {
         sut.save(couponEntity("3", false, Currency.KRW));
         sut.save(couponEntity("4", true, Currency.KRW));
 
-        assertThat(sut.findByCouponCurrency(Currency.KRW)).hasSize(2);
+        assertThat(sut.findByCurrency(Currency.KRW)).hasSize(2);
     }
 
     private static CouponEntity couponEntity(String id, boolean valid) {

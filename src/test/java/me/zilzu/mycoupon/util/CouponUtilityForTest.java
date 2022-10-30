@@ -3,8 +3,8 @@ package me.zilzu.mycoupon.util;
 import me.zilzu.mycoupon.application.service.Coupon;
 import me.zilzu.mycoupon.application.service.CouponIdGenerator;
 import me.zilzu.mycoupon.common.CouponId;
-import me.zilzu.mycoupon.common.enums.CouponCurrency;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
+import me.zilzu.mycoupon.common.enums.Currency;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ public class CouponUtilityForTest {
         return new Coupon(new CouponId(new CouponIdGenerator().generate()),
                 CouponDuration.ONCE,
                 null,
-                CouponCurrency.USD,
+                Currency.USD,
                 DiscountType.PERCENTAGE,
                 null,
                 30.0,
