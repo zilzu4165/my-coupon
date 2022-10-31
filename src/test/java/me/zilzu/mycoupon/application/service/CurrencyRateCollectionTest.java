@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,6 +66,21 @@ class CurrencyRateCollectionTest {
         list.forEach(System.out::println);
 
         //TemporalAdjuster addADay = temporal -> temporal.plus(1L, ChronoUnit.DAYS);
+    }
+
+    @Test
+    @DisplayName("해당 월의 LocalDate 리스트를 반환한다.")
+    void retreive_all_loacldate_of_month() {
+
+        LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
+        List<LocalDate> septemberDates = getDatesOfMonthStream(firstDateOfMonth);
+        septemberDates.forEach(System.out::println);
+    }
+
+    private List<LocalDate> getDatesOfMonthStream(LocalDate firstDateOfMonth) {
+        return IntStream.range(0, firstDateOfMonth.lengthOfMonth())
+                .mapToObj(firstDateOfMonth::plusDays)
+                .collect(Collectors.toList());
     }
 
 }
