@@ -8,5 +8,5 @@ import java.util.List;
 public interface NewCouponRepository extends JpaRepository<CouponEntity, String> {
     List<CouponEntity> findByValidIsFalse();
 
-    List<CouponEntity> findByCouponCurrency(Currency currency);
+    List<CouponEntity> findByCurrency(Currency currency);
 }

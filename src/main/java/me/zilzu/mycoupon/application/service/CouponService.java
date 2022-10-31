@@ -75,6 +75,19 @@ public class CouponService {
         return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.currency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
     }
 
+    public Coupon create(CouponCreationRequest couponCreationRequest, LocalDateTime localDateTime) {
+        String couponId = couponIdGenerator.generate();
+
+        couponValidator.validate(couponCreationRequest);
+
+        CouponEntity entity = new CouponEntity(couponId, couponCreationRequest.duration,
+                couponCreationRequest.durationInMonths, couponCreationRequest.currency, couponCreationRequest.discountType,
+                couponCreationRequest.amountOff, couponCreationRequest.percentOff, true, localDateTime);
+        newCouponRepository.save(entity);
+
+        return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.currency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
+    }
+
     public CouponDeleteResult delete(CouponId id) {
         newCouponRepository.deleteById(id.value);
         return new CouponDeleteResult(id);

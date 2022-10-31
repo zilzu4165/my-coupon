@@ -1,9 +1,8 @@
 package me.zilzu.mycoupon.storage;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import me.zilzu.mycoupon.common.enums.Currency;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -13,13 +12,14 @@ public class CurrencyRateHistoryEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Long id;
     public LocalDate date;
-    public String currency;
+    public Currency currency;
+    @Column(precision = 26, scale = 16)
     public BigDecimal amount;
 
     public CurrencyRateHistoryEntity() {
     }
 
-    public CurrencyRateHistoryEntity(LocalDate date, String currency, BigDecimal amount) {
+    public CurrencyRateHistoryEntity(LocalDate date, Currency currency, BigDecimal amount) {
         this.date = date;
         this.currency = currency;
         this.amount = amount;
