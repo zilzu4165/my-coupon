@@ -42,15 +42,16 @@ public class CouponAnalyzeService {
         currencyRateHistoryRepository.saveAll(list);
     }
 
-    public List<RateByBaseCurrency> getRateByBaseCurrencyByAPI(List<LocalDate> septemberDates) {
-        return septemberDates.parallelStream()
+    public List<RateByBaseCurrency> getRateByBaseCurrencyByAPI(List<LocalDate> dates) {
+        return dates.parallelStream()
                 .map(localDate -> {
                     RestTemplate restTemplate = new RestTemplate();
                     String date = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                     String rateByBaseAndDateUrl = "https://api.vatcomply.com/rates?date=" + date + "&base=USD";
                     //System.out.println("rateByBaseAndDateUrl = " + rateByBaseAndDateUrl);
                     return restTemplate.getForObject(rateByBaseAndDateUrl, RateByBaseCurrency.class);
-                }).collect(Collectors.toList());
+                }).distinct()
+                .collect(Collectors.toList());
     }
 
     public CouponAnalyzeResult analyzeByMonthAndCurrency(LocalDate targetDate, Currency currency, boolean isInTest, final CouponService couponService) {
@@ -108,7 +109,7 @@ public class CouponAnalyzeService {
                 .orElseGet(() -> retrieveLastBusinessDay(rateOfDateList, previousDate));
     }
 
-    private List<LocalDate> getAllDateInMonthStream(LocalDate firstDateOfMonth) {
+    public List<LocalDate> getAllDateInMonthStream(LocalDate firstDateOfMonth) {
         return IntStream.range(0, firstDateOfMonth.lengthOfMonth())
                 .mapToObj(firstDateOfMonth::plusDays)
                 .collect(Collectors.toList());

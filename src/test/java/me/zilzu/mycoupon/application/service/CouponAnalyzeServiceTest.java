@@ -9,11 +9,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -41,7 +43,8 @@ class CouponAnalyzeServiceTest {
         //한달 일자 목록
         LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
         LocalDate lastDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 30);
-        List<LocalDate> septemberDates = getDatesOfMonth(firstDateOfMonth, Month.SEPTEMBER);
+
+        List<LocalDate> septemberDates = couponAnalyzeService.getAllDateInMonthStream(firstDateOfMonth);
 
         //쿠폰 생성
         createCoupons(septemberDates, Currency.USD, 100, 4);
@@ -54,7 +57,9 @@ class CouponAnalyzeServiceTest {
         List<Coupon> recentlyCreatedCoupon = couponService.findRecentlyCreatedCoupon(30 * 100);
 
         List<CurrencyRateHistoryEntity> septemberKRWRates = currencyRateHistoryRepository.findByDateBetweenAndCurrency(firstDateOfMonth, lastDateOfMonth, Currency.KRW);
-        assertThat(septemberKRWRates.size()).isEqualTo(30);
+        septemberKRWRates.forEach(System.out::println);
+
+        assertThat(septemberKRWRates.size()).isEqualTo(22);
         System.out.println("septemberKRWRates.size() = " + septemberKRWRates.size());
 
         Map<LocalDate, BigDecimal> krwAmountMap = new HashMap<>();
@@ -86,9 +91,15 @@ class CouponAnalyzeServiceTest {
         System.out.println("averageSeptemberAmount = " + averageSeptemberAmount);
 
         //API 에서 받아온 순수 데이터를 기반으로 계산한 합/평균과 비교한다
-        BigDecimal sumKrwRate = sumKrwAmount(list);
+        List<RateByBaseCurrency> originalList = septemberDates.parallelStream()
+                .map(localDate -> {
+                    String date = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    String rateByBaseAndDateUrl = "https://api.vatcomply.com/rates?date=" + date + "&base=USD";
+                    return new RestTemplate().getForObject(rateByBaseAndDateUrl, RateByBaseCurrency.class);
+                }).collect(Collectors.toList());
+        BigDecimal sumKrwRate = sumKrwAmount(originalList);
         System.out.println("sumKrwRate = " + sumKrwRate);
-        BigDecimal averageKrwRate = sumKrwRate.divide(BigDecimal.valueOf(30L))
+        BigDecimal averageKrwRate = sumKrwRate.divide(BigDecimal.valueOf(30L), RoundingMode.HALF_UP)
                 .multiply(BigDecimal.valueOf(couponAmountOff)) // 쿠폰 할인 가격
                 .setScale(4, RoundingMode.HALF_UP);
 
@@ -119,8 +130,9 @@ class CouponAnalyzeServiceTest {
     @DisplayName("필요한 환율 데이터가 주말일 경우 직전 평일의 데이터를 가져온다.")
     void currencyRate_of_last_business_day() {
         LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
-        List<LocalDate> septemberDates = getDatesOfMonth(firstDateOfMonth, Month.SEPTEMBER);
+        List<LocalDate> septemberDates = couponAnalyzeService.getAllDateInMonthStream(firstDateOfMonth);
         List<RateByBaseCurrency> list = couponAnalyzeService.getRateByBaseCurrencyByAPI(septemberDates);
+        assertThat(list.size()).isEqualTo(22);
         list.forEach(System.out::println);
 
         //setting
@@ -158,25 +170,19 @@ class CouponAnalyzeServiceTest {
     @DisplayName("vatcomply API를 통해 수집한 한 달간의 환율 데이터를 DB에 저장한다. ")
     void save_rate_datas() {
         LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
-        List<LocalDate> septemberDates = getDatesOfMonth(firstDateOfMonth, Month.SEPTEMBER);
+        List<LocalDate> septemberDates = couponAnalyzeService.getAllDateInMonthStream(firstDateOfMonth);
         assertThat(septemberDates.size()).isEqualTo(30);
 
         List<RateByBaseCurrency> list = couponAnalyzeService.getRateByBaseCurrencyByAPI(septemberDates);
-        //list.forEach(rateByBaseCurrency -> System.out.println(rateByBaseCurrency.date));
-        long rateDateCount = list.stream()
-                .map(rateByBaseCurrency -> rateByBaseCurrency.date)
-                .distinct().count();
 
-        assertThat(rateDateCount).isEqualTo(22L);
-
-        assertThat(list.size()).isEqualTo(30);
+        assertThat(list.size()).isEqualTo(22);
         list.forEach(couponAnalyzeService::save);
 
         LocalDate septemberFirst = LocalDate.of(2022, 9, 1);
         LocalDate septemberLast = LocalDate.of(2022, 9, 30);
         List<CurrencyRateHistoryEntity> septemberList = currencyRateHistoryRepository.findByDateBetween(septemberFirst, septemberLast);
         assertThat(septemberList).isNotNull();
-        assertThat(septemberList.size()).isEqualTo(30 * 32); //30days * 32 Currency
+        assertThat(septemberList.size()).isEqualTo(22 * 32); //22days * 32 Currency
         System.out.println("septemberList.size() = " + septemberList.size());
 
         long idCount = septemberList.stream()
@@ -187,7 +193,7 @@ class CouponAnalyzeServiceTest {
                 .map(entity -> entity.date)
                 .distinct()
                 .count();
-        assertThat(idCount).isEqualTo(30 * 32);
+        assertThat(idCount).isEqualTo(22 * 32);
         //평일만 저장한다
         assertThat(dateCount).isEqualTo(22L);
 
@@ -199,23 +205,12 @@ class CouponAnalyzeServiceTest {
     @DisplayName("2022.09 한 달간 매일 100장의 쿠폰을 발행한다.")
     void create_and_apply_coupons_everyday_in_a_month() {
         LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
-        List<LocalDate> septemberDates = getDatesOfMonth(firstDateOfMonth, Month.SEPTEMBER);
+        List<LocalDate> septemberDates = couponAnalyzeService.getAllDateInMonthStream(firstDateOfMonth);
 
         createCoupons(septemberDates, Currency.USD, 100, 4);
 
         Long allCouponSize = couponService.getAllCouponSize();
         assertThat(allCouponSize).isEqualTo(30 * 100); // days * count
-    }
-
-    private List<LocalDate> getDatesOfMonth(LocalDate firstDateOfMonth, Month month) {
-        List<LocalDate> monthDates = new ArrayList<>();
-        LocalDate localDate = firstDateOfMonth.atStartOfDay().toLocalDate();
-        for (int i = 0; i < 31; i++) {
-            if (!localDate.getMonth().equals(month)) break;
-            monthDates.add(localDate);
-            localDate = localDate.plusDays(1L);
-        }
-        return monthDates;
     }
 
     public void createCoupons(List<LocalDate> monthDates, Currency currency, int count, int nThreads) {
