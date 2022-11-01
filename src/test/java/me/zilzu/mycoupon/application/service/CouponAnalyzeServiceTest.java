@@ -62,22 +62,39 @@ class CouponAnalyzeServiceTest {
         assertThat(septemberKRWRates.size()).isEqualTo(22);
         System.out.println("septemberKRWRates.size() = " + septemberKRWRates.size());
 
-        Map<LocalDate, BigDecimal> krwAmountMap = new HashMap<>();
-        for (CurrencyRateHistoryEntity currencyRateHistoryEntity : septemberKRWRates) {
-            krwAmountMap.put(currencyRateHistoryEntity.date, currencyRateHistoryEntity.amount);
-        }
-        krwAmountMap.keySet().forEach(System.out::println);
-        assertThat(krwAmountMap.keySet().size()).isEqualTo(22L); //주말을 제외한 9월 일수
+        List<RateOfDate> rateOfDateList = septemberKRWRates.stream()
+                .map(currencyRateHistoryEntity -> new RateOfDate(currencyRateHistoryEntity.date, currencyRateHistoryEntity.amount))
+                .collect(Collectors.toList());
+//        Map<LocalDate, BigDecimal> krwAmountMap = new HashMap<>();
+//        for (CurrencyRateHistoryEntity currencyRateHistoryEntity : septemberKRWRates) {
+//            krwAmountMap.put(currencyRateHistoryEntity.date, currencyRateHistoryEntity.amount);
+//        }
+//        krwAmountMap.keySet().forEach(System.out::println);
+//        assertThat(krwAmountMap.keySet().size()).isEqualTo(22L); //주말을 제외한 9월 일수
 
+//        List<BigDecimal> couponInKRWAmountList = recentlyCreatedCoupon.parallelStream()
+//                .map(coupon -> {
+//                    LocalDate localDate = coupon.createdTime.toLocalDate();
+//                    BigDecimal rate = krwAmountMap.get(localDate);
+//                    rate = Optional.ofNullable(rate)
+//                            .orElseGet(() -> retrieveLastBusinessDay(krwAmountMap, localDate));
+//                    BigDecimal amount = BigDecimal.valueOf(coupon.amountOff);
+//                    BigDecimal result = rate.multiply(amount);
+//                    return result;
+//                }).collect(Collectors.toList());
+
+
+        assertThat(rateOfDateList.size()).isEqualTo(22L); //주말을 제외한 9월 일수
         List<BigDecimal> couponInKRWAmountList = recentlyCreatedCoupon.parallelStream()
                 .map(coupon -> {
-                    LocalDate localDate = coupon.createdTime.toLocalDate();
-                    BigDecimal rate = krwAmountMap.get(localDate);
-                    rate = Optional.ofNullable(rate)
-                            .orElseGet(() -> retrieveLastBusinessDay(krwAmountMap, localDate));
+                    LocalDate createdDate = coupon.createdTime.toLocalDate();
+                    Optional<RateOfDate> maybeRateOfDate = rateOfDateList.stream()
+                            .filter(rateOfDate -> rateOfDate.date.equals(createdDate))
+                            .findFirst();
+                    RateOfDate rateOfDate = maybeRateOfDate.orElseGet(() -> couponAnalyzeService.retrieveLastBusinessDay(rateOfDateList, createdDate));
+                    BigDecimal rate = rateOfDate.rate;
                     BigDecimal amount = BigDecimal.valueOf(coupon.amountOff);
-                    BigDecimal result = rate.multiply(amount);
-                    return result;
+                    return rate.multiply(amount);
                 }).collect(Collectors.toList());
 
         System.out.println("couponInKRWAmountList.size() = " + couponInKRWAmountList.size());

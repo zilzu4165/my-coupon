@@ -100,7 +100,7 @@ public class CouponAnalyzeService {
         return new CouponAnalyzeResult(targetDate.getYear(), targetDate.getMonth(), sumAmountsOfCoupon, averageAmount);
     }
 
-    private RateOfDate retrieveLastBusinessDay(List<RateOfDate> rateOfDateList, LocalDate localDate) {
+    public RateOfDate retrieveLastBusinessDay(List<RateOfDate> rateOfDateList, LocalDate localDate) {
         LocalDate previousDate = localDate.minus(1, ChronoUnit.DAYS);
         Optional<RateOfDate> mayBeRate = rateOfDateList.stream()
                 .filter(rateOfDate -> rateOfDate.date.equals(previousDate))
