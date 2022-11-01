@@ -3,6 +3,7 @@ package me.zilzu.mycoupon.application.service;
 import me.zilzu.mycoupon.common.CouponDiscountAmountCalculator;
 import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
+import me.zilzu.mycoupon.common.enums.Currency;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
 import me.zilzu.mycoupon.storage.NewCouponRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +35,17 @@ public class CouponService {
     private final CouponValidator couponValidator;
     private final CouponHistoryRecorder couponHistoryRecorder;
     private final NewCouponRepository newCouponRepository;
+    private final CouponAnalyzeService couponAnalyzeService;
 
     public CouponService(CouponIdGenerator couponIdGenerator,
                          CouponDiscountAmountCalculator couponDiscountAmountCalculator, CouponValidator couponValidator,
-                         CouponHistoryRecorder couponHistoryRecorder, NewCouponRepository newCouponRepository) {
+                         CouponHistoryRecorder couponHistoryRecorder, NewCouponRepository newCouponRepository, CouponAnalyzeService couponAnalyzeService) {
         this.couponIdGenerator = couponIdGenerator;
         this.couponDiscountAmountCalculator = couponDiscountAmountCalculator;
         this.couponValidator = couponValidator;
         this.couponHistoryRecorder = couponHistoryRecorder;
         this.newCouponRepository = newCouponRepository;
+        this.couponAnalyzeService = couponAnalyzeService;
     }
 
     @Cacheable(value = "Coupon", key = "#id")
@@ -70,6 +74,19 @@ public class CouponService {
         couponValidator.validate(couponCreationRequest);
 
         CouponEntity entity = new CouponEntity(couponId, couponCreationRequest.duration, couponCreationRequest.durationInMonths, couponCreationRequest.currency, couponCreationRequest.discountType, couponCreationRequest.amountOff, couponCreationRequest.percentOff, true, LocalDateTime.now());
+        newCouponRepository.save(entity);
+
+        return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.currency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
+    }
+
+    public Coupon create(CouponCreationRequest couponCreationRequest, LocalDateTime localDateTime) {
+        String couponId = couponIdGenerator.generate();
+
+        couponValidator.validate(couponCreationRequest);
+
+        CouponEntity entity = new CouponEntity(couponId, couponCreationRequest.duration,
+                couponCreationRequest.durationInMonths, couponCreationRequest.currency, couponCreationRequest.discountType,
+                couponCreationRequest.amountOff, couponCreationRequest.percentOff, true, localDateTime);
         newCouponRepository.save(entity);
 
         return new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.currency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime);
@@ -138,5 +155,10 @@ public class CouponService {
 
     private static RuntimeException notUsableCouponException() {
         throw new RuntimeException("사용할 수 없는 쿠폰입니다.");
+    }
+
+    public CouponAnalyzeResult analyzeByMonthAndCurrency(LocalDate localDate, Currency currency) {
+        boolean isInTest = true;
+        return couponAnalyzeService.analyzeByMonthAndCurrency(localDate, currency, isInTest, this);
     }
 }
