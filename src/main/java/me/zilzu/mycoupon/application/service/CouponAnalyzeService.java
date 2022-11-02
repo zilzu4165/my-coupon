@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -54,7 +55,7 @@ public class CouponAnalyzeService {
                 .collect(Collectors.toList());
     }
 
-    public CouponAnalyzeResult analyzeByMonthAndCurrency(LocalDate targetDate, Currency currency, boolean isInTest, final CouponService couponService) {
+    public CouponAnalyzeResult analyzeByMonthAndCurrency(YearMonth targetDate, Currency currency, boolean isInTest, final CouponService couponService) {
 
         LocalDate firstDateOfMonth = LocalDate.of(targetDate.getYear(), targetDate.getMonth(), 1);
         LocalDate lastDateOfMonth = LocalDate.of(targetDate.getYear(), targetDate.getMonth(), firstDateOfMonth.lengthOfMonth());

@@ -6,9 +6,7 @@ import me.zilzu.mycoupon.common.enums.Currency;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.time.YearMonth;
 
 @RestController
 public class CouponController {
@@ -60,19 +58,14 @@ public class CouponController {
     }
 
     @GetMapping("/api/v1/stats")
-    public CouponAnalyzeResponse couponAnalyze(@RequestParam(value = "target") String target,
-                                               @RequestParam(value = "currency") Currency currency) {
+    public CouponAnalyzeResponse couponAnalyze(
+            @RequestParam(value = "target") String targetYearMonth,
+            @RequestParam(value = "currency") Currency currency
+    ) {
+        YearMonth yearMonth = YearMonth.parse(targetYearMonth);
 
-        LocalDate targetLocalDate;
-        try {
-             targetLocalDate = LocalDate.parse(target + "-01", DateTimeFormatter.ISO_LOCAL_DATE);
-        } catch (DateTimeParseException e) {
-            return new CouponAnalyzeResponse("잘못된 날짜 형식입니다", null, null, null, null);
-        }
-        CouponAnalyzeResult couponAnalyzeResult = couponService.analyzeByMonthAndCurrency(targetLocalDate, currency);
-        String message = couponAnalyzeResult.year +"년 " + couponAnalyzeResult.month.getValue() + "월에 대한 정산 결과입니다.";
-        return new CouponAnalyzeResponse(message, couponAnalyzeResult.year, couponAnalyzeResult.month,
-                couponAnalyzeResult.sumAmountsOfCoupon, couponAnalyzeResult.averageAmount);
+        CouponAnalyzeResult result = couponService.analyzeByMonthAndCurrency(yearMonth, currency);
+        return new CouponAnalyzeResponse(result);
     }
 
 }

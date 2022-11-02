@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -157,8 +157,8 @@ public class CouponService {
         throw new RuntimeException("사용할 수 없는 쿠폰입니다.");
     }
 
-    public CouponAnalyzeResult analyzeByMonthAndCurrency(LocalDate localDate, Currency currency) {
+    public CouponAnalyzeResult analyzeByMonthAndCurrency(YearMonth targetYearMonth, Currency currency) {
         boolean isInTest = true;
-        return couponAnalyzeService.analyzeByMonthAndCurrency(localDate, currency, isInTest, this);
+        return couponAnalyzeService.analyzeByMonthAndCurrency(targetYearMonth, currency, isInTest, this);
     }
 }
