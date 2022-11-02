@@ -28,8 +28,14 @@ public class CouponAnalyzeService {
 
     private final CurrencyRateHistoryRepository currencyRateHistoryRepository;
 
-    public CouponAnalyzeService(CurrencyRateHistoryRepository currencyRateHistoryRepository) {
+    private final SameMonthDatesFinder sameMonthDatesFinder;
+
+    public CouponAnalyzeService(
+            CurrencyRateHistoryRepository currencyRateHistoryRepository,
+            SameMonthDatesFinder sameMonthDatesFinder
+    ) {
         this.currencyRateHistoryRepository = currencyRateHistoryRepository;
+        this.sameMonthDatesFinder = sameMonthDatesFinder;
     }
 
     public void save(RateByBaseCurrency rateByBaseCurrency) {
@@ -59,7 +65,9 @@ public class CouponAnalyzeService {
 
         LocalDate firstDateOfMonth = LocalDate.of(targetDate.getYear(), targetDate.getMonth(), 1);
         LocalDate lastDateOfMonth = LocalDate.of(targetDate.getYear(), targetDate.getMonth(), firstDateOfMonth.lengthOfMonth());
-        List<LocalDate> septemberDates = getAllDateInMonthStream(firstDateOfMonth);
+
+        List<LocalDate> septemberDates = sameMonthDatesFinder.find(firstDateOfMonth);
+
         List<Coupon> recentlyCreatedCoupon = null;
         if (isInTest) {
             // 운영환경에서는 API 연동한 환율 데이터와 쿠폰 발급한 데이터가 이미 존재한다.
@@ -108,12 +116,6 @@ public class CouponAnalyzeService {
                 .findFirst();
         return mayBeRate
                 .orElseGet(() -> retrieveLastBusinessDay(rateOfDateList, previousDate));
-    }
-
-    public List<LocalDate> getAllDateInMonthStream(LocalDate firstDateOfMonth) {
-        return IntStream.range(0, firstDateOfMonth.lengthOfMonth())
-                .mapToObj(firstDateOfMonth::plusDays)
-                .collect(Collectors.toList());
     }
 
     private void createCoupons(CouponService couponService, List<LocalDate> monthDates, int couponCountPerDay) {

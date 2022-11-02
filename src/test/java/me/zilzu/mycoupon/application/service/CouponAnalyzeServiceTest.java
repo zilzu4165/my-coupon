@@ -17,7 +17,10 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,7 +47,8 @@ class CouponAnalyzeServiceTest {
         LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
         LocalDate lastDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 30);
 
-        List<LocalDate> septemberDates = couponAnalyzeService.getAllDateInMonthStream(firstDateOfMonth);
+        SameMonthDatesFinder sameMonthDatesFinder = new SameMonthDatesFinder();
+        List<LocalDate> septemberDates = sameMonthDatesFinder.find(firstDateOfMonth);
 
         //쿠폰 생성
         createCoupons(septemberDates, Currency.USD, 100, 4);
@@ -147,7 +151,8 @@ class CouponAnalyzeServiceTest {
     @DisplayName("필요한 환율 데이터가 주말일 경우 직전 평일의 데이터를 가져온다.")
     void currencyRate_of_last_business_day() {
         LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
-        List<LocalDate> septemberDates = couponAnalyzeService.getAllDateInMonthStream(firstDateOfMonth);
+        SameMonthDatesFinder sameMonthDatesFinder = new SameMonthDatesFinder();
+        List<LocalDate> septemberDates = sameMonthDatesFinder.find(firstDateOfMonth);
         List<RateByBaseCurrency> list = couponAnalyzeService.getRateByBaseCurrencyByAPI(septemberDates);
         assertThat(list.size()).isEqualTo(22);
         list.forEach(System.out::println);
@@ -187,7 +192,8 @@ class CouponAnalyzeServiceTest {
     @DisplayName("vatcomply API를 통해 수집한 한 달간의 환율 데이터를 DB에 저장한다. ")
     void save_rate_datas() {
         LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
-        List<LocalDate> septemberDates = couponAnalyzeService.getAllDateInMonthStream(firstDateOfMonth);
+        SameMonthDatesFinder sameMonthDatesFinder = new SameMonthDatesFinder();
+        List<LocalDate> septemberDates = sameMonthDatesFinder.find(firstDateOfMonth);
         assertThat(septemberDates.size()).isEqualTo(30);
 
         List<RateByBaseCurrency> list = couponAnalyzeService.getRateByBaseCurrencyByAPI(septemberDates);
@@ -222,7 +228,8 @@ class CouponAnalyzeServiceTest {
     @DisplayName("2022.09 한 달간 매일 100장의 쿠폰을 발행한다.")
     void create_and_apply_coupons_everyday_in_a_month() {
         LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
-        List<LocalDate> septemberDates = couponAnalyzeService.getAllDateInMonthStream(firstDateOfMonth);
+        SameMonthDatesFinder sameMonthDatesFinder = new SameMonthDatesFinder();
+        List<LocalDate> septemberDates = sameMonthDatesFinder.find(firstDateOfMonth);
 
         createCoupons(septemberDates, Currency.USD, 100, 4);
 

@@ -52,23 +52,13 @@ class CurrencyRateCollectionTest {
     void rates_collect_one_month() {
         LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
 
-        CouponAnalyzeService sut = new CouponAnalyzeService(null);
+        SameMonthDatesFinder sameMonthDatesFinder = new SameMonthDatesFinder();
+        CouponAnalyzeService sut = new CouponAnalyzeService(null, sameMonthDatesFinder);
 
-        List<LocalDate> septemberDates = sut.getAllDateInMonthStream(firstDateOfMonth);
+        List<LocalDate> septemberDates = sameMonthDatesFinder.find(firstDateOfMonth);
         List<RateByBaseCurrency> list = sut.getRateByBaseCurrencyByAPI(septemberDates);
         assertThat(list.size()).isEqualTo(22);
         list.forEach(System.out::println);
         //TemporalAdjuster addADay = temporal -> temporal.plus(1L, ChronoUnit.DAYS);
-    }
-
-    @Test
-    @DisplayName("해당 월의 LocalDate 리스트를 반환한다.")
-    void retreive_all_loacldate_of_month() {
-        LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
-        CouponAnalyzeService sut = new CouponAnalyzeService(null);
-
-        List<LocalDate> septemberDates = sut.getAllDateInMonthStream(firstDateOfMonth);
-        assertThat(septemberDates.size()).isEqualTo(firstDateOfMonth.lengthOfMonth());
-        septemberDates.forEach(System.out::println);
     }
 }
