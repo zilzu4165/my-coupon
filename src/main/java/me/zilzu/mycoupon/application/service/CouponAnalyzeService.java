@@ -63,13 +63,9 @@ public class CouponAnalyzeService {
     }
 
     public CouponAnalyzeResult analyzeBy(YearMonth targetDate, Currency currency) {
-        LocalDate firstDateOfMonth = LocalDate.of(targetDate.getYear(), targetDate.getMonth(), 1);
-        LocalDate lastDateOfMonth = LocalDate.of(targetDate.getYear(), targetDate.getMonth(), firstDateOfMonth.lengthOfMonth());
-
         List<Coupon> recentlyCreatedCoupon = recentlyCreatedCouponFinder.find(targetDate);
-        List<RateOfDate> rateOfDateList = rateOfDateFinder.find(firstDateOfMonth, lastDateOfMonth, currency);
-
+        List<RateOfDate> rateOfDateList = rateOfDateFinder.find(targetDate, currency);
         CouponStatsSummary summary = couponStatsSummarizer.summarize(recentlyCreatedCoupon, rateOfDateList);
-        return new CouponAnalyzeResult(targetDate.getYear(), targetDate.getMonth(), summary.sum, summary.average);
+        return new CouponAnalyzeResult(targetDate, summary.sum, summary.average);
     }
 }

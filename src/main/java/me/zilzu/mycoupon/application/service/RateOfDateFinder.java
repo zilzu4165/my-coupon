@@ -6,6 +6,7 @@ import me.zilzu.mycoupon.storage.CurrencyRateHistoryRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,10 @@ public class RateOfDateFinder {
         this.currencyRateHistoryRepository = currencyRateHistoryRepository;
     }
 
-    public List<RateOfDate> find(LocalDate firstDateOfMonth, LocalDate lastDateOfMonth, Currency currency) {
+    public List<RateOfDate> find(YearMonth targetYearMonth, Currency currency) {
+        LocalDate firstDateOfMonth = LocalDate.of(targetYearMonth.getYear(), targetYearMonth.getMonth(), 1);
+        LocalDate lastDateOfMonth = LocalDate.of(targetYearMonth.getYear(), targetYearMonth.getMonth(), firstDateOfMonth.lengthOfMonth());
+
         List<CurrencyRateHistoryEntity> targetRates2 = currencyRateHistoryRepository.findByDateBetweenAndCurrency(firstDateOfMonth, lastDateOfMonth, currency);
         return targetRates2.stream()
                 .map(currencyRateHistoryEntity -> new RateOfDate(currencyRateHistoryEntity.date, currencyRateHistoryEntity.amount))
