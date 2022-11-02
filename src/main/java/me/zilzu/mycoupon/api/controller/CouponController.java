@@ -70,8 +70,7 @@ public class CouponController {
     ) {
         YearMonth yearMonth = YearMonth.parse(targetYearMonth);
 
-        boolean isInTest = true;
-        CouponAnalyzeResult result = couponAnalyzeService.analyzeBy(yearMonth, currency, isInTest, couponService);
+        CouponAnalyzeResult result = couponAnalyzeService.analyzeBy(yearMonth, currency);
         return new CouponAnalyzeResponse(result);
     }
 

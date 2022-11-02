@@ -1,8 +1,6 @@
 package me.zilzu.mycoupon.application.service;
 
-import me.zilzu.mycoupon.common.enums.CouponDuration;
 import me.zilzu.mycoupon.common.enums.Currency;
-import me.zilzu.mycoupon.common.enums.DiscountType;
 import me.zilzu.mycoupon.storage.CurrencyRateHistoryEntity;
 import me.zilzu.mycoupon.storage.CurrencyRateHistoryRepository;
 import org.springframework.stereotype.Service;
@@ -16,11 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 public class CouponAnalyzeService {
@@ -31,13 +25,18 @@ public class CouponAnalyzeService {
 
     private final LastBusinessDayRateFinder lastBusinessDayRateFinder;
 
+    private final RecentlyCreatedCouponFinder recentlyCreatedCouponFinder;
+
     public CouponAnalyzeService(
             CurrencyRateHistoryRepository currencyRateHistoryRepository,
             SameMonthDatesFinder sameMonthDatesFinder,
-            LastBusinessDayRateFinder lastBusinessDayRateFinder) {
+            LastBusinessDayRateFinder lastBusinessDayRateFinder,
+            RecentlyCreatedCouponFinder recentlyCreatedCouponFinder
+    ) {
         this.currencyRateHistoryRepository = currencyRateHistoryRepository;
         this.sameMonthDatesFinder = sameMonthDatesFinder;
         this.lastBusinessDayRateFinder = lastBusinessDayRateFinder;
+        this.recentlyCreatedCouponFinder = recentlyCreatedCouponFinder;
     }
 
     public void save(RateByBaseCurrency rateByBaseCurrency) {
@@ -63,26 +62,12 @@ public class CouponAnalyzeService {
                 .collect(Collectors.toList());
     }
 
-    public CouponAnalyzeResult analyzeBy(YearMonth targetDate, Currency currency, boolean isInTest, final CouponService couponService) {
+    public CouponAnalyzeResult analyzeBy(YearMonth targetDate, Currency currency) {
 
         LocalDate firstDateOfMonth = LocalDate.of(targetDate.getYear(), targetDate.getMonth(), 1);
         LocalDate lastDateOfMonth = LocalDate.of(targetDate.getYear(), targetDate.getMonth(), firstDateOfMonth.lengthOfMonth());
 
-        List<LocalDate> septemberDates = sameMonthDatesFinder.find(firstDateOfMonth);
-
-        List<Coupon> recentlyCreatedCoupon = null;
-        if (isInTest) {
-            // 운영환경에서는 API 연동한 환율 데이터와 쿠폰 발급한 데이터가 이미 존재한다.
-            List<RateByBaseCurrency> list = getRateByBaseCurrencyByAPI(septemberDates);
-            list.forEach(this::save);
-            int couponCountPerDay = 100;
-            createCoupons(couponService, septemberDates, couponCountPerDay);
-            recentlyCreatedCoupon = couponService
-                    .findRecentlyCreatedCoupon(firstDateOfMonth.lengthOfMonth() * couponCountPerDay);
-        } else {
-            //recentlyCreatedCoupon = couponService.findByDate(firstDateOfMonth, lastDateOfMonth);
-        }
-
+        List<Coupon> recentlyCreatedCoupon = recentlyCreatedCouponFinder.find(targetDate);
 
         List<CurrencyRateHistoryEntity> targetRates = currencyRateHistoryRepository
                 .findByDateBetweenAndCurrency(firstDateOfMonth, lastDateOfMonth, currency);
@@ -109,33 +94,5 @@ public class CouponAnalyzeService {
         BigDecimal averageAmount = sumAmountsOfCoupon.divide(BigDecimal.valueOf(convertedCouponAmountList.size()));
 
         return new CouponAnalyzeResult(targetDate.getYear(), targetDate.getMonth(), sumAmountsOfCoupon, averageAmount);
-    }
-
-    private void createCoupons(CouponService couponService, List<LocalDate> monthDates, int couponCountPerDay) {
-
-        Currency currency = Currency.USD;
-        Long couponAmountOff = 100L;
-        int numberOfThreads = 4;
-        monthDates.forEach(localDate -> {
-            // 특정 고정값(USD) 할인 쿠폰
-            CouponCreationRequest couponCreationRequest = new CouponCreationRequest(
-                    CouponDuration.ONCE, null, DiscountType.AMOUNT, currency, couponAmountOff, null);
-
-            concurrnetCreateCoupons(couponService, couponCreationRequest, localDate, couponCountPerDay, numberOfThreads);
-        });
-    }
-
-    private void concurrnetCreateCoupons(CouponService couponService, CouponCreationRequest couponCreationRequest, LocalDate localDate, int count, int nThreads) {
-        ExecutorService executorService = Executors.newFixedThreadPool(nThreads); // threadPoolSize 100
-
-        List<CompletableFuture> futures = IntStream.range(0, count)
-                .boxed()
-                .map(target ->
-                        CompletableFuture.runAsync(() ->
-                                couponService.create(couponCreationRequest, localDate.atStartOfDay()), executorService))
-                .collect(Collectors.toList());
-
-        CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
-        executorService.shutdown();
     }
 }
