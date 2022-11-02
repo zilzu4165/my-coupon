@@ -3,7 +3,6 @@ package me.zilzu.mycoupon.application.service;
 import me.zilzu.mycoupon.common.CouponDiscountAmountCalculator;
 import me.zilzu.mycoupon.common.CouponId;
 import me.zilzu.mycoupon.common.enums.CouponDuration;
-import me.zilzu.mycoupon.common.enums.Currency;
 import me.zilzu.mycoupon.common.enums.SortingOrder;
 import me.zilzu.mycoupon.storage.CouponEntity;
 import me.zilzu.mycoupon.storage.NewCouponRepository;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -157,8 +155,4 @@ public class CouponService {
         throw new RuntimeException("사용할 수 없는 쿠폰입니다.");
     }
 
-    public CouponAnalyzeResult analyzeByMonthAndCurrency(YearMonth targetYearMonth, Currency currency) {
-        boolean isInTest = true;
-        return couponAnalyzeService.analyzeByMonthAndCurrency(targetYearMonth, currency, isInTest, this);
-    }
 }

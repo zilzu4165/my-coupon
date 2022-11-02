@@ -55,7 +55,7 @@ public class CouponAnalyzeService {
                 .collect(Collectors.toList());
     }
 
-    public CouponAnalyzeResult analyzeByMonthAndCurrency(YearMonth targetDate, Currency currency, boolean isInTest, final CouponService couponService) {
+    public CouponAnalyzeResult analyzeBy(YearMonth targetDate, Currency currency, boolean isInTest, final CouponService couponService) {
 
         LocalDate firstDateOfMonth = LocalDate.of(targetDate.getYear(), targetDate.getMonth(), 1);
         LocalDate lastDateOfMonth = LocalDate.of(targetDate.getYear(), targetDate.getMonth(), firstDateOfMonth.lengthOfMonth());

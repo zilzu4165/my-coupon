@@ -13,8 +13,14 @@ public class CouponController {
 
     private final CouponService couponService;
 
-    public CouponController(CouponService couponService) {
+    private final CouponAnalyzeService couponAnalyzeService;
+
+    public CouponController(
+            CouponService couponService,
+            CouponAnalyzeService couponAnalyzeService
+    ) {
         this.couponService = couponService;
+        this.couponAnalyzeService = couponAnalyzeService;
     }
 
     @GetMapping("/api/v1/coupons/{id}")
@@ -64,7 +70,8 @@ public class CouponController {
     ) {
         YearMonth yearMonth = YearMonth.parse(targetYearMonth);
 
-        CouponAnalyzeResult result = couponService.analyzeByMonthAndCurrency(yearMonth, currency);
+        boolean isInTest = true;
+        CouponAnalyzeResult result = couponAnalyzeService.analyzeBy(yearMonth, currency, isInTest, couponService);
         return new CouponAnalyzeResponse(result);
     }
 
