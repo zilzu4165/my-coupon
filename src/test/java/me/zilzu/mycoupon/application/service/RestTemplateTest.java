@@ -4,6 +4,7 @@ import me.zilzu.mycoupon.common.enums.Currency;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -20,14 +21,7 @@ public class RestTemplateTest {
     @DisplayName("RestTemplate API Test")
     void test1() {
         String yearMonth = "2022-09";
-        YearMonth month = YearMonth.parse(yearMonth, DateTimeFormatter.ofPattern("yyyy-MM"));
-        LocalDate atDay = month.atDay(1);
-
-        int lastDayOfMonth = atDay.lengthOfMonth();
         List<CouponRateHistory> couponRateHistories = sut.getRateOfMonth(yearMonth);
-
-        assertThat(couponRateHistories.size()).isEqualTo(lastDayOfMonth);
-        System.out.println("couponRateHistories.size() = " + couponRateHistories.size());
 
         List<Currency> bases = couponRateHistories
                 .stream()
@@ -40,7 +34,7 @@ public class RestTemplateTest {
     }
 
     @Test
-    @DisplayName("해당 월의 모든 날짜 구하기")
+    @DisplayName("해당 월의 공휴일을 제외한 모든 날짜 구하기")
     void test2() {
         String dateString = "2022-09";
         YearMonth yearMonth = YearMonth.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM"));
@@ -51,6 +45,9 @@ public class RestTemplateTest {
 
         for (int i = 0; i < lastDayOfMonth; i++) {
             LocalDate plusDays = firstDay.plusDays(i);
+            if (plusDays.getDayOfWeek() == DayOfWeek.SUNDAY || plusDays.getDayOfWeek() == DayOfWeek.SATURDAY) {
+                continue;
+            }
             System.out.println(plusDays);
         }
     }
