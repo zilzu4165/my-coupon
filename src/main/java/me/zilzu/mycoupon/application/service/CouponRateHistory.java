@@ -2,12 +2,11 @@ package me.zilzu.mycoupon.application.service;
 
 import me.zilzu.mycoupon.common.enums.Currency;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Map;
 
-public class CouponRateHistory implements Serializable {
+public class CouponRateHistory {
 
     public LocalDate date;
     public Currency base;
