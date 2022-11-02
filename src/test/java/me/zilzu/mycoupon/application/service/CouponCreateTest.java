@@ -98,7 +98,7 @@ public class CouponCreateTest {
     void test6() {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, null, Currency.USD, null, null);
 
-        Coupon coupon = couponService.create(couponCreationRequest);
+        Coupon coupon = couponService.create(couponCreationRequest, LocalDateTime.now());
         Coupon foundCoupon = couponService.retrieve(coupon.id);
 
         assertThat(foundCoupon.id).isEqualTo(coupon.id);
@@ -110,7 +110,7 @@ public class CouponCreateTest {
     @EnumSource(value = CouponDuration.class, names = {"ONCE", "FOREVER"})
     void test9(CouponDuration duration) {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(duration, null, null, null, null, null);
-        Coupon coupon = couponService.create(couponCreationRequest);
+        Coupon coupon = couponService.create(couponCreationRequest, LocalDateTime.now());
 
         Coupon retrieve = couponService.retrieve(coupon.id);
 
@@ -125,7 +125,7 @@ public class CouponCreateTest {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(duration, 0, null, null, null, null);
 
         assertThatThrownBy(() -> {
-            couponService.create(couponCreationRequest);
+            couponService.create(couponCreationRequest, LocalDateTime.now());
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -133,7 +133,7 @@ public class CouponCreateTest {
     @Test
     void test11() {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.REPEATING, 3, null, null, null, null);
-        Coupon coupon = couponService.create(couponCreationRequest);
+        Coupon coupon = couponService.create(couponCreationRequest, LocalDateTime.now());
 
         Coupon retrieve = couponService.retrieve(coupon.id);
 
@@ -147,7 +147,7 @@ public class CouponCreateTest {
     void test17() {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, null, 1000L, null);
 
-        Coupon coupon = couponService.create(couponCreationRequest);
+        Coupon coupon = couponService.create(couponCreationRequest, LocalDateTime.now());
         Coupon foundCoupon = couponService.retrieve(coupon.id);
 
         assertThat(coupon.valid).isTrue();
@@ -163,7 +163,7 @@ public class CouponCreateTest {
                 .boxed()
                 .map(target ->
                         CompletableFuture.runAsync(() ->
-                                couponService.create(couponCreationRequest), executorService))
+                                couponService.create(couponCreationRequest, LocalDateTime.now()), executorService))
                 .collect(Collectors.toList());
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();

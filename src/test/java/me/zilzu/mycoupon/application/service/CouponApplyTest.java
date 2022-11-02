@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +34,7 @@ public class CouponApplyTest {
     @Test
     void test2() {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, Currency.KRW, 1000L, null);
-        Coupon coupon = couponService.create(couponCreationRequest);
+        Coupon coupon = couponService.create(couponCreationRequest, LocalDateTime.now());
         Double price = 1000d;
         couponService.apply(coupon.id, price);
 
@@ -55,7 +56,7 @@ public class CouponApplyTest {
     void test4() {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, Currency.KRW, 1000L, null);
 
-        Coupon coupon = couponService.create(couponCreationRequest);
+        Coupon coupon = couponService.create(couponCreationRequest, LocalDateTime.now());
         Coupon foundCoupon = couponService.retrieve(coupon.id);
         couponService.apply(foundCoupon.id, 1000d);  // valid false
 
@@ -69,7 +70,7 @@ public class CouponApplyTest {
     void test5() {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.AMOUNT, Currency.KRW, 10000L, null);
 
-        Coupon coupon = couponService.create(couponCreationRequest);
+        Coupon coupon = couponService.create(couponCreationRequest, LocalDateTime.now());
 
         Double price = 20000d;
         couponService.apply(coupon.id, price);
@@ -87,7 +88,7 @@ public class CouponApplyTest {
     void test6() {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.PERCENTAGE, Currency.KRW, null, 10d);
 
-        Coupon coupon = couponService.create(couponCreationRequest);
+        Coupon coupon = couponService.create(couponCreationRequest, LocalDateTime.now());
 
         Double price = 10000d;
         couponService.apply(coupon.id, price);
@@ -105,7 +106,7 @@ public class CouponApplyTest {
     @DisplayName("couponHistory 의 CouponCurrency가 정상적으로 조회된다.")
     void test7() {
         CouponCreationRequest couponCreationRequest = new CouponCreationRequest(CouponDuration.ONCE, null, DiscountType.PERCENTAGE, Currency.USD, null, 10d);
-        Coupon coupon = couponService.create(couponCreationRequest);
+        Coupon coupon = couponService.create(couponCreationRequest, LocalDateTime.now());
 
         Double price = 10000d;
         couponService.apply(coupon.id, price);

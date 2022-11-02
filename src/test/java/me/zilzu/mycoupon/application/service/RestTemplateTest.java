@@ -24,7 +24,7 @@ public class RestTemplateTest {
         LocalDate atDay = month.atDay(1);
 
         int lastDayOfMonth = atDay.lengthOfMonth();
-        List<CouponRateHistory> couponRateHistories = sut.rateExchangeHistory(yearMonth);
+        List<CouponRateHistory> couponRateHistories = sut.getRateOfMonth(yearMonth);
 
         assertThat(couponRateHistories.size()).isEqualTo(lastDayOfMonth);
         System.out.println("couponRateHistories.size() = " + couponRateHistories.size());

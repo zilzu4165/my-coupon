@@ -8,6 +8,8 @@ import me.zilzu.mycoupon.common.CouponId;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 public class CouponController {
 
@@ -37,7 +39,7 @@ public class CouponController {
 
     @PostMapping("/api/v1/coupons")
     public CouponCreatedResponse createCoupons(@RequestBody CouponRequestDto couponRequestDto) {
-        Coupon coupon = couponService.create(new CouponCreationRequest(couponRequestDto.duration, couponRequestDto.durationInMonths, couponRequestDto.discountType, couponRequestDto.currency, couponRequestDto.amountOff, couponRequestDto.percentOff));
+        Coupon coupon = couponService.create(new CouponCreationRequest(couponRequestDto.duration, couponRequestDto.durationInMonths, couponRequestDto.discountType, couponRequestDto.currency, couponRequestDto.amountOff, couponRequestDto.percentOff), LocalDateTime.now());
 
         return new CouponCreatedResponse(coupon);
     }

@@ -61,7 +61,7 @@ public class PaginationTest {
 
         List<CompletableFuture> futures = IntStream.range(0, count)
                 .boxed()
-                .map(target -> CompletableFuture.runAsync(() -> couponService.create(couponCreationRequest), executorService))
+                .map(target -> CompletableFuture.runAsync(() -> couponService.create(couponCreationRequest, LocalDateTime.now()), executorService))
                 .collect(Collectors.toList());
 
         CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
