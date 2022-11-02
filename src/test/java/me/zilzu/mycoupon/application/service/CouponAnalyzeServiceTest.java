@@ -95,7 +95,7 @@ class CouponAnalyzeServiceTest {
                     Optional<RateOfDate> maybeRateOfDate = rateOfDateList.stream()
                             .filter(rateOfDate -> rateOfDate.date.equals(createdDate))
                             .findFirst();
-                    RateOfDate rateOfDate = maybeRateOfDate.orElseGet(() -> couponAnalyzeService.retrieveLastBusinessDay(rateOfDateList, createdDate));
+                    RateOfDate rateOfDate = maybeRateOfDate.orElseGet(() -> new LastBusinessDayRateFinder().find(rateOfDateList, createdDate));
                     BigDecimal rate = rateOfDate.rate;
                     BigDecimal amount = BigDecimal.valueOf(coupon.amountOff);
                     return rate.multiply(amount);

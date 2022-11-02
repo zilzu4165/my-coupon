@@ -13,7 +13,6 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,12 +29,15 @@ public class CouponAnalyzeService {
 
     private final SameMonthDatesFinder sameMonthDatesFinder;
 
+    private final LastBusinessDayRateFinder lastBusinessDayRateFinder;
+
     public CouponAnalyzeService(
             CurrencyRateHistoryRepository currencyRateHistoryRepository,
-            SameMonthDatesFinder sameMonthDatesFinder
-    ) {
+            SameMonthDatesFinder sameMonthDatesFinder,
+            LastBusinessDayRateFinder lastBusinessDayRateFinder) {
         this.currencyRateHistoryRepository = currencyRateHistoryRepository;
         this.sameMonthDatesFinder = sameMonthDatesFinder;
+        this.lastBusinessDayRateFinder = lastBusinessDayRateFinder;
     }
 
     public void save(RateByBaseCurrency rateByBaseCurrency) {
@@ -96,7 +98,7 @@ public class CouponAnalyzeService {
                     Optional<RateOfDate> maybeRateOfDate = rateOfDateList.stream()
                             .filter(rateOfDate -> rateOfDate.date.equals(createdDate))
                             .findFirst();
-                    RateOfDate rateOfDate = maybeRateOfDate.orElseGet(() -> retrieveLastBusinessDay(rateOfDateList, createdDate));
+                    RateOfDate rateOfDate = maybeRateOfDate.orElseGet(() -> lastBusinessDayRateFinder.find(rateOfDateList, createdDate));
                     BigDecimal rate = rateOfDate.rate;
                     BigDecimal amount = BigDecimal.valueOf(coupon.amountOff);
                     return rate.multiply(amount);
@@ -107,15 +109,6 @@ public class CouponAnalyzeService {
         BigDecimal averageAmount = sumAmountsOfCoupon.divide(BigDecimal.valueOf(convertedCouponAmountList.size()));
 
         return new CouponAnalyzeResult(targetDate.getYear(), targetDate.getMonth(), sumAmountsOfCoupon, averageAmount);
-    }
-
-    public RateOfDate retrieveLastBusinessDay(List<RateOfDate> rateOfDateList, LocalDate localDate) {
-        LocalDate previousDate = localDate.minus(1, ChronoUnit.DAYS);
-        Optional<RateOfDate> mayBeRate = rateOfDateList.stream()
-                .filter(rateOfDate -> rateOfDate.date.equals(previousDate))
-                .findFirst();
-        return mayBeRate
-                .orElseGet(() -> retrieveLastBusinessDay(rateOfDateList, previousDate));
     }
 
     private void createCoupons(CouponService couponService, List<LocalDate> monthDates, int couponCountPerDay) {
