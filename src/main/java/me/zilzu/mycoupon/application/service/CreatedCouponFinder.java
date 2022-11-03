@@ -6,6 +6,7 @@ import me.zilzu.mycoupon.storage.NewCouponRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ public class CreatedCouponFinder {
     public List<Coupon> findBy(YearMonth targetYearMonth) {
         LocalDate firstDateOfMonth = LocalDate.of(targetYearMonth.getYear(), targetYearMonth.getMonth(), 1);
         LocalDate lastDateOfMonth = LocalDate.of(targetYearMonth.getYear(), targetYearMonth.getMonth(), firstDateOfMonth.lengthOfMonth());
-        List<CouponEntity> couponEntities = newCouponRepository.findByDateBetween(firstDateOfMonth, lastDateOfMonth);
+        List<CouponEntity> couponEntities = newCouponRepository.findByCreatedTimeBetween(firstDateOfMonth.atStartOfDay(), lastDateOfMonth.atTime(LocalTime.MAX));
         return couponEntities.stream()
                 .map(entity -> new Coupon(new CouponId(entity.id), entity.duration, entity.durationInMonth, entity.currency, entity.discountType, entity.amountOff, entity.percentOff, entity.valid, entity.createdTime))
                 .collect(Collectors.toList());
