@@ -1,14 +1,15 @@
 package me.zilzu.mycoupon.api.controller;
 
-import me.zilzu.mycoupon.application.service.Coupon;
-import me.zilzu.mycoupon.application.service.CouponCreationRequest;
-import me.zilzu.mycoupon.application.service.CouponDeleteResult;
-import me.zilzu.mycoupon.application.service.CouponService;
+import me.zilzu.mycoupon.application.service.*;
 import me.zilzu.mycoupon.common.CouponId;
+import me.zilzu.mycoupon.common.enums.Currency;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class CouponController {
@@ -59,4 +60,14 @@ public class CouponController {
         return "쿠폰을 적용했습니다.";
     }
 
+    @GetMapping("/api/v1/stats")
+    public List<CouponRateCalculationResponse> analyseStatsCoupon(@RequestParam(value = "target") YearMonth yearMonth
+            , @RequestParam(value = "currency") Currency currency) {
+
+        List<CouponRateCalculationResult> results = couponService.analyseStatsOf(yearMonth, currency);
+
+        return results.stream()
+                .map(CouponRateCalculationResponse::new)
+                .collect(Collectors.toList());
+    }
 }

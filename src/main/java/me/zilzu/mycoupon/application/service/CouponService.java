@@ -156,6 +156,11 @@ public class CouponService {
         return new CouponApplicationResult(id, history.usageTime);
     }
 
+    public List<CouponRateCalculationResult> analyseStatsOf(YearMonth yearMonth, Currency currency) {
+        List<Coupon> foundCouponsOfMonth = retrieveAllCouponOfMonth(yearMonth, currency);
+        List<CouponRateHistory> rateHistoryList = couponRateExchanger.getRateOfMonth(yearMonth);
+        return couponRateExchanger.calculateRateExchanger(foundCouponsOfMonth, rateHistoryList);
+    }
 
     private static RuntimeException notUsableCouponException() {
         throw new RuntimeException("사용할 수 없는 쿠폰입니다.");
