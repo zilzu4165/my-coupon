@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 
 @RestController
 public class CouponController {
@@ -68,7 +69,12 @@ public class CouponController {
             @RequestParam(value = "target") String targetYearMonth,
             @RequestParam(value = "currency") Currency currency
     ) {
-        YearMonth yearMonth = YearMonth.parse(targetYearMonth);
+        YearMonth yearMonth;
+        try {
+            yearMonth = YearMonth.parse(targetYearMonth);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("잘못된 날짜 형식입니다.");
+        }
 
         CouponAnalyzeResult result = couponAnalyzeService.analyzeBy(yearMonth, currency);
         return new CouponAnalyzeResponse(result);

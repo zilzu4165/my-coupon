@@ -4,19 +4,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import me.zilzu.mycoupon.application.service.CouponAnalyzeResult;
 
 import java.math.BigDecimal;
-import java.time.Month;
+import java.time.YearMonth;
 
 public class CouponAnalyzeResponse {
-    public final Integer year;
-    public final Month month;
+    @JsonProperty("target_year_month")
+    public final YearMonth targetYearMonth;
     @JsonProperty("sum_amount")
     public final BigDecimal sumAmount;
     @JsonProperty("average_amount")
     public final BigDecimal averageAmount;
 
     public CouponAnalyzeResponse(CouponAnalyzeResult result) {
-        this.year = result.year;
-        this.month = result.month;
+        this.targetYearMonth = YearMonth.of(result.year, result.month);
         this.sumAmount = result.sumAmountsOfCoupon;
         this.averageAmount = result.averageAmount;
     }
