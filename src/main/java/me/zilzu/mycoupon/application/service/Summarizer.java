@@ -11,7 +11,7 @@ public class Summarizer {
 
     public CouponStatsResult summarize(List<CouponRateCalculationResult> calculatedResults, Currency currency) {
         BigDecimal sum = calculatedResults.stream()
-                .map(result -> result.calculatedRate)
+                .map(result -> result.calculatedAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal average = sum.divide(BigDecimal.valueOf(calculatedResults.size()));
 

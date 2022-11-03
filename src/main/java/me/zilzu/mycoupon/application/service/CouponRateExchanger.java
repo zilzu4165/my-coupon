@@ -40,7 +40,7 @@ public class CouponRateExchanger {
     }
 
 
-    public List<CouponRateCalculationResult> calculateRateExchanger(List<Coupon> foundCouponsOfMonth, List<CouponRateHistory> couponRateHistories) {
+    public List<CouponRateCalculationResult> calculateRateExchanger(List<Coupon> foundCouponsOfMonth, List<CouponRateHistory> couponRateHistories, Currency currency) {
         /**
          * 1. foundCouponsOfMonth :: 해당 월에 생성된 모든 쿠폰
          * 2. couponRateHistories :: 해당 월의 환율
@@ -52,10 +52,10 @@ public class CouponRateExchanger {
 
             for (CouponRateHistory couponRateHistory : couponRateHistories) {
                 if (date.isEqual(couponRateHistory.date)) {
-                    BigDecimal rateOfCurrency = couponRateHistory.rates.get(Currency.KRW);
-                    BigDecimal rateOfKRW = rateOfCurrency.multiply(BigDecimal.valueOf(coupon.amountOff));
+                    BigDecimal rateOfCurrency = couponRateHistory.rates.get(currency);
+                    BigDecimal calculatedAmount = rateOfCurrency.multiply(BigDecimal.valueOf(coupon.amountOff));
 
-                    calculatedRateCoupons.add(new CouponRateCalculationResult(coupon.id, rateOfKRW, Currency.KRW, date));
+                    calculatedRateCoupons.add(new CouponRateCalculationResult(coupon.id, calculatedAmount, currency, date));
                 }
             }
         }

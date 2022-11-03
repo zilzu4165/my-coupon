@@ -161,7 +161,7 @@ public class CouponService {
     public CouponStatsResult analyseStatsOf(YearMonth yearMonth, Currency currency) {
         List<Coupon> foundCouponsOfMonth = retrieveAllCouponOfMonth(yearMonth, currency);
         List<CouponRateHistory> rateHistoryList = couponRateExchanger.getRateOfMonth(yearMonth);
-        List<CouponRateCalculationResult> calculatedResults = couponRateExchanger.calculateRateExchanger(foundCouponsOfMonth, rateHistoryList);
+        List<CouponRateCalculationResult> calculatedResults = couponRateExchanger.calculateRateExchanger(foundCouponsOfMonth, rateHistoryList, currency);
 
         return summarizer.summarize(calculatedResults, currency);
 

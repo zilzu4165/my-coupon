@@ -9,13 +9,13 @@ import java.time.LocalDate;
 public class CouponRateCalculationResult {
 
     public CouponId id;
-    public BigDecimal calculatedRate;
+    public BigDecimal calculatedAmount;
     public Currency currency;
     public LocalDate date;
 
-    public CouponRateCalculationResult(CouponId id, BigDecimal calculatedRate, Currency currency, LocalDate date) {
+    public CouponRateCalculationResult(CouponId id, BigDecimal calculatedAmount, Currency currency, LocalDate date) {
         this.id = id;
-        this.calculatedRate = calculatedRate;
+        this.calculatedAmount = calculatedAmount;
         this.currency = currency;
         this.date = date;
     }
