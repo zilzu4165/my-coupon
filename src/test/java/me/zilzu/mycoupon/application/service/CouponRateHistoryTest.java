@@ -55,7 +55,7 @@ public class CouponRateHistoryTest {
         System.out.println("couponSize = " + foundCouponsOfMonth.size());
 
         // 2. 해당 월의 환율을 가져온다.
-        List<CouponRateHistory> couponRateHistories = couponRateExchanger.getRateOfMonth(yearMonthStr);
+        List<CouponRateHistory> couponRateHistories = couponRateExchanger.getRateOfMonth(yearMonth);
 
         // 3. KRW로 환율을 계산한다.
         List<CouponRateCalculationResult> couponRateCalculationResults = couponRateExchanger.calculateRateExchanger(foundCouponsOfMonth, couponRateHistories);

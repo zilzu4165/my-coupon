@@ -20,7 +20,8 @@ public class RestTemplateTest {
     @Test
     @DisplayName("RestTemplate API Test")
     void test1() {
-        String yearMonth = "2022-09";
+        String yearMonthStr = "2022-09";
+        YearMonth yearMonth = YearMonth.parse(yearMonthStr, DateTimeFormatter.ofPattern("yyyy-MM"));
         List<CouponRateHistory> couponRateHistories = sut.getRateOfMonth(yearMonth);
 
         List<Currency> bases = couponRateHistories

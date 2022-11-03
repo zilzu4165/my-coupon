@@ -11,7 +11,7 @@ public interface NewCouponRepository extends JpaRepository<CouponEntity, String>
 
     List<CouponEntity> findByCurrency(Currency currency);
 
-    List<CouponEntity> findByCreatedTimeBetweenAndCurrency(LocalDateTime createdTimeStart, LocalDateTime createdTimeEnd, Currency krw);
+    List<CouponEntity> findByCreatedTimeBetweenAndCurrency(LocalDateTime from, LocalDateTime to, Currency currency);
 
 
 }
