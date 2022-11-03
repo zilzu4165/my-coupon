@@ -5,6 +5,7 @@ import me.zilzu.mycoupon.common.enums.Currency;
 import me.zilzu.mycoupon.common.enums.DiscountType;
 import me.zilzu.mycoupon.storage.CurrencyRateHistoryEntity;
 import me.zilzu.mycoupon.storage.CurrencyRateHistoryRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,15 @@ class CouponAnalyzeServiceTest {
     @Autowired
     CouponService couponService;
 
+    @Autowired
+    RateHistoryCollector rateHistoryCollector;
+
     private Long couponAmountOff = 100L;
+
+    @AfterEach
+    void clear_repository() {
+        currencyRateHistoryRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("한 달간 하루에 100개의 쿠폰을 발행한다. 저장된 환율 데이터를 기반으로 해당 기간에 발행된 쿠폰들의 KRW 금액 통계를 구한다.")
@@ -54,8 +63,9 @@ class CouponAnalyzeServiceTest {
         createCoupons(septemberDates, Currency.USD, 100, 4);
 
         //환율 데이터 수집 및 저장
-        List<RateByBaseCurrency> list = couponAnalyzeService.getRateByBaseCurrencyByAPI(septemberDates);
-        list.forEach(couponAnalyzeService::save);
+
+        List<RateByBaseCurrency> list = rateHistoryCollector.collect(septemberDates);
+        rateHistoryCollector.save(list);
 
         //검증
         List<Coupon> recentlyCreatedCoupon = couponService.findRecentlyCreatedCoupon(30 * 100);
@@ -153,7 +163,8 @@ class CouponAnalyzeServiceTest {
         LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
         SameMonthDatesFinder sameMonthDatesFinder = new SameMonthDatesFinder();
         List<LocalDate> septemberDates = sameMonthDatesFinder.find(firstDateOfMonth);
-        List<RateByBaseCurrency> list = couponAnalyzeService.getRateByBaseCurrencyByAPI(septemberDates);
+
+        List<RateByBaseCurrency> list = rateHistoryCollector.collect(septemberDates);
         assertThat(list.size()).isEqualTo(22);
         list.forEach(System.out::println);
 
@@ -196,10 +207,10 @@ class CouponAnalyzeServiceTest {
         List<LocalDate> septemberDates = sameMonthDatesFinder.find(firstDateOfMonth);
         assertThat(septemberDates.size()).isEqualTo(30);
 
-        List<RateByBaseCurrency> list = couponAnalyzeService.getRateByBaseCurrencyByAPI(septemberDates);
+        List<RateByBaseCurrency> list = rateHistoryCollector.collect(septemberDates);
+        rateHistoryCollector.save(list);
 
         assertThat(list.size()).isEqualTo(22);
-        list.forEach(couponAnalyzeService::save);
 
         LocalDate septemberFirst = LocalDate.of(2022, 9, 1);
         LocalDate septemberLast = LocalDate.of(2022, 9, 30);

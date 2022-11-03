@@ -53,12 +53,10 @@ class CurrencyRateCollectionTest {
         LocalDate firstDateOfMonth = LocalDate.of(2022, Month.SEPTEMBER, 1);
 
         SameMonthDatesFinder sameMonthDatesFinder = new SameMonthDatesFinder();
-        CouponAnalyzeService sut = new CouponAnalyzeService(null, new LastBusinessDayRateFinder(), recentlyCreatedCouponFinder, rateOfDateFinder, couponStatsSummarizer);
-
         List<LocalDate> septemberDates = sameMonthDatesFinder.find(firstDateOfMonth);
-        List<RateByBaseCurrency> list = sut.getRateByBaseCurrencyByAPI(septemberDates);
+        RateHistoryCollector rateHistoryCollector = new RateHistoryCollector(null);
+        List<RateByBaseCurrency> list = rateHistoryCollector.collect(septemberDates);
         assertThat(list.size()).isEqualTo(22);
         list.forEach(System.out::println);
-        //TemporalAdjuster addADay = temporal -> temporal.plus(1L, ChronoUnit.DAYS);
     }
 }
