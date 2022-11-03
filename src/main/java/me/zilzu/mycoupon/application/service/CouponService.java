@@ -37,19 +37,21 @@ public class CouponService {
     private final CouponHistoryRecorder couponHistoryRecorder;
     private final NewCouponRepository newCouponRepository;
     private final CouponRateExchanger couponRateExchanger;
+    private final Summarizer summarizer;
 
     public CouponService(CouponIdGenerator couponIdGenerator,
                          CouponDiscountAmountCalculator couponDiscountAmountCalculator,
                          CouponValidator couponValidator,
                          CouponHistoryRecorder couponHistoryRecorder,
                          NewCouponRepository newCouponRepository,
-                         CouponRateExchanger couponRateExchanger) {
+                         CouponRateExchanger couponRateExchanger, Summarizer summarizer) {
         this.couponIdGenerator = couponIdGenerator;
         this.couponDiscountAmountCalculator = couponDiscountAmountCalculator;
         this.couponValidator = couponValidator;
         this.couponHistoryRecorder = couponHistoryRecorder;
         this.newCouponRepository = newCouponRepository;
         this.couponRateExchanger = couponRateExchanger;
+        this.summarizer = summarizer;
     }
 
     @Cacheable(value = "Coupon", key = "#id")
@@ -156,10 +158,13 @@ public class CouponService {
         return new CouponApplicationResult(id, history.usageTime);
     }
 
-    public List<CouponRateCalculationResult> analyseStatsOf(YearMonth yearMonth, Currency currency) {
+    public CouponStatsResult analyseStatsOf(YearMonth yearMonth, Currency currency) {
         List<Coupon> foundCouponsOfMonth = retrieveAllCouponOfMonth(yearMonth, currency);
         List<CouponRateHistory> rateHistoryList = couponRateExchanger.getRateOfMonth(yearMonth);
-        return couponRateExchanger.calculateRateExchanger(foundCouponsOfMonth, rateHistoryList);
+        List<CouponRateCalculationResult> calculatedResults = couponRateExchanger.calculateRateExchanger(foundCouponsOfMonth, rateHistoryList);
+
+        return summarizer.summarize(calculatedResults, currency);
+
     }
 
     private static RuntimeException notUsableCouponException() {

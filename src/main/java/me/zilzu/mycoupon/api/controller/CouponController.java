@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class CouponController {
@@ -61,13 +59,12 @@ public class CouponController {
     }
 
     @GetMapping("/api/v1/stats")
-    public List<CouponRateCalculationResponse> analyseStatsCoupon(@RequestParam(value = "target") YearMonth yearMonth
+    public CouponRateStatsResponse analyseStatsCoupon(@RequestParam(value = "target") YearMonth yearMonth
             , @RequestParam(value = "currency") Currency currency) {
 
-        List<CouponRateCalculationResult> results = couponService.analyseStatsOf(yearMonth, currency);
+        CouponStatsResult results = couponService.analyseStatsOf(yearMonth, currency);
 
-        return results.stream()
-                .map(CouponRateCalculationResponse::new)
-                .collect(Collectors.toList());
+        return new CouponRateStatsResponse(results.sum, results.average, results.currency);
+
     }
 }
