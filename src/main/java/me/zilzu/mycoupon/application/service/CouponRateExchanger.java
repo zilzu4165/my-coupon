@@ -8,17 +8,15 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class CouponRateExchanger {
 
-    public List<CouponRateHistory> getRateOfMonth(String yearMonth) {
+    public List<CouponRateHistory> getRateOfMonth(YearMonth yearMonth) {
 
-        YearMonth month = YearMonth.parse(yearMonth, DateTimeFormatter.ofPattern("yyyy-MM"));
-        LocalDate atDay = month.atDay(1);
+        LocalDate atDay = yearMonth.atDay(1);
 
         LocalDate firstDay = atDay.withDayOfMonth(1);
         int lastDayOfMonth = atDay.lengthOfMonth();
@@ -27,14 +25,13 @@ public class CouponRateExchanger {
 
         for (int i = 0; i < lastDayOfMonth; i++) {
             LocalDate plusDays = firstDay.plusDays(i);
+
             if (plusDays.getDayOfWeek() == DayOfWeek.SATURDAY || plusDays.getDayOfWeek() == DayOfWeek.SUNDAY) {  // 주말인 경우 패스
                 continue;
             }
-            System.out.println(plusDays);
 
             RestTemplate restTemplate = new RestTemplate();
             String url = "https://api.vatcomply.com/rates?date=" + plusDays;
-
             CouponRateHistory rateHistory = restTemplate.getForObject(url, CouponRateHistory.class);
             couponRateHistories.add(rateHistory);
         }
@@ -51,7 +48,7 @@ public class CouponRateExchanger {
         List<CouponRateCalculationResult> calculatedRateCoupons = new ArrayList<>();
 
         for (Coupon coupon : foundCouponsOfMonth) {
-            LocalDate date = convertWeekDay(coupon.createdTime.toLocalDate());
+            LocalDate date = new DayConverter().convertWeekDay(coupon.createdTime.toLocalDate());
 
             for (CouponRateHistory couponRateHistory : couponRateHistories) {
                 if (date.isEqual(couponRateHistory.date)) {
@@ -63,18 +60,6 @@ public class CouponRateExchanger {
             }
         }
         return calculatedRateCoupons;
-    }
-
-    private static LocalDate convertWeekDay(LocalDate date1) {
-        DayOfWeek dayOfWeek = date1.getDayOfWeek();
-        int weekValue = dayOfWeek.getValue();
-        if (weekValue == 7) {
-            date1 = date1.minusDays(2);
-        } else if (weekValue == 6) {
-            date1 = date1.minusDays(1);
-        }
-        LocalDate date = date1;
-        return date;
     }
 
 }
