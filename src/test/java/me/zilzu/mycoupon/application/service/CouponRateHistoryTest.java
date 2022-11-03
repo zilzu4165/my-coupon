@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -62,7 +63,7 @@ public class CouponRateHistoryTest {
         assertThat(couponRateCalculationResults.size()).isEqualTo(foundCouponsOfMonth.size());
 
         // 3-1 2022-09-01에 [생성된 쿠폰, 환율이 계산된 result, 환율] 로 계산이 잘 되었는지 검증하기
-//        verifyCalculation(foundCouponsOfMonth,couponRateHistories,couponRateCalculationResults);
+        verifyCalculation(foundCouponsOfMonth, couponRateHistories, couponRateCalculationResults);
 
         // 4. 통계를 낸다. 합계, 평균
         CouponStatsResult statsResult = summarizer.summarize(couponRateCalculationResults, Currency.KRW);
@@ -79,6 +80,29 @@ public class CouponRateHistoryTest {
         assertThat(statsResult.average).isEqualTo(average);
 
 
+    }
+
+    private void verifyCalculation(List<Coupon> foundCouponsOfMonth, List<CouponRateHistory> couponRateHistories, List<CouponRateCalculationResult> couponRateCalculationResults) {
+        Long foundCouponAmountOff = foundCouponsOfMonth.stream()
+                .filter(coupon -> coupon.createdTime.toLocalDate().toString().equals("2022-09-01"))
+                .findAny()
+                .get().amountOff;
+        Map<Currency, BigDecimal> rates = couponRateHistories.stream()
+                .filter(couponRateHistory -> couponRateHistory.date.toString().equals("2022-09-01"))
+                .findAny()
+                .get().rates;
+        BigDecimal rate = rates.get(Currency.KRW);
+
+        BigDecimal calculatedAmount = couponRateCalculationResults.stream()
+                .filter(result -> result.date.toString().equals("2022-09-01"))
+                .findAny()
+                .get().calculatedAmount;
+
+        System.out.println("foundCouponAmountOff" + foundCouponAmountOff);
+        System.out.println("rate + " + rate);
+        System.out.println("calculatedAmount " + calculatedAmount);
+
+        assertThat(calculatedAmount).isEqualTo(rate.multiply(BigDecimal.valueOf(foundCouponAmountOff)));
     }
 
     public void createRandomCouponsInMonth(int count, int nThreads) throws InterruptedException {
