@@ -1,12 +1,13 @@
 package me.zilzu.mycoupon.api.controller;
 
-import me.zilzu.mycoupon.application.service.Coupon;
-import me.zilzu.mycoupon.application.service.CouponCreationRequest;
-import me.zilzu.mycoupon.application.service.CouponDeleteResult;
-import me.zilzu.mycoupon.application.service.CouponService;
+import me.zilzu.mycoupon.application.service.*;
 import me.zilzu.mycoupon.common.CouponId;
+import me.zilzu.mycoupon.common.enums.Currency;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 
 @RestController
 public class CouponController {
@@ -37,7 +38,7 @@ public class CouponController {
 
     @PostMapping("/api/v1/coupons")
     public CouponCreatedResponse createCoupons(@RequestBody CouponRequestDto couponRequestDto) {
-        Coupon coupon = couponService.create(new CouponCreationRequest(couponRequestDto.duration, couponRequestDto.durationInMonths, couponRequestDto.discountType, couponRequestDto.currency, couponRequestDto.amountOff, couponRequestDto.percentOff));
+        Coupon coupon = couponService.create(new CouponCreationRequest(couponRequestDto.duration, couponRequestDto.durationInMonths, couponRequestDto.discountType, couponRequestDto.currency, couponRequestDto.amountOff, couponRequestDto.percentOff), LocalDateTime.now());
 
         return new CouponCreatedResponse(coupon);
     }
@@ -57,4 +58,13 @@ public class CouponController {
         return "쿠폰을 적용했습니다.";
     }
 
+    @GetMapping("/api/v1/stats")
+    public CouponRateStatsResponse analyseStatsCoupon(@RequestParam(value = "target") YearMonth yearMonth
+            , @RequestParam(value = "currency") Currency currency) {
+
+        CouponStatsResult results = couponService.analyseStatsOf(yearMonth, currency);
+
+        return new CouponRateStatsResponse(results.sum, results.average, results.currency);
+
+    }
 }

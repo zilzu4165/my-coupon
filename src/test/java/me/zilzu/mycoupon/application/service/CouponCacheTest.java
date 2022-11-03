@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -33,7 +35,7 @@ class CouponCacheTest {
                 , 10L
                 , null
         );
-        Coupon coupon = sut.create(request);
+        Coupon coupon = sut.create(request, LocalDateTime.now());
 
         Coupon foundCouponFromDB = sut.retrieve(coupon.id);
         Coupon foundsCouponFromCache = sut.retrieve(coupon.id);

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -25,7 +27,7 @@ class CouponServiceTest {
     @Test
     void coupon_create_and_retrieve_test() {
         CouponCreationRequest request = new CouponCreationRequest(CouponDuration.ONCE, null, null, null, null, null);
-        Coupon coupon = couponService.create(request);
+        Coupon coupon = couponService.create(request, LocalDateTime.now());
 
         Coupon retrievedCoupon = couponService.retrieve(coupon.id);
 
