@@ -32,11 +32,11 @@ public class CouponStatsSummarizer {
                     return rate.multiply(amount);
                 }).collect(Collectors.toList());
 
-        BigDecimal sumAmountsOfCoupon = convertedCouponAmountList.stream()
+        BigDecimal sumAmount = convertedCouponAmountList.stream()
                 .reduce(BigDecimal.ZERO.setScale(4, RoundingMode.HALF_UP), BigDecimal::add);
-        BigDecimal averageAmount = sumAmountsOfCoupon.divide(BigDecimal.valueOf(convertedCouponAmountList.size()));
+        BigDecimal averageAmount = sumAmount.divide(BigDecimal.valueOf(convertedCouponAmountList.size()));
 
-        return new CouponStatsSummary(sumAmountsOfCoupon, averageAmount);
+        return new CouponStatsSummary(sumAmount, averageAmount);
 
     }
 }

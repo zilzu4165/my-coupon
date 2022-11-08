@@ -11,4 +11,12 @@ public class RateOfDate {
         this.date = date;
         this.rate = rate;
     }
+
+    @Override
+    public String toString() {
+        return "RateOfDate{" +
+                "date=" + date +
+                ", rate=" + rate +
+                '}';
+    }
 }

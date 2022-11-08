@@ -27,12 +27,10 @@ class CurrencyRateCollectionTest {
         ResponseEntity<String> response
                 = restTemplate.getForEntity(rateByBaseAndDateUrl, String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        System.out.println("response = " + response);
 
         RateByBaseCurrency rateByBaseCurrency
                 = restTemplate.getForObject(rateByBaseAndDateUrl, RateByBaseCurrency.class);
         assertThat(rateByBaseCurrency).isNotNull();
-        System.out.println("rateByBaseCurrency = " + rateByBaseCurrency);
 
 
         final Map<Currency, BigDecimal> dataMap = rateByBaseCurrency.rates;
@@ -56,7 +54,25 @@ class CurrencyRateCollectionTest {
         List<LocalDate> septemberDates = sameMonthDatesFinder.find(firstDateOfMonth);
         RateHistoryCollector rateHistoryCollector = new RateHistoryCollector(null);
         List<RateByBaseCurrency> list = rateHistoryCollector.collect(septemberDates);
+
+        // 9월의 환율 수집일은 22일이다.
         assertThat(list.size()).isEqualTo(22);
-        list.forEach(System.out::println);
+
+        List<RateOfDate> rateOfDateList = list.stream()
+                .map(rateByBaseCurrency -> new RateOfDate(rateByBaseCurrency.date, rateByBaseCurrency.rates.get(Currency.KRW)))
+                .collect(Collectors.toList());
+
+        LocalDate bizDay01 = LocalDate.of(2022, Month.SEPTEMBER, 2);
+        LocalDate holiday01 = LocalDate.of(2022, Month.SEPTEMBER, 3);
+        // 평일 데이터는 존재하고 주말 데이터는 없어야 한다.
+        assertThat(rateOfDateList.size()).isEqualTo(22L);
+        assertThat(rateOfDateList.stream()
+                .filter(rateOfDate -> rateOfDate.date.isEqual(bizDay01))
+                .findFirst())
+                .isNotEmpty();
+        assertThat(rateOfDateList.stream()
+                .filter(rateOfDate -> rateOfDate.date.isEqual(holiday01))
+                .findFirst()).isEmpty();
+
     }
 }
